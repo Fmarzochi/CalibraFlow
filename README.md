@@ -1,4 +1,4 @@
-# CalibrFlow
+# CalibraFlow
 
 ## 📌 Sobre o Projeto
 
