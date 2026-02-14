@@ -2,54 +2,51 @@
 
 ## 📌 Sobre o Projeto
 
-Eu desenvolvi o **CalibrFlow** como um sistema corporativo auditável para gestão do ciclo de vida de calibração de instrumentos.
+Eu desenvolvi o **CalibraFlow** como um sistema corporativo auditável para gestão do ciclo de vida de calibração de instrumentos.
 
 O objetivo do sistema é garantir:
 
-- controle automático de vencimentos
-- rastreabilidade completa conforme padrões ISO
-- histórico imutável de calibrações
-- auditoria total de movimentações e responsáveis
+- **Controle automático de vencimentos**
+- **Rastreabilidade completa** conforme padrões ISO
+- **Histórico imutável** de calibrações
+- **Auditoria total** de movimentações e responsáveis
 
-O CalibrFlow substitui controles manuais descentralizados por uma aplicação segura, centralizada e preparada para uso multiusuário em ambiente corporativo.
+O CalibraFlow substitui controles manuais descentralizados por uma aplicação segura, centralizada e preparada para uso multiusuário em ambiente corporativo.
 
 ---
 
 ## 🚀 Tecnologias (Stack)
 
-- **Backend:** Java 21 + Spring Boot (Clean Architecture + SOLID)
+- **Backend:** Java 21 + Spring Boot (Foco em SOLID)
 - **Frontend:** React + Vite
 - **Banco de Dados:** PostgreSQL
-- **Infraestrutura:** Docker + Vercel (ambiente de testes)
+- **Infraestrutura:** Docker
 
 ---
 
 ## 👥 Perfis de Acesso
 
 1. **ADMIN**
-   - Controle total do sistema
-   - Gestão de usuários
-   - Invalidação de registros via *soft delete*
+   - Controle total do sistema e usuários.
+   - Invalidação de registros via *soft delete*.
 
 2. **USUÁRIO**
-   - Registro de calibrações
-   - Movimentação de instrumentos entre unidades/obras
-   - Sem permissão para apagar histórico
+   - Registro de calibrações e movimentação de instrumentos.
+   - Sem permissão para apagar histórico.
 
 3. **AUDITOR**
-   - Acesso somente leitura
-   - Exportação de relatórios em PDF
+   - Acesso somente leitura e exportação de relatórios.
 
 ---
 
 ## 📅 Histórico de Evolução
 
-### Fase 1: Fundação (Em andamento)
-- [x] Criação do repositório e estrutura inicial
-- [ ] Configuração do ambiente Backend (Spring Boot)
-- [ ] Configuração do banco PostgreSQL via Docker
+### Fase 1: Fundação ✅
+- [x] Criação do repositório e estrutura inicial.
+- [x] Configuração do Git e padrão corporativo.
+- [x] Definição da stack tecnológica.
 
-### Próxima Fase: Backend Core
-- Implementação da entidade Instrumento
-- Service de cálculo automático de vencimento
-- Controle de permissões por perfil
+### Fase 2: Backend Core (Em andamento) 🛠️
+- [x] Configuração do Spring Boot (pom.xml).
+- [x] Conexão com PostgreSQL via Docker.
+- [ ] Criação das Entidades de Banco de Dados.
