@@ -1,4 +1,4 @@
-package com.calibraflow.model;
+package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
 import java.util.Objects;
