@@ -42,11 +42,26 @@ O CalibraFlow substitui controles manuais descentralizados por uma aplicação s
 ## 📅 Histórico de Evolução
 
 ### Fase 1: Fundação ✅
-- [x] Criação do repositório e estrutura inicial.
-- [x] Configuração do Git e padrão corporativo.
-- [x] Definição da stack tecnológica.
+- [x] Eu criei o repositório e a estrutura inicial do CalibraFlow
+- [x] Eu configurei README.md e .gitignore corporativo
+- [x] Eu defini o padrão de commits e evolução por fases
 
-### Fase 2: Backend Core (Em andamento) 🛠️
-- [x] Configuração do Spring Boot (pom.xml).
-- [x] Conexão com PostgreSQL via Docker.
-- [ ] Criação das Entidades de Banco de Dados.
+---
+
+### Fase 2: Backend Core 🛠️ (Em andamento)
+
+**Infraestrutura:**
+- [x] Spring Boot inicializado (pom.xml confirmado no projeto)
+- [x] PostgreSQL configurado via Docker (docker-compose.yml presente)
+
+**Entidades do Domínio:**
+- [x] Role.java criada (ROLE_ADMIN, ROLE_USER, ROLE_AUDITOR)
+- [x] User.java criada
+- [x] Instrument.java criada
+- [x] Category.java criada
+- [x] Location.java criada
+- [x] Movement.java criada
+- [x] Calibration.java criada
+
+📌 **Status atual:**
+Modelagem das entidades concluída. Pronto para iniciar a camada de Repositories.
