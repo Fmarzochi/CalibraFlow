@@ -1,13 +1,13 @@
-package com.calibrflow.api;
+package com.calibraflow.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CalibrFlowApiApplication {
+public class CalibraFlowApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CalibrFlowApiApplication.class, args);
+        SpringApplication.run(CalibraFlowApiApplication.class, args);
     }
 
 }
