@@ -37,4 +37,6 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
+    // Eu utilizo Set para garantir que um usuário não tenha perfis duplicados
+    // O fetch EAGER garante que os perfis sejam carregados junto com o usuário para a segurança
 }
