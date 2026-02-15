@@ -64,4 +64,4 @@ Entidades do Domínio:
 - [x] Calibration.java concluído
 
 📌 Status atual:
-Mapeamento de todas as entidades do domínio finalizado e validado.
+Mapeamento de todas as entidades do domínio finalizado e validado.Eu implementei os repositórios do domínio e o controller de categorias, validando a persistência no PostgreSQL.
