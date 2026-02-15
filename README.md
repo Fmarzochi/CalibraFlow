@@ -51,8 +51,8 @@ O CalibraFlow substitui controles manuais descentralizados por uma aplicação s
 ### Fase 2: Backend Core 🛠️ (Em andamento)
 
 Infraestrutura:
-- [ ] Spring Boot inicializado (pom.xml confirmado no projeto)
-- [ ] PostgreSQL configurado via Docker
+- [x] Spring Boot inicializado (pom.xml confirmado no projeto)
+- [x] PostgreSQL configurado via Docker
 
 Entidades do Domínio:
 - [x] Role.java criada (ROLE_ADMIN, ROLE_USER, ROLE_AUDITOR)
@@ -61,7 +61,9 @@ Entidades do Domínio:
 - [x] Category.java concluído
 - [x] Location.java concluído
 - [x] Movement.java concluído
-- [x] Calibration.java concluído
+- [x] Calibration.java concluído (Estrutura definida e saneada)
 
 📌 Status atual:
-Mapeamento de todas as entidades do domínio finalizado e validado.Eu implementei os repositórios do domínio e o controller de categorias, validando a persistência no PostgreSQL.
+Mapeamento de todas as entidades do domínio finalizado. Eu implementei os repositórios, 
+o cadastro de instrumentos e o controller de categorias, validando a persistência e os relacionamentos
+no PostgreSQL.
