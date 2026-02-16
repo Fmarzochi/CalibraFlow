@@ -11,17 +11,14 @@ import java.util.List;
 @RequestMapping("/api/instruments")
 public class InstrumentController {
 
-    // Eu utilizo a injeção de dependência para acessar o repositório de instrumentos
     @Autowired
     private InstrumentRepository instrumentRepository;
 
-    // Eu exponho o método GET para listar todos os instrumentos cadastrados
     @GetMapping
     public List<Instrument> findAll() {
         return instrumentRepository.findAll();
     }
 
-    // Eu exponho o método POST para permitir o cadastro de novos instrumentos
     @PostMapping
     public Instrument create(@RequestBody Instrument instrument) {
         return instrumentRepository.save(instrument);
