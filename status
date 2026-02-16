@@ -1,5 +1,45 @@
-[33m435c5d8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Eu implementei o MovementController para gestão de movimentações e auditoria
-[33m3925256[m Eu implementei o MovementRepository para persistência de movimentações com UUID
-[33mae35aa6[m Eu atualizei o README com o progresso da infraestrutura de usuários
-[33m4460da6[m Eu criei o controlador UserController para gestão de usuários
-[33md47f1a4[m Eu implementei a entidade User com suporte a roles e autenticação
+10c2447 Eu atualizei o histórico de evolução no README conforme a fase atual do backend
+5634deb Eu corrigi o nome do arquivo de log para o padrão técnico 'status'
+14d9a21 Eu corrigi o erro de digitação: renomeei tatus para estatus e recuperei o log
+98e633b Eu removi o arquivo 'tatus' criado por erro de digitação e saneei a raiz do projeto
+7f1ec76 Eu atualizei o README com o detalhamento técnico da Fase 2 e o motor de movimentação
+164e686 Eu implementei a busca de histórico de movimentações por instrumento
+435c5d8 Eu implementei o MovementController para gestão de movimentações e auditoria
+3925256 Eu implementei o MovementRepository para persistência de movimentações com UUID
+ae35aa6 Eu atualizei o README com o progresso da infraestrutura de usuários
+4460da6 Eu criei o controlador UserController para gestão de usuários
+d47f1a4 Eu implementei a entidade User com suporte a roles e autenticação
+3f20c2a Eu implementei o InstrumentController para gerenciar o cadastro de instrumentos
+250bcb0 Eu implementei o MovementController para permitir o registro de movimentações de instrumentos
+bab1e8c Eu implementei o LocationController para expor a gestão de locais
+8d915bd Eu corrigi a ordem de limpeza do banco no TestConfig para evitar erro de chave estrangeira
+7a79fdd Removi os arquivos conflitantes e estabilizei o cadastro de instrumentos
+08548ef Removi os arquivos conflitantes e estabilizei o cadastro de instrumentos
+00d792f Eu implementei a carga automática de categorias no banco de dados
+c90526d Eu implementei o controller de instrumentos para gestão de inventário
+2021c52 Eu registrei a evolução da camada de persistência no README
+2d9e4e9 Eu implementei os repositórios do domínio e o controller de categorias
+8671000 Eu atualizei o progresso das entidades no README
+4158eb7 Eu atualizei o pacote da entidade User para o novo caminho no backend
+a52f8d0 Eu atualizei o pacote da entidade Role para o novo caminho no backend
+412a173 Eu unifiquei a estrutura do projeto dentro da pasta backend e removi arquivos duplicados
+21a7c80 Eu criei a entidade User e organizei o pacote da Role
+a0228f8 Eu sincronizei o README com o estado real das entidades e infraestrutura
+bd1cc8a Eu implementei a entidade User com relacionamento ManyToMany para perfis de acesso
+9b79a0d Eu finalizei o mapeamento do banco com a entidade Movement e suas relações
+1a4fb1d Eu implementei a entidade Location para rastrear onde os instrumentos estão
+4d04551 Eu implementei a entidade Calibration com rastreabilidade e carimbo de tempo
+772b5d3 Eu implementei a entidade Instrumento conectada com Categoria
+46f5981 Eu implementei a entidade Category para controlar intervalos de calibração
+510414c Eu implementei a entidade User com relacionamento ManyToMany para perfis
+e35796b Eu criei a entidade Role para gestão de perfis de acesso
+35bfdda Eu atualizei o README com a visão executiva e perfis de acesso
+d39c499 Eu finalizei a refatoração para CalibraFlow e estou pronto para sincronizar
+623afb2 Eu corrigi o artefato e o nome do projeto para CalibraFlow no pom.xml
+8b8d5ae Fix project name from CalibrFlow to CalibraFlow
+f351922 Eu configurei o container Docker do PostgreSQL
+11bac0b Eu configurei a conexão do banco de dados PostgreSQL
+9f39199 Eu criei a classe main para inicializar o Spring Boot
+5961e8a Eu adicionei o pom.xml via terminal.
+9256106 Eu adicionei o README oficial do projeto
+310ddc2 Eu corrigi o gitignore para um padrão corporativo no CalibrFlow
