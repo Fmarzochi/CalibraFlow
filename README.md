@@ -50,13 +50,15 @@ O CalibraFlow substitui controles manuais descentralizados por uma aplicação s
 
 ### Fase 2: Backend Core 🛠️ (Em andamento)
 
-Infraestrutura e Persistência:
+**Infraestrutura e Persistência:**
 - [x] Spring Boot inicializado (pom.xml confirmado no projeto)
 - [x] PostgreSQL configurado via Docker
 - [x] UserRepository.java implementado
 - [x] UserController.java implementado (Gestão de usuários e auditoria)
+- [x] MovementRepository.java implementado (Persistência com UUID e filtros de busca)
+- [x] MovementController.java implementado (Endpoints de listagem, criação e histórico)
 
-Entidades do Domínio:
+**Entidades do Domínio:**
 - [x] Role.java criada (ROLE_ADMIN, ROLE_USER, ROLE_AUDITOR)
 - [x] User.java concluído
 - [x] Instrument.java concluído
@@ -65,7 +67,8 @@ Entidades do Domínio:
 - [x] Movement.java concluído
 - [x] Calibration.java concluído (Estrutura definida e saneada)
 
-📌 Status atual:
-Mapeamento de todas as entidades do domínio finalizado. Eu implementei os 
-repositórios, controladores e a infraestrutura de usuários necessária para garantir 
-a rastreabilidade das movimentações e calibrações no PostgreSQL.
+📌 **Status atual:**
+Mapeamento de todas as entidades do domínio finalizado. Eu implementei os repositórios,
+controladores e a infraestrutura necessária para garantir a rastreabilidade das movimentações no PostgreSQL 
+utilizando identificadores únicos (UUID). O sistema já é capaz de registrar e filtrar o histórico de movimentações por 
+instrumento, vinculando cada ação a um usuário responsável para fins de auditoria.
