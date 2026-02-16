@@ -1,5 +1,0 @@
-[33m435c5d8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Eu implementei o MovementController para gestão de movimentações e auditoria
-[33m3925256[m Eu implementei o MovementRepository para persistência de movimentações com UUID
-[33mae35aa6[m Eu atualizei o README com o progresso da infraestrutura de usuários
-[33m4460da6[m Eu criei o controlador UserController para gestão de usuários
-[33md47f1a4[m Eu implementei a entidade User com suporte a roles e autenticação
