@@ -65,10 +65,13 @@ O CalibraFlow substitui controles manuais descentralizados por uma aplicação s
 - [x] Category.java concluído
 - [x] Location.java concluído
 - [x] Movement.java concluído
-- [x] Calibration.java concluído (Estrutura definida e saneada)
+- [ ] Calibration.java (Em andamento - faltam dados e saneamento completo)
 
 📌 **Status atual:**
-Mapeamento de todas as entidades do domínio finalizado. Eu implementei os repositórios, 
-controladores e a infraestrutura necessária para garantir a rastreabilidade das movimentações no PostgreSQL 
-utilizando identificadores únicos (UUID). O sistema já é capaz de registrar e filtrar o histórico de movimentações 
-por instrumento, vinculando cada ação a um usuário responsável para fins de auditoria.
+Mapeamento das entidades do domínio em andamento, com a maioria das classes principais 
+finalizadas. Eu implementei os repositórios, controladores e a infraestrutura básica 
+necessária para garantir a rastreabilidade das movimentações no PostgreSQL utilizando 
+identificadores únicos (UUID). O sistema já é capaz de registrar e filtrar o histórico 
+de movimentações por instrumento, vinculando cada ação a um usuário responsável para
+fins de auditoria. A entidade Calibration.java segue em desenvolvimento para incluir 
+todos os campos técnicos necessários...

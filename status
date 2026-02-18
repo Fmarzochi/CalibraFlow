@@ -1,3 +1,5 @@
+6f13375 Eu finalizei a estruturação da camada de persistência e do modelo de domínio da CalibraFlow API.
+68da5e4 Eu implementei o mapeamento de exclusão em cascata para as movimentações e calibrações vinculadas ao instrumento.
 4df6286 Eu atualizei o DatabaseSeeder para incluir a lista definitiva de categorias e periodicidades conforme o padrão
 2ea7b51 Eu atualizei o DatabaseSeeder para incluir a lista completa de categorias de calibração industrial e suas respectivas periodicidades.
 1a8a77e Eu implementei o DatabaseSeeder para popular automaticamente as categorias iniciais (Pressão, Temperatura, etc) quando o banco estiver vazio.
