@@ -1,3 +1,4 @@
+afcf731 Atualizando status do projeto
 6f13375 Eu finalizei a estruturação da camada de persistência e do modelo de domínio da CalibraFlow API.
 68da5e4 Eu implementei o mapeamento de exclusão em cascata para as movimentações e calibrações vinculadas ao instrumento.
 4df6286 Eu atualizei o DatabaseSeeder para incluir a lista definitiva de categorias e periodicidades conforme o padrão
