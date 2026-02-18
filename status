@@ -1,3 +1,4 @@
+cfc12ea Eu implementei o repositório de calibração para permitir a persistência dos registros no banco de dados.
 b588c67 Eu implementei a entidade Calibration vinculada ao instrumento para registrar dados reais de calibração.
 a8acd96 Eu implementei a entidade Calibration vinculada ao instrumento para registrar dados reais de calibração.
 6cbc64a Eu atualizei o log de status com todo o histórico de commits do projeto
