@@ -4,39 +4,34 @@ import com.calibraflow.api.domain.entities.Calibration;
 import com.calibraflow.api.domain.entities.Instrument;
 import com.calibraflow.api.domain.repositories.CalibrationRepository;
 import com.calibraflow.api.domain.repositories.InstrumentRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CalibrationService {
 
-    @Autowired
-    private CalibrationRepository calibrationRepository;
-
-    @Autowired
-    private InstrumentRepository instrumentRepository;
+    private final CalibrationRepository calibrationRepository;
+    private final InstrumentRepository instrumentRepository;
 
     @Transactional
-    public Calibration registerCalibration(UUID instrumentId, Calibration calibrationData) {
+    public Calibration registerCalibration(UUID instrumentId, Calibration calibration) {
         Instrument instrument = instrumentRepository.findById(instrumentId)
-                .orElseThrow(() -> new EntityNotFoundException("Instrumento não encontrado com ID: " + instrumentId));
+                .orElseThrow(() -> new RuntimeException("Instrumento não encontrado"));
 
-        if (!instrument.getActive()) {
-            throw new IllegalStateException("Não é possível calibrar um instrumento inativo.");
+        if (!instrument.isActive()) {
+            throw new RuntimeException("Não é possível registrar calibração para um instrumento inativo");
         }
 
-        // Regra de Negócio: Calcula o vencimento baseado na periodicidade da categoria
-        int intervalDays = instrument.getCategory().getCalibrationIntervalDays();
-        LocalDate nextDate = calibrationData.getCalibrationDate().plusDays(intervalDays);
+        calibration.setInstrument(instrument);
+        return calibrationRepository.save(calibration);
+    }
 
-        calibrationData.setNextCalibrationDate(nextDate);
-        calibrationData.setInstrument(instrument);
-
-        return calibrationRepository.save(calibrationData);
+    public List<Calibration> getHistoryByInstrument(UUID instrumentId) {
+        return calibrationRepository.findByInstrumentId(instrumentId);
     }
 }

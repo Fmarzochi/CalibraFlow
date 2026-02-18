@@ -2,7 +2,6 @@ package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
 import java.util.UUID;
 import java.util.List;
 
@@ -26,12 +25,6 @@ public class Instrument {
     private String name;
 
     private String serialNumber;
-
-    private String manufacturer;
-
-    private String model;
-
-    private LocalDate acquisitionDate;
 
     @Builder.Default
     private boolean active = true;
