@@ -1,3 +1,6 @@
+28a92b8 Eu refatorei o MovementController para utilizar o MovementService, padronizando a arquitetura de camadas e os retornos HTTP
+f754520 Eu criei o MovementService para centralizar o rastreio e a auditoria das movimentações de instrumentos no banco de dados.
+63f67aa Eu corrigi a declaração do pacote no DatabaseSeeder e implementei a integração com o MigrationService para a carga inicial do sistema
 6edd656 Eu criei o CategoryService garantindo a estrutura correta de pacotes para resolver as falhas de compilação no controlador
 1f86084 Eu configurei o docker-compose.yml na raiz para orquestrar o banco de dados PostgreSQL e garantir a persistência dos dados.
 aaedb9f Eu refatorei o LocationController para utilizar o LocationService e implementei o endpoint de alternância de status ativo.
