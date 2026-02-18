@@ -1,3 +1,5 @@
+1bbdda6 Refatorei o modelo de dados para UUID e implementei a importação de CSV real
+d9da3e5 Ajuste do MigrationService para o CSV real e alteração do ddl-auto para update. Eu ajustei os índices de mapeamento para TAG, Descrição e Série, implementei a lógica de carga das calibrações e alterei a configuração de persistência no application.properties para update, garantindo que os dados não sejam apagados no reinício.
 bd27a9d Corrigi estrutura do backend e finalizei execução do Spring Boot com carga inicial funcionando
 6c656df Eu limpei a estrutura de pacotes, removi classes aninhadas e corrigi as duplicatas nos módulos de calibração.
 28a92b8 Eu refatorei o MovementController para utilizar o MovementService, padronizando a arquitetura de camadas e os retornos HTTP

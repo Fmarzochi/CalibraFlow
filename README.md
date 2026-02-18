@@ -28,7 +28,7 @@ O CalibraFlow substitui controles manuais descentralizados por uma aplicação s
 
 1. **ADMIN**
    - Controle total do sistema e usuários.
-   - Invalidação de registros via *soft delete*.
+   - Invalidação de registros via *soft delete* (mantendo integridade).
 
 2. **USUÁRIO**
    - Registro de calibrações e movimentação de instrumentos.
@@ -53,25 +53,38 @@ O CalibraFlow substitui controles manuais descentralizados por uma aplicação s
 **Infraestrutura e Persistência:**
 - [x] Spring Boot inicializado (pom.xml confirmado no projeto)
 - [x] PostgreSQL configurado via Docker
-- [x] UserRepository.java implementado
-- [x] UserController.java implementado (Gestão de usuários e auditoria)
-- [x] MovementRepository.java implementado (Persistência com UUID e filtros de busca)
-- [x] MovementController.java implementado (Endpoints de listagem, criação e histórico)
+- [x] Persistência configurada com identificadores únicos (UUID)
+- [x] Estrutura de repositórios base (JPA) criada
+- [x] Serviço de migração de dados via CSV implementado
+- [x] Carga inicial automatizada via DatabaseSeeder funcional
 
 **Entidades do Domínio:**
 - [x] Role.java criada (ROLE_ADMIN, ROLE_USER, ROLE_AUDITOR)
 - [x] User.java concluído
-- [x] Instrument.java concluído
+- [x] Patrimony.java concluído (Gestão de códigos e TAGs)
+- [x] Instrument.java concluído (Relacionamentos JPA normalizados)
 - [x] Category.java concluído
 - [x] Location.java concluído
 - [x] Movement.java concluído
-- [ ] Calibration.java (Em andamento - faltam dados e saneamento completo)
+- [x] Calibration.java concluído
+
+**Lógica e Segurança (Pendentes):**
+- [ ] Implementação de Bean Validation (Validação de entradas)
+- [ ] Global Exception Handler (Tratamento de erros profissional)
+- [ ] Spring Security + JWT (Autenticação e Autorização)
+- [ ] Auditoria JPA (AuditLog automático de criação/edição)
+- [ ] Soft Delete real (Exclusão lógica de registros)
 
 📌 **Status atual:**
-Mapeamento das entidades do domínio em andamento, com a maioria das classes principais 
-finalizadas. Eu implementei os repositórios, controladores e a infraestrutura básica 
-necessária para garantir a rastreabilidade das movimentações no PostgreSQL utilizando 
-identificadores únicos (UUID). O sistema já é capaz de registrar e filtrar o histórico 
-de movimentações por instrumento, vinculando cada ação a um usuário responsável para
-fins de auditoria. A entidade Calibration.java segue em desenvolvimento para incluir 
-todos os campos técnicos necessários...
+A fundação do banco de dados e o mapeamento das entidades principais com UUID
+estão concluídos e validados. O sistema realiza a ingestão de dados via CSV e entrega
+os objetos relacionados via API. O projeto agora entra na etapa crítica de implementação
+das regras de negócio, validações de integridade e camada de segurança, essenciais para 
+atingir os requisitos de auditoria propostos.
+
+---
+
+### Fase 3: Frontend & UX 🎨 (Planejado)
+- [ ] Configuração do ambiente React + Vite
+- [ ] Implementação do Dashboard de vencimentos
+- [ ] Criação dos formulários auditáveis de calibração
