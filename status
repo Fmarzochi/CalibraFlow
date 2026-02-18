@@ -1,3 +1,4 @@
+1a8a77e Eu implementei o DatabaseSeeder para popular automaticamente as categorias iniciais (Pressão, Temperatura, etc) quando o banco estiver vazio.
 5a66ca6 feat: Implementei o CalibrationService com cálculo de vencimento
 fe82f0b Eu implementei o serviço de calibração com a regra de negócio que calcula automaticamente a data de vencimento baseada na categoria do instrumento.
 cfc12ea Eu implementei o repositório de calibração para permitir a persistência dos registros no banco de dados.

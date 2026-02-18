@@ -20,13 +20,17 @@ public class DatabaseSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (categoryRepository.count() == 0) {
             categoryRepository.saveAll(List.of(
-                    Category.builder().name("Pressão").calibrationIntervalDays(365).description("Manômetros e Transmissores").build(),
-                    Category.builder().name("Temperatura").calibrationIntervalDays(365).description("Termômetros e PT-100").build(),
-                    Category.builder().name("Dimensional").calibrationIntervalDays(180).description("Paquímetros e Micrômetros").build(),
-                    Category.builder().name("Elétrica").calibrationIntervalDays(180).description("Multímetros e Alicates").build(),
-                    Category.builder().name("Massa").calibrationIntervalDays(365).description("Balanças e Pesos Padrão").build()
+                // Categorias Padrão da Indústria
+                Category.builder().name("Pressão").calibrationIntervalDays(365).description("Manômetros, Transmissores, Pressostatos").build(),
+                Category.builder().name("Temperatura").calibrationIntervalDays(365).description("Termômetros, PT-100, Termopares").build(),
+                Category.builder().name("Dimensional").calibrationIntervalDays(180).description("Paquímetros, Micrômetros, Trenas").build(),
+                Category.builder().name("Elétrica").calibrationIntervalDays(180).description("Multímetros, Alicates Amperímetros, Megômetros").build(),
+                Category.builder().name("Massa").calibrationIntervalDays(365).description("Balanças, Pesos Padrão").build(),
+                Category.builder().name("Vazão").calibrationIntervalDays(365).description("Medidores de Vazão, Rotâmetros").build(),
+                Category.builder().name("Físico-Química").calibrationIntervalDays(180).description("Phmetros, Condutivímetros").build(),
+                Category.builder().name("Segurança").calibrationIntervalDays(180).description("Detectores de Gás, Luxímetros").build()
             ));
-            System.out.println("Banco de dados populado com categorias padrão!");
+            System.out.println("Banco de dados populado com todas as categorias padrão!");
         }
     }
 }
