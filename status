@@ -1,3 +1,4 @@
+6a41dd8 Eu finalizei a implementação do LocationRepository adicionando o método findByName, garantindo que o sistema consiga identificar e vincular corretamente os locais físicos dos instrumentos durante o processo de migração em massa da planilha
 afcf731 Atualizando status do projeto
 6f13375 Eu finalizei a estruturação da camada de persistência e do modelo de domínio da CalibraFlow API.
 68da5e4 Eu implementei o mapeamento de exclusão em cascata para as movimentações e calibrações vinculadas ao instrumento.
