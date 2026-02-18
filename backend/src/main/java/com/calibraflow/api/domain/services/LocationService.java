@@ -1,0 +1,42 @@
+package com.calibraflow.api.domain.services;
+
+import com.calibraflow.api.domain.entities.Location;
+import com.calibraflow.api.domain.repositories.LocationRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class LocationService {
+
+    private final LocationRepository locationRepository;
+
+    @Transactional(readOnly = true)
+    public List<Location> findAll() {
+        return locationRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Location> findById(UUID id) {
+        return locationRepository.findById(id);
+    }
+
+    @Transactional
+    public Location save(Location location) {
+        return locationRepository.save(location);
+    }
+
+    @Transactional
+    public Optional<Location> toggleActive(UUID id) {
+        return locationRepository.findById(id)
+                .map(location -> {
+                    location.setActive(!location.getActive());
+                    return locationRepository.save(location);
+                });
+    }
+}

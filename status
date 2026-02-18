@@ -1,3 +1,6 @@
+45b4c47 Eu refatorei o InstrumentController para utilizar o InstrumentService, garantindo o desacoplamento entre a API e o repositório.
+9f5a98f Eu criei o InstrumentService para isolar a regra de negócio e centralizar o acesso ao repositório de instrumentos.
+d42bae5 Eu corrigi a ordem de limpeza das tabelas no TestConfig para evitar erros de chave estrangeira.
 e93331e  Realizei o mapeamento das colunas no MigrationService para a importação dos dados e alterei o escopo das variáveis para o tratamento de erros durante o processamento da planilha.
 68494b5 Eu declarei os métodos findByInstrumentId e existsByInstrumentAndCertificateNumber no CalibrationRepository, permitindo que o Spring Data JPA gere automaticamente as consultas necessárias para a recuperação do histórico de calibrações e para a validação de unicidade durante a importação total da planilha.
 509ee2e Eu ajustei o MigrationService para processar as 7 colunas identificadas na planilha original (Tag, Descrição, Série, Localização, Última Calibração, Vencimento e Certificado), garantindo que a importação de dados reflita fielmente a estrutura atual do seu controle de instrumentos.
