@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
@@ -17,6 +19,9 @@ public class MigrationService {
     private final InstrumentRepository instrumentRepository;
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
+    private final CalibrationRepository calibrationRepository;
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Transactional
     public void importFromCsv(List<String[]> rows) {
@@ -31,32 +36,63 @@ public class MigrationService {
         for (int i = 1; i < rows.size(); i++) {
             String[] row = rows.get(i);
             try {
-                // Mapeamento baseado no seu CSV (Patrimônio, Nome, Categoria, Local, Serial)
-                String patrimonyId = row[0].trim();
-                String name = row[1].trim();
-                String categoryName = row[2].trim();
-                String locationName = row[3].trim();
+                String patrimonyId = row[0].trim(); // TAG
+                String name = row[1].trim();        // DESCRIÇÃO
+                String serialNumber = row[2].trim(); // SÉRIE
+                String locationName = row[3].trim(); // LOCALIZAÇÃO
 
-                Category category = categoryRepository.findByName(categoryName)
-                        .orElseGet(() -> categoryRepository.save(new Category(null, categoryName, 365, "Auto-gerado")));
+                // Como não há coluna de categoria, usamos "Geral" ou tentamos inferir
+                String categoryName = "Geral";
+                if (name.toLowerCase().contains("manometro")) categoryName = "Pressão";
+                if (name.toLowerCase().contains("termometro")) categoryName = "Temperatura";
+
+                final String finalCategoryName = categoryName;
+                Category category = categoryRepository.findByName(finalCategoryName)
+                        .orElseGet(() -> categoryRepository.save(new Category(null, finalCategoryName, 365, "Auto-gerado")));
 
                 Location location = locationRepository.findByName(locationName)
                         .orElseGet(() -> locationRepository.save(new Location(null, locationName, "Auto-gerado", true)));
 
-                if (!instrumentRepository.findByPatrimonyId(patrimonyId).isPresent()) {
-                    Instrument ins = new Instrument();
-                    ins.setPatrimonyId(patrimonyId);
-                    ins.setName(name);
-                    ins.setCategory(category);
-                    ins.setLocation(location);
-                    ins.setActive(true);
-                    instrumentRepository.save(ins);
-                    count++;
+                Instrument instrument = instrumentRepository.findByPatrimonyId(patrimonyId)
+                        .orElseGet(() -> {
+                            Instrument newIns = new Instrument();
+                            newIns.setPatrimonyId(patrimonyId);
+                            newIns.setName(name);
+                            newIns.setSerialNumber(serialNumber);
+                            newIns.setCategory(category);
+                            newIns.setLocation(location);
+                            newIns.setActive(true);
+                            return instrumentRepository.save(newIns);
+                        });
+
+                if (row.length >= 7 && !row[4].isEmpty() && !row[6].isEmpty()) {
+                    processCalibration(instrument, row[4], row[5], row[6]);
                 }
+
+                count++;
             } catch (Exception e) {
                 log.error(">>> MIGRATION: Erro na linha {}: {}", i, e.getMessage());
             }
         }
-        log.info(">>> MIGRATION: Sucesso! {} novos instrumentos cadastrados.", count);
+        log.info(">>> MIGRATION: Sucesso! {} instrumentos processados.", count);
+    }
+
+    private void processCalibration(Instrument instrument, String dateStr, String expiryStr, String certNumber) {
+        try {
+            LocalDate date = LocalDate.parse(dateStr, formatter);
+            LocalDate expiry = LocalDate.parse(expiryStr, formatter);
+
+            if (!calibrationRepository.existsByInstrumentAndCertificateNumber(instrument, certNumber)) {
+                Calibration cal = new Calibration();
+                cal.setInstrument(instrument);
+                cal.setCalibrationDate(date);
+                cal.setNextCalibrationDate(expiry);
+                cal.setCertificateNumber(certNumber);
+                cal.setLaboratory("Importado");
+                calibrationRepository.save(cal);
+            }
+        } catch (Exception e) {
+            log.warn(">>> MIGRATION: Falha na calibração do instrumento {}: {}", instrument.getPatrimonyId(), e.getMessage());
+        }
     }
 }
