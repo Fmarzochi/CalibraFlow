@@ -1,3 +1,4 @@
+fe82f0b Eu implementei o serviço de calibração com a regra de negócio que calcula automaticamente a data de vencimento baseada na categoria do instrumento.
 cfc12ea Eu implementei o repositório de calibração para permitir a persistência dos registros no banco de dados.
 b588c67 Eu implementei a entidade Calibration vinculada ao instrumento para registrar dados reais de calibração.
 a8acd96 Eu implementei a entidade Calibration vinculada ao instrumento para registrar dados reais de calibração.
