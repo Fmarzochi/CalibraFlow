@@ -2,11 +2,9 @@ package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDate;
 import java.util.UUID;
 import java.util.List;
-import java.util.ArrayList;
 
 @Entity
 @Table(name = "tb_instruments")
@@ -21,29 +19,31 @@ public class Instrument {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Column(nullable = false, unique = true)
+    private String patrimonyId;
+
     @Column(nullable = false)
     private String name;
 
-    @Column(unique = true, nullable = false)
-    private String patrimonyId;
-
-    @Column(unique = true, nullable = false)
     private String serialNumber;
+
+    private String manufacturer;
+
+    private String model;
 
     private LocalDate acquisitionDate;
 
     @Builder.Default
-    private Boolean active = true;
+    private boolean active = true;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "instrument", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Movement> movements = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
 
-    @OneToMany(mappedBy = "instrument", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Calibration> calibrations = new ArrayList<>();
+    @OneToMany(mappedBy = "instrument", cascade = CascadeType.ALL)
+    private List<Calibration> calibrations;
 }
