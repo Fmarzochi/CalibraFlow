@@ -1,3 +1,5 @@
+a8acd96 Eu implementei a entidade Calibration vinculada ao instrumento para registrar dados reais de calibração.
+6cbc64a Eu atualizei o log de status com todo o histórico de commits do projeto
 10c2447 Eu atualizei o histórico de evolução no README conforme a fase atual do backend
 5634deb Eu corrigi o nome do arquivo de log para o padrão técnico 'status'
 14d9a21 Eu corrigi o erro de digitação: renomeei tatus para estatus e recuperei o log
