@@ -1,7 +1,7 @@
 package com.calibraflow.api.controllers;
 
 import com.calibraflow.api.domain.entities.Instrument;
-import com.calibraflow.api.domain.repositories.InstrumentRepository;
+import com.calibraflow.api.domain.services.InstrumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,24 +16,24 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InstrumentController {
 
-    private final InstrumentRepository instrumentRepository;
+    private final InstrumentService instrumentService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<Instrument> create(@RequestBody Instrument instrument) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(instrumentRepository.save(instrument));
+        return ResponseEntity.status(HttpStatus.CREATED).body(instrumentService.save(instrument));
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'AUDITOR')")
     public ResponseEntity<List<Instrument>> listAll() {
-        return ResponseEntity.ok(instrumentRepository.findAll());
+        return ResponseEntity.ok(instrumentService.findAll());
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'AUDITOR')")
     public ResponseEntity<Instrument> getById(@PathVariable UUID id) {
-        return instrumentRepository.findById(id)
+        return instrumentService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -41,12 +41,8 @@ public class InstrumentController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> softDelete(@PathVariable UUID id) {
-        return instrumentRepository.findById(id)
-                .map(instrument -> {
-                    instrument.setActive(false);
-                    instrumentRepository.save(instrument);
-                    return ResponseEntity.noContent().<Void>build();
-                })
+        return instrumentService.softDelete(id)
+                .map(instrument -> ResponseEntity.noContent().<Void>build())
                 .orElse(ResponseEntity.notFound().build());
     }
 }
