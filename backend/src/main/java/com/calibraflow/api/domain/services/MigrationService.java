@@ -2,18 +2,17 @@ package com.calibraflow.api.domain.services;
 
 import com.calibraflow.api.domain.entities.*;
 import com.calibraflow.api.domain.repositories.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MigrationService {
 
     private final InstrumentRepository instrumentRepository;
@@ -21,78 +20,82 @@ public class MigrationService {
     private final LocationRepository locationRepository;
     private final CalibrationRepository calibrationRepository;
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
     @Transactional
     public void importFromCsv(List<String[]> rows) {
-        log.info(">>> MIGRATION: Iniciando processamento de {} linhas...", rows.size());
+        log.info(">>> MIGRATION: Iniciando importação de {} instrumentos...", rows.size());
 
-        if (rows.size() <= 1) {
-            log.warn(">>> MIGRATION: O arquivo CSV parece estar vazio ou apenas com cabeçalho.");
-            return;
-        }
+        Category catPadrao = createCategory("Geral", "Categoria Padrão", 365);
 
-        int count = 0;
-        for (int i = 1; i < rows.size(); i++) {
-            String[] row = rows.get(i);
+        for (String[] row : rows) {
             try {
-                String patrimonyId = row[0].trim(); // TAG
-                String name = row[1].trim();        // DESCRIÇÃO
-                String serialNumber = row[2].trim(); // SÉRIE
-                String locationName = row[3].trim(); // LOCALIZAÇÃO
+                String patrimonyCode = row[0];
+                String name = row[1];
+                String serialNumber = row[2];
+                String locationName = row[3];
+                String certNumber = row.length > 6 ? row[6] : "N/A";
 
-                // Como não há coluna de categoria, usamos "Geral" ou tentamos inferir
-                String categoryName = "Geral";
-                if (name.toLowerCase().contains("manometro")) categoryName = "Pressão";
-                if (name.toLowerCase().contains("termometro")) categoryName = "Temperatura";
-
-                final String finalCategoryName = categoryName;
-                Category category = categoryRepository.findByName(finalCategoryName)
-                        .orElseGet(() -> categoryRepository.save(new Category(null, finalCategoryName, 365, "Auto-gerado")));
-
-                Location location = locationRepository.findByName(locationName)
-                        .orElseGet(() -> locationRepository.save(new Location(null, locationName, "Auto-gerado", true)));
-
-                Instrument instrument = instrumentRepository.findByPatrimonyId(patrimonyId)
-                        .orElseGet(() -> {
-                            Instrument newIns = new Instrument();
-                            newIns.setPatrimonyId(patrimonyId);
-                            newIns.setName(name);
-                            newIns.setSerialNumber(serialNumber);
-                            newIns.setCategory(category);
-                            newIns.setLocation(location);
-                            newIns.setActive(true);
-                            return instrumentRepository.save(newIns);
-                        });
-
-                if (row.length >= 7 && !row[4].isEmpty() && !row[6].isEmpty()) {
-                    processCalibration(instrument, row[4], row[5], row[6]);
+                if (instrumentRepository.existsByPatrimonyCode(patrimonyCode)) {
+                    continue;
                 }
 
-                count++;
+                Location location = createLocation(locationName, "Local importado");
+
+                Patrimony patrimony = new Patrimony();
+                patrimony.setCode(patrimonyCode);
+                patrimony.setTag(patrimonyCode);
+
+                Instrument instrument = new Instrument();
+                instrument.setName(name);
+                instrument.setSerialNumber(serialNumber);
+                instrument.setPatrimony(patrimony);
+                instrument.setCategory(catPadrao);
+                instrument.setLocation(location);
+                instrument.setActive(true);
+
+                instrumentRepository.save(instrument);
+
+                createInitialCalibration(instrument, certNumber);
+
             } catch (Exception e) {
-                log.error(">>> MIGRATION: Erro na linha {}: {}", i, e.getMessage());
+                log.error("Erro linha: {}", e.getMessage());
             }
         }
-        log.info(">>> MIGRATION: Sucesso! {} instrumentos processados.", count);
+        log.info(">>> MIGRATION: Importação concluída!");
     }
 
-    private void processCalibration(Instrument instrument, String dateStr, String expiryStr, String certNumber) {
-        try {
-            LocalDate date = LocalDate.parse(dateStr, formatter);
-            LocalDate expiry = LocalDate.parse(expiryStr, formatter);
+    private Category createCategory(String name, String desc, Integer days) {
+        return categoryRepository.findAll().stream()
+                .filter(c -> c.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElseGet(() -> {
+                    Category c = new Category();
+                    c.setName(name);
+                    c.setDescription(desc);
+                    c.setCalibrationIntervalDays(days);
+                    return categoryRepository.save(c);
+                });
+    }
 
-            if (!calibrationRepository.existsByInstrumentAndCertificateNumber(instrument, certNumber)) {
-                Calibration cal = new Calibration();
-                cal.setInstrument(instrument);
-                cal.setCalibrationDate(date);
-                cal.setNextCalibrationDate(expiry);
-                cal.setCertificateNumber(certNumber);
-                cal.setLaboratory("Importado");
-                calibrationRepository.save(cal);
-            }
-        } catch (Exception e) {
-            log.warn(">>> MIGRATION: Falha na calibração do instrumento {}: {}", instrument.getPatrimonyId(), e.getMessage());
-        }
+    private Location createLocation(String name, String desc) {
+        return locationRepository.findAll().stream()
+                .filter(l -> l.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElseGet(() -> {
+                    Location l = new Location();
+                    l.setName(name);
+                    l.setDescription(desc);
+                    l.setActive(true);
+                    return locationRepository.save(l);
+                });
+    }
+
+    private void createInitialCalibration(Instrument instrument, String certNumber) {
+        Calibration cal = new Calibration();
+        cal.setInstrument(instrument);
+        cal.setLaboratory("Lab Importação");
+        cal.setCertificateNumber(certNumber);
+        cal.setCalibrationDate(LocalDate.now());
+        cal.setNextCalibrationDate(LocalDate.now().plusDays(365));
+        calibrationRepository.save(cal);
     }
 }

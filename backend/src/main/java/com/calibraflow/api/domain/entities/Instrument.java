@@ -2,8 +2,9 @@ package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.UUID;
+import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_instruments")
@@ -11,23 +12,22 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Instrument {
+@EqualsAndHashCode(of = "id")
+public class Instrument implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @Column(nullable = false, unique = true)
-    private String patrimonyId;
 
     @Column(nullable = false)
     private String name;
 
+    @Column(name = "serial_number", nullable = false)
     private String serialNumber;
 
-    @Builder.Default
-    private boolean active = true;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "patrimony_id")
+    private Patrimony patrimony;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -37,6 +37,8 @@ public class Instrument {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @OneToMany(mappedBy = "instrument", cascade = CascadeType.ALL)
+    private boolean active;
+
+    @OneToMany(mappedBy = "instrument", fetch = FetchType.EAGER)
     private List<Calibration> calibrations;
 }

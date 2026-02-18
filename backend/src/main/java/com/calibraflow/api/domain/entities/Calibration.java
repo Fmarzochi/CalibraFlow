@@ -1,5 +1,6 @@
 package com.calibraflow.api.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.io.Serializable;
@@ -31,6 +32,7 @@ public class Calibration implements Serializable {
     @Column(nullable = false)
     private LocalDate nextCalibrationDate;
 
+    @JsonIgnore
     @ManyToOne(optional = false)
     @JoinColumn(name = "instrument_id")
     private Instrument instrument;
