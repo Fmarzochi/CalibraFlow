@@ -1,3 +1,7 @@
+6edd656 Eu criei o CategoryService garantindo a estrutura correta de pacotes para resolver as falhas de compilação no controlador
+1f86084 Eu configurei o docker-compose.yml na raiz para orquestrar o banco de dados PostgreSQL e garantir a persistência dos dados.
+aaedb9f Eu refatorei o LocationController para utilizar o LocationService e implementei o endpoint de alternância de status ativo.
+f10ede4 Eu criei o LocationService para centralizar a gestão de localizações e permitir validações de estado futuro.
 45b4c47 Eu refatorei o InstrumentController para utilizar o InstrumentService, garantindo o desacoplamento entre a API e o repositório.
 9f5a98f Eu criei o InstrumentService para isolar a regra de negócio e centralizar o acesso ao repositório de instrumentos.
 d42bae5 Eu corrigi a ordem de limpeza das tabelas no TestConfig para evitar erros de chave estrangeira.
