@@ -1,3 +1,4 @@
+4df6286 Eu atualizei o DatabaseSeeder para incluir a lista definitiva de categorias e periodicidades conforme o padrão
 2ea7b51 Eu atualizei o DatabaseSeeder para incluir a lista completa de categorias de calibração industrial e suas respectivas periodicidades.
 1a8a77e Eu implementei o DatabaseSeeder para popular automaticamente as categorias iniciais (Pressão, Temperatura, etc) quando o banco estiver vazio.
 5a66ca6 feat: Implementei o CalibrationService com cálculo de vencimento

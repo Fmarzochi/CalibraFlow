@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "tb_instruments")
@@ -23,17 +25,25 @@ public class Instrument {
     private String name;
 
     @Column(unique = true, nullable = false)
-    private String patrimonyId; // Código do Patrimônio (Regra: Deve ser único)
+    private String patrimonyId;
 
     @Column(unique = true, nullable = false)
-    private String serialNumber; // Número de Série (Regra: Deve ser único)
+    private String serialNumber;
 
     private LocalDate acquisitionDate;
 
     @Builder.Default
-    private Boolean active = true; // Para Soft Delete (Inativar em vez de apagar)
+    private Boolean active = true;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category; // A categoria define o intervalo de vencimento
+    private Category category;
+
+    @OneToMany(mappedBy = "instrument", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Movement> movements = new ArrayList<>();
+
+    @OneToMany(mappedBy = "instrument", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Calibration> calibrations = new ArrayList<>();
 }
