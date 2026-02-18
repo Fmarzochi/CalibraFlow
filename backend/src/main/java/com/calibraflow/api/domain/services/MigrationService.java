@@ -24,7 +24,7 @@ public class MigrationService {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         for (String[] columns : rows) {
-            if (columns.length < 7 || columns[0].equalsIgnoreCase("TAG")) continue;
+            if (columns.length < 7 || columns[0].equalsIgnoreCase("TAG") || columns[0].trim().isEmpty()) continue;
 
             String tag = columns[0].trim();
             String desc = columns[1].trim();
@@ -39,24 +39,25 @@ public class MigrationService {
 
             Category category = findCategoryByDescription(desc);
 
-            if (!instrumentRepository.existsByPatrimonyId(tag)) {
-                Instrument instrument = Instrument.builder()
-                        .patrimonyId(tag)
-                        .name(desc)
-                        .serialNumber(serial)
-                        .category(category)
-                        .active(true)
-                        .build();
+            Instrument instrument = instrumentRepository.findByPatrimonyId(tag)
+                    .orElseGet(() -> instrumentRepository.save(Instrument.builder()
+                            .patrimonyId(tag)
+                            .name(desc)
+                            .serialNumber(serial)
+                            .category(category)
+                            .active(true)
+                            .build()));
 
-                Instrument savedInstrument = instrumentRepository.save(instrument);
+            if (!dataCalibStr.isEmpty() && !dataVencStr.isEmpty()) {
+                boolean jaExisteCalibracao = calibrationRepository.existsByInstrumentAndCertificateNumber(instrument, cert);
 
-                if (!dataCalibStr.isEmpty() && !dataVencStr.isEmpty()) {
+                if (!jaExisteCalibracao) {
                     Calibration calib = new Calibration();
-                    calib.setInstrument(savedInstrument);
+                    calib.setInstrument(instrument);
                     calib.setCalibrationDate(LocalDate.parse(dataCalibStr, dtf));
                     calib.setNextCalibrationDate(LocalDate.parse(dataVencStr, dtf));
                     calib.setCertificateNumber(cert);
-                    calib.setLaboratory("MIGRAÇÃO PLANILHA");
+                    calib.setLaboratory("MIGRAÇÃO SISTEMA");
                     calibrationRepository.save(calib);
                 }
             }
@@ -67,6 +68,7 @@ public class MigrationService {
         String upper = desc.toUpperCase();
         if (upper.contains("MANÔMETRO") || upper.contains("PRESSÃO")) return categoryRepository.findByName("Pressão").orElse(null);
         if (upper.contains("TERMÔMETRO") || upper.contains("TEMP")) return categoryRepository.findByName("Temperatura").orElse(null);
-        return categoryRepository.findByName("Dimensional").orElse(null);
+        if (upper.contains("PAQUÍMETRO") || upper.contains("RÉGUA") || upper.contains("DIMENSIONAL")) return categoryRepository.findByName("Dimensional").orElse(null);
+        return categoryRepository.findByName("Massa").orElse(null);
     }
 }
