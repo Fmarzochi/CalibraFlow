@@ -2,7 +2,6 @@ package com.calibraflow.api.config;
 
 import com.calibraflow.api.domain.entities.Category;
 import com.calibraflow.api.domain.repositories.CategoryRepository;
-import com.calibraflow.api.domain.repositories.InstrumentRepository;
 import com.calibraflow.api.domain.services.MigrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -19,7 +18,6 @@ import java.util.List;
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
-    private final InstrumentRepository instrumentRepository;
     private final MigrationService migrationService;
 
     @Override
@@ -41,10 +39,6 @@ public class DatabaseSeeder implements CommandLineRunner {
     }
 
     private void seedDataFromCsv() {
-        if (instrumentRepository.count() > 5) {
-            return;
-        }
-
         try (BufferedReader br = new BufferedReader(new InputStreamReader(
                 new ClassPathResource("data/planilha_mestre.csv").getInputStream()))) {
 
