@@ -24,17 +24,15 @@ public class MigrationService {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         for (String[] columns : rows) {
-            if (columns.length < 9 || columns[0].equalsIgnoreCase("TAG") || columns[0].trim().isEmpty()) continue;
+            if (columns.length < 7 || columns[0].equalsIgnoreCase("TAG") || columns[0].trim().isEmpty()) continue;
 
             String tag = columns[0].trim();
             String desc = columns[1].trim();
             String serial = columns[2].trim();
-            String manufacturer = columns[3].trim();
-            String model = columns[4].trim();
-            String localName = columns[5].trim();
-            String dataCalibStr = columns[6].trim();
-            String dataVencStr = columns[7].trim();
-            String cert = columns[8].trim();
+            String localName = columns[3].trim();
+            String dataCalibStr = columns[4].trim();
+            String dataVencStr = columns[5].trim();
+            String cert = columns[6].trim();
 
             Location location = locationRepository.findByName(localName)
                     .orElseGet(() -> locationRepository.save(Location.builder().name(localName).build()));
@@ -46,8 +44,6 @@ public class MigrationService {
                             .patrimonyId(tag)
                             .name(desc)
                             .serialNumber(serial)
-                            .manufacturer(manufacturer)
-                            .model(model)
                             .location(location)
                             .category(category)
                             .active(true)
@@ -62,7 +58,7 @@ public class MigrationService {
                     calib.setCalibrationDate(LocalDate.parse(dataCalibStr, dtf));
                     calib.setNextCalibrationDate(LocalDate.parse(dataVencStr, dtf));
                     calib.setCertificateNumber(cert);
-                    calib.setLaboratory("MIGRAÇÃO TOTAL");
+                    calib.setLaboratory("MIGRAÇÃO PLANILHA");
                     calibrationRepository.save(calib);
                 }
             }
