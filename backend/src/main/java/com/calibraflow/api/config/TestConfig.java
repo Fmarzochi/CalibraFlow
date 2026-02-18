@@ -1,8 +1,7 @@
 package com.calibraflow.api.config;
 
 import com.calibraflow.api.domain.entities.Category;
-import com.calibraflow.api.domain.repositories.CategoryRepository;
-import com.calibraflow.api.domain.repositories.InstrumentRepository;
+import com.calibraflow.api.domain.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -20,13 +19,23 @@ public class TestConfig implements CommandLineRunner {
     @Autowired
     private InstrumentRepository instrumentRepository;
 
+    @Autowired
+    private MovementRepository movementRepository;
+
+    @Autowired
+    private CalibrationRepository calibrationRepository;
+
+    @Autowired
+    private LocationRepository locationRepository;
+
     @Override
     public void run(String... args) throws Exception {
-        // Limpa as entidades filhas primeiro para evitar violação de restrições de chave estrangeira
-        instrumentRepository.deleteAll();
 
-        // Limpa as entidades pai
+        movementRepository.deleteAll();
+        calibrationRepository.deleteAll();
+        instrumentRepository.deleteAll();
         categoryRepository.deleteAll();
+        locationRepository.deleteAll();
 
         Category c1 = new Category(null, "Pressão", 365, "Instrumentos de medição de pressão e vácuo");
         Category c2 = new Category(null, "Temperatura", 365, "Termômetros, termopares e controladores");
@@ -36,6 +45,6 @@ public class TestConfig implements CommandLineRunner {
 
         categoryRepository.saveAll(Arrays.asList(c1, c2, c3, c4, c5));
 
-        System.out.println(">>> CalibraFlow: Banco de dados reiniciado com sucesso!");
+        System.out.println(">>> CalibraFlow: Banco de dados limpo e categorias reiniciadas com sucesso!");
     }
 }
