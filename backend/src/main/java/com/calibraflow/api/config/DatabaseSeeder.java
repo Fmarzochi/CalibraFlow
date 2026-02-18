@@ -20,7 +20,6 @@ public class DatabaseSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
         if (categoryRepository.count() == 0) {
             categoryRepository.saveAll(List.of(
-                // Categorias Padrão da Indústria
                 Category.builder().name("Pressão").calibrationIntervalDays(365).description("Manômetros, Transmissores, Pressostatos").build(),
                 Category.builder().name("Temperatura").calibrationIntervalDays(365).description("Termômetros, PT-100, Termopares").build(),
                 Category.builder().name("Dimensional").calibrationIntervalDays(180).description("Paquímetros, Micrômetros, Trenas").build(),
@@ -30,7 +29,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 Category.builder().name("Físico-Química").calibrationIntervalDays(180).description("Phmetros, Condutivímetros").build(),
                 Category.builder().name("Segurança").calibrationIntervalDays(180).description("Detectores de Gás, Luxímetros").build()
             ));
-            System.out.println("Banco de dados populado com todas as categorias padrão!");
+            System.out.println("Banco de dados populado com todas as categorias padrão da indústria!");
         }
     }
 }
