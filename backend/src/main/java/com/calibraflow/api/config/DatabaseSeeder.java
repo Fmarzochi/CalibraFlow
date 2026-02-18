@@ -2,34 +2,64 @@ package com.calibraflow.api.config;
 
 import com.calibraflow.api.domain.entities.Category;
 import com.calibraflow.api.domain.repositories.CategoryRepository;
+import com.calibraflow.api.domain.repositories.InstrumentRepository;
+import com.calibraflow.api.domain.services.MigrationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@RequiredArgsConstructor
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
-
-    public DatabaseSeeder(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
+    private final InstrumentRepository instrumentRepository;
+    private final MigrationService migrationService;
 
     @Override
     public void run(String... args) throws Exception {
+        seedCategories();
+        seedDataFromCsv();
+    }
+
+    private void seedCategories() {
         if (categoryRepository.count() == 0) {
-            categoryRepository.saveAll(List.of(
-                Category.builder().name("Pressão").calibrationIntervalDays(365).description("Manômetros, Transmissores, Pressostatos").build(),
-                Category.builder().name("Temperatura").calibrationIntervalDays(365).description("Termômetros, PT-100, Termopares").build(),
-                Category.builder().name("Dimensional").calibrationIntervalDays(180).description("Paquímetros, Micrômetros, Trenas").build(),
-                Category.builder().name("Elétrica").calibrationIntervalDays(180).description("Multímetros, Alicates Amperímetros, Megômetros").build(),
-                Category.builder().name("Massa").calibrationIntervalDays(365).description("Balanças, Pesos Padrão").build(),
-                Category.builder().name("Vazão").calibrationIntervalDays(365).description("Medidores de Vazão, Rotâmetros").build(),
-                Category.builder().name("Físico-Química").calibrationIntervalDays(180).description("Phmetros, Condutivímetros").build(),
-                Category.builder().name("Segurança").calibrationIntervalDays(180).description("Detectores de Gás, Luxímetros").build()
-            ));
-            System.out.println("Banco de dados populado com todas as categorias padrão da indústria!");
+            List<Category> categories = List.of(
+                    Category.builder().name("Pressão").calibrationIntervalDays(365).description("Manômetros e Transmissores").build(),
+                    Category.builder().name("Temperatura").calibrationIntervalDays(365).description("Termômetros e PT-100").build(),
+                    Category.builder().name("Dimensional").calibrationIntervalDays(180).description("Paquímetros e Micrômetros").build(),
+                    Category.builder().name("Massa").calibrationIntervalDays(365).description("Balanças").build()
+            );
+            categoryRepository.saveAll(categories);
+        }
+    }
+
+    private void seedDataFromCsv() {
+        if (instrumentRepository.count() > 5) {
+            return;
+        }
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                new ClassPathResource("data/planilha_mestre.csv").getInputStream()))) {
+
+            List<String[]> rows = new ArrayList<>();
+            String line;
+            while ((line = br.readLine()) != null) {
+                rows.add(line.split(","));
+            }
+
+            if (!rows.isEmpty()) {
+                migrationService.importFromCsv(rows);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erro ao carregar arquivo de migração: " + e.getMessage());
         }
     }
 }
