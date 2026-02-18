@@ -1,3 +1,4 @@
+b588c67 Eu implementei a entidade Calibration vinculada ao instrumento para registrar dados reais de calibração.
 a8acd96 Eu implementei a entidade Calibration vinculada ao instrumento para registrar dados reais de calibração.
 6cbc64a Eu atualizei o log de status com todo o histórico de commits do projeto
 10c2447 Eu atualizei o histórico de evolução no README conforme a fase atual do backend
