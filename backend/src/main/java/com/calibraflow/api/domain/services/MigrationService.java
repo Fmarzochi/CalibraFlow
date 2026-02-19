@@ -19,83 +19,91 @@ public class MigrationService {
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
     private final CalibrationRepository calibrationRepository;
+    private final PeriodicityRepository periodicityRepository;
 
     @Transactional
     public void importFromCsv(List<String[]> rows) {
         log.info(">>> MIGRATION: Iniciando importação de {} instrumentos...", rows.size());
 
-        Category catPadrao = createCategory("Geral", "Categoria Padrão", 365);
-
         for (String[] row : rows) {
             try {
-                String patrimonyCode = row[0];
-                String name = row[1];
-                String serialNumber = row[2];
-                String locationName = row[3];
-                String certNumber = row.length > 6 ? row[6] : "N/A";
+                if (row.length < 12) continue;
+
+                String description = row[0].trim();
+                String patrimonyCode = row[3].trim();
+                String tag = row[4].trim();
+                String serialNumber = row[5].trim();
+                String lab = row[7].trim();
+                String certNumber = row[8].trim();
+                String calDateStr = row[9].trim();
+                String locationName = row[11].trim();
 
                 if (instrumentRepository.existsByPatrimonyCode(patrimonyCode)) {
                     continue;
                 }
 
-                Location location = createLocation(locationName, "Local importado");
+                Integer intervalDays = periodicityRepository.findByInstrumentName(description)
+                        .map(Periodicity::getDays)
+                        .orElse(365);
 
-                Patrimony patrimony = new Patrimony();
-                patrimony.setCode(patrimonyCode);
-                patrimony.setTag(patrimonyCode);
+                Category category = findOrCreateCategory(description, intervalDays);
+                Location location = findOrCreateLocation(locationName);
 
                 Instrument instrument = new Instrument();
-                instrument.setName(name);
+                instrument.setName(description);
                 instrument.setSerialNumber(serialNumber);
-                instrument.setPatrimony(patrimony);
-                instrument.setCategory(catPadrao);
+                instrument.setCategory(category);
                 instrument.setLocation(location);
                 instrument.setActive(true);
 
+                Patrimony patrimony = new Patrimony();
+                patrimony.setPatrimonyCode(patrimonyCode);
+                patrimony.setTag(tag);
+                instrument.setPatrimony(patrimony);
+
                 instrumentRepository.save(instrument);
 
-                createInitialCalibration(instrument, certNumber);
+                if (!calDateStr.isEmpty() && !certNumber.equalsIgnoreCase("N/C") && !certNumber.isEmpty()) {
+                    createCalibration(instrument, calDateStr, certNumber, lab, intervalDays);
+                }
 
             } catch (Exception e) {
-                log.error("Erro linha: {}", e.getMessage());
+                log.error(">>> MIGRATION: Erro ao processar instrumento {}: {}", row[3], e.getMessage());
             }
         }
-        log.info(">>> MIGRATION: Importação concluída!");
+        log.info(">>> MIGRATION: Importação concluída com sucesso!");
     }
 
-    private Category createCategory(String name, String desc, Integer days) {
-        return categoryRepository.findAll().stream()
-                .filter(c -> c.getName().equalsIgnoreCase(name))
-                .findFirst()
+    private Category findOrCreateCategory(String name, Integer days) {
+        return categoryRepository.findByName(name)
                 .orElseGet(() -> {
                     Category c = new Category();
                     c.setName(name);
-                    c.setDescription(desc);
+                    c.setDescription("Categoria importada automaticamente");
                     c.setCalibrationIntervalDays(days);
                     return categoryRepository.save(c);
                 });
     }
 
-    private Location createLocation(String name, String desc) {
-        return locationRepository.findAll().stream()
-                .filter(l -> l.getName().equalsIgnoreCase(name))
-                .findFirst()
+    private Location findOrCreateLocation(String name) {
+        return locationRepository.findByName(name)
                 .orElseGet(() -> {
                     Location l = new Location();
                     l.setName(name);
-                    l.setDescription(desc);
+                    l.setDescription("Local importado automaticamente");
                     l.setActive(true);
                     return locationRepository.save(l);
                 });
     }
 
-    private void createInitialCalibration(Instrument instrument, String certNumber) {
+    private void createCalibration(Instrument instrument, String dateStr, String cert, String lab, Integer days) {
+        LocalDate calDate = LocalDate.parse(dateStr);
         Calibration cal = new Calibration();
         cal.setInstrument(instrument);
-        cal.setLaboratory("Lab Importação");
-        cal.setCertificateNumber(certNumber);
-        cal.setCalibrationDate(LocalDate.now());
-        cal.setNextCalibrationDate(LocalDate.now().plusDays(365));
+        cal.setLaboratory(lab);
+        cal.setCertificateNumber(cert);
+        cal.setCalibrationDate(calDate);
+        cal.setNextCalibrationDate(calDate.plusDays(days));
         calibrationRepository.save(cal);
     }
 }

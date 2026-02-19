@@ -7,6 +7,5 @@ import java.util.UUID;
 
 @Repository
 public interface InstrumentRepository extends JpaRepository<Instrument, UUID> {
-    // AQUI MUDOU: O Spring Data busca dentro da entidade Patrimony pelo campo Code
     boolean existsByPatrimonyCode(String code);
 }
