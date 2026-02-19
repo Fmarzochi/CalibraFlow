@@ -35,9 +35,4 @@ public class CalibrationService {
     public Calibration save(Calibration calibration) {
         return calibrationRepository.save(calibration);
     }
-
-    @Transactional
-    public void delete(UUID id) {
-        calibrationRepository.deleteById(id);
-    }
 }
