@@ -2,6 +2,8 @@ package com.calibraflow.api.infrastructure.seeder;
 
 import com.calibraflow.api.domain.entities.Periodicity;
 import com.calibraflow.api.domain.repositories.PeriodicityRepository;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import org.springframework.boot.CommandLineRunner;
@@ -32,16 +34,20 @@ public class PeriodicitySeeder implements CommandLineRunner {
             return;
         }
 
+        CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
+
         try (CSVReader reader = new CSVReaderBuilder(
                 new InputStreamReader(new ClassPathResource("periodicities.csv").getInputStream(), StandardCharsets.UTF_8))
                 .withSkipLines(3)
+                .withCSVParser(parser)
                 .build()) {
 
             String[] line;
             List<Periodicity> periodicities = new ArrayList<>();
+            int count = 0;
 
             while ((line = reader.readNext()) != null) {
-                if (line.length >= 3) {
+                if (line.length >= 3 && !line[0].trim().isEmpty()) {
                     String name = line[0].trim();
                     String daysStr = line[2].trim();
 
@@ -49,6 +55,7 @@ public class PeriodicitySeeder implements CommandLineRunner {
                         try {
                             Integer days = Integer.parseInt(daysStr);
                             periodicities.add(new Periodicity(name, days));
+                            count++;
                         } catch (NumberFormatException ignored) {
                         }
                     }
@@ -56,7 +63,7 @@ public class PeriodicitySeeder implements CommandLineRunner {
             }
 
             periodicityRepository.saveAll(periodicities);
-            System.out.println(">>> CalibraFlow: Regras de periodicidade importadas com sucesso via OpenCSV!");
+            System.out.println(">>> CalibraFlow: Regras de periodicidade importadas com sucesso via OpenCSV! Total: " + count);
 
         } catch (Exception e) {
             System.out.println("Erro ao importar periodicidades: " + e.getMessage());

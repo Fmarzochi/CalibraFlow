@@ -2,6 +2,8 @@ package com.calibraflow.api.infrastructure.seeder;
 
 import com.calibraflow.api.domain.entities.*;
 import com.calibraflow.api.domain.repositories.*;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import org.springframework.boot.CommandLineRunner;
@@ -26,8 +28,6 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final PatrimonyRepository patrimonyRepository;
     private final CalibrationRepository calibrationRepository;
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
     public DatabaseSeeder(InstrumentRepository instrumentRepository,
                           CategoryRepository categoryRepository,
                           LocationRepository locationRepository,
@@ -47,25 +47,28 @@ public class DatabaseSeeder implements CommandLineRunner {
             return;
         }
 
+        CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
+
         try (CSVReader reader = new CSVReaderBuilder(
                 new InputStreamReader(new ClassPathResource("instruments.csv").getInputStream(), StandardCharsets.UTF_8))
                 .withSkipLines(5)
+                .withCSVParser(parser)
                 .build()) {
 
             String[] data;
             int importedCount = 0;
 
             while ((data = reader.readNext()) != null) {
-                if (data.length >= 12 && !data[0].trim().isEmpty()) {
+                if (data.length >= 6 && !data[0].trim().isEmpty()) {
                     String descricao = data[0].trim();
-                    String patrimonyCode = data[3].trim();
-                    String tag = data[4].trim();
-                    String serialNumber = data[5].trim();
-                    String laboratory = data[7].trim();
-                    String certificate = data[8].trim();
-                    String calibDateStr = data[9].trim();
-                    String nextCalibDateStr = data[10].trim();
-                    String locationName = data[11].trim();
+                    String patrimonyCode = data.length > 3 ? data[3].trim() : "N/C";
+                    String tag = data.length > 4 ? data[4].trim() : "N/C";
+                    String serialNumber = data.length > 5 ? data[5].trim() : "N/C";
+                    String laboratory = data.length > 7 ? data[7].trim() : "Externo";
+                    String certificate = data.length > 8 ? data[8].trim() : "N/C";
+                    String calibDateStr = data.length > 9 ? data[9].trim() : "";
+                    String nextCalibDateStr = data.length > 10 ? data[10].trim() : "";
+                    String locationName = data.length > 11 && !data[11].trim().isEmpty() ? data[11].trim() : "Almoxarifado";
 
                     Category category = categoryRepository.findByName(descricao)
                             .orElseGet(() -> {
@@ -105,25 +108,23 @@ public class DatabaseSeeder implements CommandLineRunner {
                                 return instrumentRepository.save(newInst);
                             });
 
-                    if (!calibDateStr.isEmpty() && !calibDateStr.equalsIgnoreCase("N/C")) {
-                        try {
-                            LocalDate calDate = LocalDate.parse(calibDateStr, FORMATTER);
-                            LocalDate nextCalDate = calDate.plusDays(category.getCalibrationIntervalDays());
+                    LocalDate calDate = parseDateRobust(calibDateStr);
+                    if (calDate != null) {
+                        LocalDate nextCalDate = calDate.plusDays(category.getCalibrationIntervalDays());
+                        LocalDate parsedNextDate = parseDateRobust(nextCalibDateStr);
 
-                            if (!nextCalibDateStr.isEmpty() && !nextCalibDateStr.equalsIgnoreCase("N/C")) {
-                                nextCalDate = LocalDate.parse(nextCalibDateStr, FORMATTER);
-                            }
+                        if (parsedNextDate != null) {
+                            nextCalDate = parsedNextDate;
+                        }
 
-                            if (!calibrationRepository.existsByInstrumentAndCertificateNumber(instrument, certificate)) {
-                                Calibration calibration = new Calibration();
-                                calibration.setInstrument(instrument);
-                                calibration.setCalibrationDate(calDate);
-                                calibration.setNextCalibrationDate(nextCalDate);
-                                calibration.setCertificateNumber(certificate);
-                                calibration.setLaboratory(laboratory.isEmpty() ? "Externo" : laboratory);
-                                calibrationRepository.save(calibration);
-                            }
-                        } catch (DateTimeParseException ignored) {
+                        if (!calibrationRepository.existsByInstrumentAndCertificateNumber(instrument, certificate)) {
+                            Calibration calibration = new Calibration();
+                            calibration.setInstrument(instrument);
+                            calibration.setCalibrationDate(calDate);
+                            calibration.setNextCalibrationDate(nextCalDate);
+                            calibration.setCertificateNumber(certificate);
+                            calibration.setLaboratory(laboratory.isEmpty() ? "Externo" : laboratory);
+                            calibrationRepository.save(calibration);
                         }
                     }
                     importedCount++;
@@ -132,6 +133,20 @@ public class DatabaseSeeder implements CommandLineRunner {
             System.out.println(">>> CalibraFlow: Instrumentos e calibrações importados com sucesso. Total: " + importedCount);
         } catch (Exception e) {
             System.out.println("Erro na migração de instrumentos: " + e.getMessage());
+        }
+    }
+
+    private LocalDate parseDateRobust(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty() || dateStr.equalsIgnoreCase("N/C")) return null;
+        String cleanDate = dateStr.trim();
+        try {
+            if (cleanDate.contains("/")) {
+                return LocalDate.parse(cleanDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } else {
+                return LocalDate.parse(cleanDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            }
+        } catch (DateTimeParseException ignored) {
+            return null;
         }
     }
 }
