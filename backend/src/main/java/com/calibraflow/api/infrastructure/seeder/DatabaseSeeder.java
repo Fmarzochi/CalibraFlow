@@ -42,11 +42,16 @@ public class DatabaseSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+        System.out.println(">>> INICIANDO DEBUG DO SEEDER <<<");
+
         try {
             ClassPathResource resource = new ClassPathResource("instruments.csv");
+            System.out.println("Lendo arquivo de: " + resource.getURL());
+
             try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
                 String line;
                 int lineNumber = 0;
+                int importedCount = 0;
 
                 while ((line = br.readLine()) != null) {
                     lineNumber++;
@@ -55,25 +60,31 @@ public class DatabaseSeeder implements CommandLineRunner {
                     }
 
                     String[] data = line.split(",");
+
+                    if (lineNumber <= 10) { // Mostra só as primeiras linhas para não poluir
+                        System.out.println("Linha " + lineNumber + " tem " + data.length + " colunas. Conteúdo: " + line);
+                    }
+
                     if (data.length >= 10) {
+                        importedCount++;
                         String description = data[0].trim();
-                        String manufacturer = data[2].trim(); // Coluna Fabricante
+                        String manufacturer = data[2].trim();
                         String patrimonyCode = data[3].trim();
                         String tag = data[4].trim();
                         String serialOriginal = data[5].trim();
-                        String model = data[6].trim(); // Coluna Modelo
-                        String laboratory = data[7].trim(); // Coluna Laboratório
+                        String model = data[6].trim();
+                        String laboratory = data[7].trim();
                         String certificate = data[8].trim();
                         String calibDateStr = data[9].trim();
                         String nextCalibDateStr = data.length > 10 ? data[10].trim() : "";
                         String locationName = data.length > 11 ? data[11].trim() : "Não Informado";
+
                         String tempSerial;
                         if (serialOriginal.equalsIgnoreCase("N/C") || serialOriginal.equalsIgnoreCase("S/N") || serialOriginal.isEmpty()) {
                             tempSerial = "GENERIC-" + patrimonyCode;
                         } else {
                             tempSerial = serialOriginal;
                         }
-
                         String serialForLambda = tempSerial;
 
                         Patrimony patrimony = patrimonyRepository.findByPatrimonyCode(patrimonyCode)
@@ -95,7 +106,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                                     newI.setName(description);
                                     newI.setManufacturer(manufacturer);
                                     newI.setModel(model);
-                                    newI.setSerialNumber(serialForLambda); // Uso permitido aqui
+                                    newI.setSerialNumber(serialForLambda);
                                     newI.setPatrimony(patrimony);
                                     newI.setLocation(location);
                                     newI.setCategory(category);
@@ -110,7 +121,6 @@ public class DatabaseSeeder implements CommandLineRunner {
                                 if (!nextCalibDateStr.isEmpty() && !nextCalibDateStr.equals("N/C")) {
                                     nextCalDate = LocalDate.parse(nextCalibDateStr, formatter);
                                 }
-
                                 if (!calibrationRepository.existsByInstrumentAndCertificateNumber(instrument, certificate)) {
                                     Calibration calibration = new Calibration();
                                     calibration.setInstrument(instrument);
@@ -118,14 +128,17 @@ public class DatabaseSeeder implements CommandLineRunner {
                                     calibration.setNextCalibrationDate(nextCalDate);
                                     calibration.setCertificateNumber(certificate);
                                     calibration.setLaboratory(laboratory.isEmpty() ? "Externo" : laboratory);
-
                                     calibrationRepository.save(calibration);
                                 }
                             } catch (DateTimeParseException ignored) { }
                         }
+                    } else {
+                        if (lineNumber <= 10) {
+                            System.out.println("!!! AVISO: Linha " + lineNumber + " ignorada (apenas " + data.length + " colunas).");
+                        }
                     }
                 }
-                System.out.println(">>> CalibraFlow: Migração da Planilha Real finalizada com sucesso!");
+                System.out.println(">>> DEBUG FINALIZADO. Total processado: " + importedCount);
             }
         } catch (Exception e) {
             System.out.println("Erro na migração: " + e.getMessage());
