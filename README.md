@@ -17,10 +17,10 @@ O CalibraFlow substitui controles manuais descentralizados por uma aplicação s
 
 ## 🚀 Tecnologias (Stack)
 
-- **Backend:** Java 21 + Spring Boot (Foco em SOLID)
-- **Frontend:** React + Vite
-- **Banco de Dados:** PostgreSQL
-- **Infraestrutura:** Docker
+- **Backend:** Java 21 + Spring Boot 3.2 (Foco em SOLID)
+- **Frontend:** React + Vite (Planejado)
+- **Banco de Dados:** PostgreSQL (Dockerizado)
+- **Persistência:** Spring Data JPA + Hibernate
 
 ---
 
@@ -42,49 +42,49 @@ O CalibraFlow substitui controles manuais descentralizados por uma aplicação s
 ## 📅 Histórico de Evolução
 
 ### Fase 1: Fundação ✅
-- [x] Eu criei o repositório e a estrutura inicial do CalibraFlow
-- [x] Eu configurei README.md e .gitignore corporativo
-- [x] Eu defini o padrão de commits e evolução por fases
-
----
+- [x] Eu criei o repositório e a estrutura inicial do CalibraFlow.
+- [x] Eu configurei README.md e .gitignore corporativo.
+- [x] Eu defini o padrão de commits e evolução por fases.
 
 ### Fase 2: Backend Core 🛠️ (Em andamento)
 
-**Infraestrutura e Persistência:**
-- [x] Spring Boot inicializado (pom.xml confirmado no projeto)
-- [x] PostgreSQL configurado via Docker
-- [x] Persistência configurada com identificadores únicos (UUID)
-- [x] Estrutura de repositórios base (JPA) criada
-- [x] Serviço de migração de dados via CSV implementado
-- [x] Carga inicial automatizada via DatabaseSeeder funcional
+**Infraestrutura e Persistência (Estabilizada):**
+- [x] Configuração do ambiente com Java 21 e Spring Boot 3.2.
+- [x] Dockerização do banco de dados PostgreSQL.
+- [x] **Refatoração de Identificadores:** Migração concluída de identificadores UUID para 
+- identificadores sequenciais (`Long`/`BigInt`) para garantir compatibilidade e performance.
+- [x] **Estratégia de Identidade:** Implementação de `GenerationType.IDENTITY` em todas as 
+- entidades.
 
-**Entidades do Domínio:**
-- [x] Role.java criada (ROLE_ADMIN, ROLE_USER, ROLE_AUDITOR)
-- [x] User.java concluído
-- [x] Patrimony.java concluído (Gestão de códigos e TAGs)
-- [x] Instrument.java concluído (Relacionamentos JPA normalizados)
-- [x] Category.java concluído
-- [x] Location.java concluído
-- [x] Movement.java concluído
-- [x] Calibration.java concluído
+**Domínio e Mapeamento (Concluído):**
+- [x] Mapeamento relacional das entidades: `Role`, `User`, `Patrimony`, `Instrument`, `Category`, `Location`, `Movement` e `Calibration`.
+- [x] Repositórios JPA estabilizados e validados após refatoração de tipos.
 
-**Lógica e Segurança (Pendentes):**
-- [ ] Implementação de Bean Validation (Validação de entradas)
-- [ ] Global Exception Handler (Tratamento de erros profissional)
-- [ ] Spring Security + JWT (Autenticação e Autorização)
-- [ ] Auditoria JPA (AuditLog automático de criação/edição)
-- [ ] Soft Delete real (Exclusão lógica de registros)
+**Ingestão de Dados e Lógica de Negócio (EM ANDAMENTO):**
+- [/] **Importação de Periodicidade:** Implementado o motor de leitura para `periodicities.csv`,
+- mas aguarda carga de dados completa e fiel à planilha original.
+- [/] **Ingestão de Instrumentos:** O `DatabaseSeeder` está funcional para carga via CSV, porém 
+- a **lógica de vínculo inteligente** (match entre descrição e categoria) ainda apresenta falhas
+- de precisão e precisa de refinamento.
+- [ ] Implementação de Bean Validation para garantir integridade de entrada via API.
+
+**Segurança e Auditoria (Pendente):**
+- [ ] Global Exception Handler (Tratamento de erros centralizado).
+- [ ] Spring Security + JWT (Controle de acesso e autenticação).
+- [ ] JPA Audit (Registro automático de autoria e data em cada registro).
+- [ ] Soft Delete (Preservação de histórico para auditoria ISO).
 
 📌 **Status atual:**
-A fundação do banco de dados e o mapeamento das entidades principais com UUID
-estão concluídos e validados. O sistema realiza a ingestão de dados via CSV e entrega
-os objetos relacionados via API. O projeto agora entra na etapa crítica de implementação
-das regras de negócio, validações de integridade e camada de segurança, essenciais para 
-atingir os requisitos de auditoria propostos.
+A fundação do banco de dados foi totalmente refatorada para utilizar IDs numéricos (`Long`), 
+resolvendo conflitos de migração e estabilizando a compilação. O sistema já é capaz de realizar 
+o `boot` completo e criar as tabelas automaticamente. No entanto, a **camada de ingestão 
+de dados via Seeders ainda não é confiável**: instrumentos estão sendo vinculados a categorias 
+genéricas ou incorretas. O projeto encontra-se na fase de ajuste fino da lógica de comparação
+de dados antes de avançar para a implementação da segurança e APIs.
 
 ---
 
 ### Fase 3: Frontend & UX 🎨 (Planejado)
-- [ ] Configuração do ambiente React + Vite
-- [ ] Implementação do Dashboard de vencimentos
-- [ ] Criação dos formulários auditáveis de calibração
+- [ ] Configuração do ambiente React + Vite.
+- [ ] Desenvolvimento de Dashboard para visualização de vencimentos.
+- [ ] Implementação de filtros avançados e relatórios auditáveis.
