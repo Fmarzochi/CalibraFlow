@@ -1,6 +1,7 @@
 package com.calibraflow.api.controllers;
 
 import com.calibraflow.api.domain.entities.Instrument;
+import com.calibraflow.api.domain.entities.Location;
 import com.calibraflow.api.domain.services.InstrumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,16 @@ public class InstrumentController {
         return instrumentService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/location")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<Instrument> updateLocation(
+            @PathVariable UUID id,
+            @RequestBody Location newLocation,
+            @RequestParam Long userId,
+            @RequestParam String reason) {
+        return ResponseEntity.ok(instrumentService.updateLocation(id, newLocation, userId, reason));
     }
 
     @DeleteMapping("/{id}")
