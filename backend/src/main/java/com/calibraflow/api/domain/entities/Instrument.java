@@ -2,7 +2,6 @@ package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,30 +19,22 @@ public class Instrument {
     private UUID id;
 
     @Column(nullable = false)
-    private String description;
-
-    private String specification;
-
-    private String manufacturer;
-
-    private String patrimony;
-
-    private String tag;
+    private String name;
 
     @Column(name = "serial_number")
     private String serialNumber;
 
-    private String model;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
-    private String laboratory;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "location_id")
+    private Location location;
 
-    private String certificateNumber;
-
-    private LocalDate calibrationDate;
-
-    private LocalDate nextCalibrationDate;
-
-    private String location;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patrimony_id")
+    private Patrimony patrimony;
 
     @Builder.Default
     private boolean active = true;
