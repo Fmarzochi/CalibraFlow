@@ -1,20 +1,18 @@
 package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
-import java.io.Serializable;
-import java.util.List;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.UUID;
 
+@Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "tb_instruments")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(of = "id")
-public class Instrument implements Serializable {
+public class Instrument {
 
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -22,12 +20,14 @@ public class Instrument implements Serializable {
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "serial_number", nullable = false)
+    private String manufacturer;
+
+    private String model;
+
+    @Column(unique = true)
     private String serialNumber;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "patrimony_id")
-    private Patrimony patrimony;
+    private boolean active;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -37,8 +37,7 @@ public class Instrument implements Serializable {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    private boolean active;
-
-    @OneToMany(mappedBy = "instrument", fetch = FetchType.EAGER)
-    private List<Calibration> calibrations;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "patrimony_id", referencedColumnName = "id")
+    private Patrimony patrimony;
 }
