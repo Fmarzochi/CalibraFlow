@@ -1,45 +1,88 @@
 package com.calibraflow.api.infrastructure.seeder;
 
-import com.calibraflow.api.domain.services.MigrationService;
+import com.calibraflow.api.domain.entities.*;
+import com.calibraflow.api.domain.repositories.*;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @Component
+@Order(2)
 public class DatabaseSeeder implements CommandLineRunner {
 
-    private final MigrationService migrationService;
+    private final InstrumentRepository instrumentRepository;
+    private final CategoryRepository categoryRepository;
+    private final LocationRepository locationRepository;
+    private final PatrimonyRepository patrimonyRepository;
 
-    public DatabaseSeeder(MigrationService migrationService) {
-        this.migrationService = migrationService;
+    public DatabaseSeeder(InstrumentRepository instrumentRepository,
+                          CategoryRepository categoryRepository,
+                          LocationRepository locationRepository,
+                          PatrimonyRepository patrimonyRepository) {
+        this.instrumentRepository = instrumentRepository;
+        this.categoryRepository = categoryRepository;
+        this.locationRepository = locationRepository;
+        this.patrimonyRepository = patrimonyRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        String csvFile = "src/main/resources/instruments.csv";
-        String csvSplitBy = ",";
-        List<String[]> rows = new ArrayList<>();
+        // Só executa se o banco estiver vazio
+        if (instrumentRepository.count() > 0) {
+            return;
+        }
 
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            String line;
+        try {
+            ClassPathResource resource = new ClassPathResource("instruments.csv");
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
+                String line;
+                boolean isFirstLine = true;
 
-            br.readLine();
+                while ((line = br.readLine()) != null) {
+                    if (isFirstLine) {
+                        isFirstLine = false;
+                        continue;
+                    }
 
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(csvSplitBy);
-                rows.add(data);
+                    String[] data = line.split(",");
+                    if (data.length >= 4) {
+                        String tag = data[0].trim();
+                        String description = data[1].trim();
+                        String serial = data[2].trim();
+                        String locationName = data[3].trim();
+
+                        Patrimony patrimony = new Patrimony();
+                        patrimony.setPatrimonyCode(tag);
+                        patrimony.setTag(tag);
+                        patrimony = patrimonyRepository.save(patrimony);
+
+                        Location location = locationRepository.findByName(locationName)
+                                .orElseGet(() -> locationRepository.save(new Location(null, locationName, "Importado via planilha", true)));
+                        Category category = categoryRepository.findAll().stream().findFirst().orElse(null);
+
+                        Instrument instrument = new Instrument();
+                        instrument.setName(description);
+                        instrument.setSerialNumber(serial);
+                        instrument.setPatrimony(patrimony);
+                        instrument.setLocation(location);
+                        instrument.setCategory(category);
+                        instrument.setActive(true);
+
+                        instrumentRepository.save(instrument);
+                    }
+                }
+                System.out.println(">>> CalibraFlow: Migração de " + instrumentRepository.count() + " instrumentos concluída!");
             }
-
-            if (!rows.isEmpty()) {
-                migrationService.importFromCsv(rows);
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao ler CSV: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro na migração de instrumentos: " + e.getMessage());
         }
     }
 }
