@@ -1,6 +1,7 @@
 package com.calibraflow.api.domain.services;
 
 import com.calibraflow.api.domain.entities.Instrument;
+import com.calibraflow.api.domain.entities.Location;
 import com.calibraflow.api.domain.repositories.InstrumentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,11 @@ public class InstrumentService {
     }
 
     @Transactional(readOnly = true)
+    public List<Instrument> findAll() {
+        return instrumentRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
     public Optional<Instrument> findById(UUID id) {
         return instrumentRepository.findActiveById(id);
     }
@@ -39,6 +45,15 @@ public class InstrumentService {
                     instrument.setDeleted(true);
                     instrument.setActive(false);
                     instrument.setDeletedAt(LocalDateTime.now());
+                    return instrumentRepository.save(instrument);
+                });
+    }
+
+    @Transactional
+    public Optional<Instrument> updateLocation(UUID id, Location newLocation, Long userId, String reason) {
+        return instrumentRepository.findById(id)
+                .map(instrument -> {
+                    instrument.setLocation(newLocation);
                     return instrumentRepository.save(instrument);
                 });
     }

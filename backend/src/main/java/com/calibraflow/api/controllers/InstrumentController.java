@@ -4,9 +4,7 @@ import com.calibraflow.api.domain.entities.Instrument;
 import com.calibraflow.api.domain.entities.Location;
 import com.calibraflow.api.domain.services.InstrumentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,38 +17,41 @@ public class InstrumentController {
 
     private final InstrumentService instrumentService;
 
-    @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Instrument> create(@RequestBody Instrument instrument) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(instrumentService.save(instrument));
+    @GetMapping
+    public ResponseEntity<List<Instrument>> findAll() {
+        return ResponseEntity.ok(instrumentService.findAllActive());
     }
 
-    @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'AUDITOR')")
-    public ResponseEntity<List<Instrument>> listAll() {
+    @GetMapping("/all")
+    public ResponseEntity<List<Instrument>> findAllIncludingDeleted() {
         return ResponseEntity.ok(instrumentService.findAll());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER', 'AUDITOR')")
-    public ResponseEntity<Instrument> getById(@PathVariable UUID id) {
+    public ResponseEntity<Instrument> findById(@PathVariable UUID id) {
         return instrumentService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PatchMapping("/{id}/location")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PostMapping
+    public ResponseEntity<Instrument> create(@RequestBody Instrument instrument) {
+        return ResponseEntity.ok(instrumentService.save(instrument));
+    }
+
+    @PutMapping("/{id}/location")
     public ResponseEntity<Instrument> updateLocation(
             @PathVariable UUID id,
             @RequestBody Location newLocation,
             @RequestParam Long userId,
             @RequestParam String reason) {
-        return ResponseEntity.ok(instrumentService.updateLocation(id, newLocation, userId, reason));
+
+        return instrumentService.updateLocation(id, newLocation, userId, reason)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> softDelete(@PathVariable UUID id) {
         return instrumentService.softDelete(id)
                 .map(instrument -> ResponseEntity.noContent().<Void>build())
