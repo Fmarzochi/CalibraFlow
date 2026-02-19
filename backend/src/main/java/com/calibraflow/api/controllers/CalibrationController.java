@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Controller padronizado para gestão do ciclo de vida de calibrações.
- */
 @RestController
 @RequestMapping("/api/calibrations")
 @RequiredArgsConstructor
@@ -41,11 +38,5 @@ public class CalibrationController {
     public ResponseEntity<Calibration> create(@RequestBody Calibration calibration) {
         Calibration savedCalibration = calibrationService.save(calibration);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCalibration);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        calibrationService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }
