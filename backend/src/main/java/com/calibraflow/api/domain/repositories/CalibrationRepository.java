@@ -12,6 +12,5 @@ import java.util.UUID;
 public interface CalibrationRepository extends JpaRepository<Calibration, UUID> {
 
     List<Calibration> findByInstrumentIdOrderByCalibrationDateDesc(UUID instrumentId);
-
     boolean existsByInstrumentAndCertificateNumber(Instrument instrument, String certificateNumber);
 }

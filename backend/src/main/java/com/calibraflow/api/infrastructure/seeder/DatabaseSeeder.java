@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Component
 @Order(2)
@@ -20,23 +22,24 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
     private final PatrimonyRepository patrimonyRepository;
+    private final CalibrationRepository calibrationRepository;
 
     public DatabaseSeeder(InstrumentRepository instrumentRepository,
                           CategoryRepository categoryRepository,
                           LocationRepository locationRepository,
-                          PatrimonyRepository patrimonyRepository) {
+                          PatrimonyRepository patrimonyRepository,
+                          CalibrationRepository calibrationRepository) {
         this.instrumentRepository = instrumentRepository;
         this.categoryRepository = categoryRepository;
         this.locationRepository = locationRepository;
         this.patrimonyRepository = patrimonyRepository;
+        this.calibrationRepository = calibrationRepository;
     }
 
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        if (instrumentRepository.count() > 0) {
-            return;
-        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         try {
             ClassPathResource resource = new ClassPathResource("instruments.csv");
@@ -51,13 +54,15 @@ public class DatabaseSeeder implements CommandLineRunner {
                     }
 
                     String[] data = line.split(",");
-                    if (data.length >= 4) {
+                    if (data.length >= 7) {
                         String tag = data[0].trim();
                         String description = data[1].trim();
                         String serial = data[2].trim();
                         String locationName = data[3].trim();
+                        String calibDateStr = data[4].trim();
+                        String nextCalibDateStr = data[5].trim();
+                        String certificate = data[6].trim();
 
-                        // SOLUÇÃO: Busca se o patrimônio já existe no banco
                         Patrimony patrimony = patrimonyRepository.findByPatrimonyCode(tag)
                                 .orElseGet(() -> {
                                     Patrimony newP = new Patrimony();
@@ -71,21 +76,34 @@ public class DatabaseSeeder implements CommandLineRunner {
 
                         Category category = categoryRepository.findAll().stream().findFirst().orElse(null);
 
-                        Instrument instrument = new Instrument();
-                        instrument.setName(description);
-                        instrument.setSerialNumber(serial);
-                        instrument.setPatrimony(patrimony); // Aqui usamos a entidade gerenciada pelo Hibernate
-                        instrument.setLocation(location);
-                        instrument.setCategory(category);
-                        instrument.setActive(true);
+                        Instrument instrument = instrumentRepository.findBySerialNumber(serial)
+                                .orElseGet(() -> {
+                                    Instrument newI = new Instrument();
+                                    newI.setName(description);
+                                    newI.setSerialNumber(serial);
+                                    newI.setPatrimony(patrimony);
+                                    newI.setLocation(location);
+                                    newI.setCategory(category);
+                                    newI.setActive(true);
+                                    return instrumentRepository.save(newI);
+                                });
 
-                        instrumentRepository.save(instrument);
+                        if (!calibrationRepository.existsByInstrumentAndCertificateNumber(instrument, certificate)) {
+                            Calibration calibration = new Calibration();
+                            calibration.setInstrument(instrument);
+                            calibration.setCalibrationDate(LocalDate.parse(calibDateStr, formatter));
+                            calibration.setNextCalibrationDate(LocalDate.parse(nextCalibDateStr, formatter));
+                            calibration.setCertificateNumber(certificate);
+                            calibration.setLaboratory("Laboratório Externo (Migração)");
+
+                            calibrationRepository.save(calibration);
+                        }
                     }
                 }
-                System.out.println(">>> CalibraFlow: Migração finalizada com sucesso!");
+                System.out.println(">>> CalibraFlow: Importação total concluída!");
             }
         } catch (Exception e) {
-            System.out.println("Erro na migração de instrumentos: " + e.getMessage());
+            System.out.println("Erro na carga completa: " + e.getMessage());
         }
     }
 }
