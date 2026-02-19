@@ -1,28 +1,36 @@
 package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "tb_instruments")
-@Getter
-@Setter
-@Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Instrument {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "serial_number")
     private String serialNumber;
+
+    @Column(nullable = false)
+    private Boolean active;
+
+    @Column(nullable = false)
+    private Boolean deleted;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime deletedAt;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
@@ -32,23 +40,14 @@ public class Instrument {
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "patrimony_id")
     private Patrimony patrimony;
 
-    @Builder.Default
-    private boolean active = true;
-
-    @Builder.Default
-    private boolean deleted = false;
-
-    private LocalDateTime deletedAt;
-
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        if (this.createdAt == null) this.createdAt = LocalDateTime.now();
+        if (this.active == null) this.active = true;
+        if (this.deleted == null) this.deleted = false;
     }
 }

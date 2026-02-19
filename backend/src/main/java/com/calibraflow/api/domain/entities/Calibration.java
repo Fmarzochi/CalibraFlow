@@ -1,39 +1,24 @@
 package com.calibraflow.api.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
-import java.io.Serializable;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
 @Table(name = "tb_calibrations")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(of = "id")
-public class Calibration implements Serializable {
-
+public class Calibration {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @Column(nullable = false)
+    private LocalDate calibrationDate;
+    private LocalDate nextCalibrationDate;
+    private String certificateNumber;
     private String laboratory;
 
-    @Column(nullable = false)
-    private String certificateNumber;
-
-    @Column(nullable = false)
-    private LocalDate calibrationDate;
-
-    @Column(nullable = false)
-    private LocalDate nextCalibrationDate;
-
-    @JsonIgnore
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "instrument_id")
     private Instrument instrument;
 }
