@@ -2,13 +2,14 @@ package com.calibraflow.api.infrastructure.seeder;
 
 import com.calibraflow.api.domain.entities.*;
 import com.calibraflow.api.domain.repositories.*;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -25,6 +26,8 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final PatrimonyRepository patrimonyRepository;
     private final CalibrationRepository calibrationRepository;
 
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     public DatabaseSeeder(InstrumentRepository instrumentRepository,
                           CategoryRepository categoryRepository,
                           LocationRepository locationRepository,
@@ -40,108 +43,95 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        if (instrumentRepository.count() > 0) {
+            return;
+        }
 
-        System.out.println(">>> INICIANDO DEBUG DO SEEDER <<<");
+        try (CSVReader reader = new CSVReaderBuilder(
+                new InputStreamReader(new ClassPathResource("instruments.csv").getInputStream(), StandardCharsets.UTF_8))
+                .withSkipLines(5)
+                .build()) {
 
-        try {
-            ClassPathResource resource = new ClassPathResource("instruments.csv");
-            System.out.println("Lendo arquivo de: " + resource.getURL());
+            String[] data;
+            int importedCount = 0;
 
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
-                String line;
-                int lineNumber = 0;
-                int importedCount = 0;
+            while ((data = reader.readNext()) != null) {
+                if (data.length >= 12 && !data[0].trim().isEmpty()) {
+                    String descricao = data[0].trim();
+                    String patrimonyCode = data[3].trim();
+                    String tag = data[4].trim();
+                    String serialNumber = data[5].trim();
+                    String laboratory = data[7].trim();
+                    String certificate = data[8].trim();
+                    String calibDateStr = data[9].trim();
+                    String nextCalibDateStr = data[10].trim();
+                    String locationName = data[11].trim();
 
-                while ((line = br.readLine()) != null) {
-                    lineNumber++;
-                    if (lineNumber <= 5) {
-                        continue;
-                    }
+                    Category category = categoryRepository.findByName(descricao)
+                            .orElseGet(() -> {
+                                Category newCat = new Category();
+                                newCat.setName(descricao);
+                                newCat.setCalibrationIntervalDays(365);
+                                newCat.setDescription("Importado automaticamente");
+                                return categoryRepository.save(newCat);
+                            });
 
-                    String[] data = line.split(",");
+                    Location location = locationRepository.findByName(locationName)
+                            .orElseGet(() -> {
+                                Location newLoc = new Location();
+                                newLoc.setName(locationName);
+                                newLoc.setDescription("Importado automaticamente");
+                                newLoc.setActive(true);
+                                return locationRepository.save(newLoc);
+                            });
 
-                    if (lineNumber <= 10) { // Mostra só as primeiras linhas para não poluir
-                        System.out.println("Linha " + lineNumber + " tem " + data.length + " colunas. Conteúdo: " + line);
-                    }
+                    Patrimony patrimony = patrimonyRepository.findByPatrimonyCode(patrimonyCode)
+                            .orElseGet(() -> {
+                                Patrimony newPat = new Patrimony();
+                                newPat.setPatrimonyCode(patrimonyCode);
+                                newPat.setTag(tag);
+                                return patrimonyRepository.save(newPat);
+                            });
 
-                    if (data.length >= 10) {
-                        importedCount++;
-                        String description = data[0].trim();
-                        String manufacturer = data[2].trim();
-                        String patrimonyCode = data[3].trim();
-                        String tag = data[4].trim();
-                        String serialOriginal = data[5].trim();
-                        String model = data[6].trim();
-                        String laboratory = data[7].trim();
-                        String certificate = data[8].trim();
-                        String calibDateStr = data[9].trim();
-                        String nextCalibDateStr = data.length > 10 ? data[10].trim() : "";
-                        String locationName = data.length > 11 ? data[11].trim() : "Não Informado";
+                    Instrument instrument = instrumentRepository.findBySerialNumber(serialNumber)
+                            .orElseGet(() -> {
+                                Instrument newInst = new Instrument();
+                                newInst.setName(descricao);
+                                newInst.setSerialNumber(serialNumber);
+                                newInst.setCategory(category);
+                                newInst.setLocation(location);
+                                newInst.setPatrimony(patrimony);
+                                newInst.setActive(true);
+                                return instrumentRepository.save(newInst);
+                            });
 
-                        String tempSerial;
-                        if (serialOriginal.equalsIgnoreCase("N/C") || serialOriginal.equalsIgnoreCase("S/N") || serialOriginal.isEmpty()) {
-                            tempSerial = "GENERIC-" + patrimonyCode;
-                        } else {
-                            tempSerial = serialOriginal;
-                        }
-                        String serialForLambda = tempSerial;
+                    if (!calibDateStr.isEmpty() && !calibDateStr.equalsIgnoreCase("N/C")) {
+                        try {
+                            LocalDate calDate = LocalDate.parse(calibDateStr, FORMATTER);
+                            LocalDate nextCalDate = calDate.plusDays(category.getCalibrationIntervalDays());
 
-                        Patrimony patrimony = patrimonyRepository.findByPatrimonyCode(patrimonyCode)
-                                .orElseGet(() -> {
-                                    Patrimony newP = new Patrimony();
-                                    newP.setPatrimonyCode(patrimonyCode);
-                                    newP.setTag(tag.isEmpty() ? patrimonyCode : tag);
-                                    return patrimonyRepository.save(newP);
-                                });
+                            if (!nextCalibDateStr.isEmpty() && !nextCalibDateStr.equalsIgnoreCase("N/C")) {
+                                nextCalDate = LocalDate.parse(nextCalibDateStr, FORMATTER);
+                            }
 
-                        Location location = locationRepository.findByName(locationName)
-                                .orElseGet(() -> locationRepository.save(new Location(null, locationName, "Importado", true)));
-
-                        Category category = categoryRepository.findAll().stream().findFirst().orElse(null);
-
-                        Instrument instrument = instrumentRepository.findBySerialNumber(serialForLambda)
-                                .orElseGet(() -> {
-                                    Instrument newI = new Instrument();
-                                    newI.setName(description);
-                                    newI.setManufacturer(manufacturer);
-                                    newI.setModel(model);
-                                    newI.setSerialNumber(serialForLambda);
-                                    newI.setPatrimony(patrimony);
-                                    newI.setLocation(location);
-                                    newI.setCategory(category);
-                                    newI.setActive(true);
-                                    return instrumentRepository.save(newI);
-                                });
-
-                        if (!calibDateStr.isEmpty() && !calibDateStr.equals("N/C")) {
-                            try {
-                                LocalDate calDate = LocalDate.parse(calibDateStr, formatter);
-                                LocalDate nextCalDate = null;
-                                if (!nextCalibDateStr.isEmpty() && !nextCalibDateStr.equals("N/C")) {
-                                    nextCalDate = LocalDate.parse(nextCalibDateStr, formatter);
-                                }
-                                if (!calibrationRepository.existsByInstrumentAndCertificateNumber(instrument, certificate)) {
-                                    Calibration calibration = new Calibration();
-                                    calibration.setInstrument(instrument);
-                                    calibration.setCalibrationDate(calDate);
-                                    calibration.setNextCalibrationDate(nextCalDate);
-                                    calibration.setCertificateNumber(certificate);
-                                    calibration.setLaboratory(laboratory.isEmpty() ? "Externo" : laboratory);
-                                    calibrationRepository.save(calibration);
-                                }
-                            } catch (DateTimeParseException ignored) { }
-                        }
-                    } else {
-                        if (lineNumber <= 10) {
-                            System.out.println("!!! AVISO: Linha " + lineNumber + " ignorada (apenas " + data.length + " colunas).");
+                            if (!calibrationRepository.existsByInstrumentAndCertificateNumber(instrument, certificate)) {
+                                Calibration calibration = new Calibration();
+                                calibration.setInstrument(instrument);
+                                calibration.setCalibrationDate(calDate);
+                                calibration.setNextCalibrationDate(nextCalDate);
+                                calibration.setCertificateNumber(certificate);
+                                calibration.setLaboratory(laboratory.isEmpty() ? "Externo" : laboratory);
+                                calibrationRepository.save(calibration);
+                            }
+                        } catch (DateTimeParseException ignored) {
                         }
                     }
+                    importedCount++;
                 }
-                System.out.println(">>> DEBUG FINALIZADO. Total processado: " + importedCount);
             }
+            System.out.println(">>> CalibraFlow: Instrumentos e calibrações importados com sucesso. Total: " + importedCount);
         } catch (Exception e) {
-            System.out.println("Erro na migração: " + e.getMessage());
+            System.out.println("Erro na migração de instrumentos: " + e.getMessage());
         }
     }
 }
