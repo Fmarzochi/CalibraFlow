@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @Component
 @Order(2)
@@ -39,35 +40,47 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try {
             ClassPathResource resource = new ClassPathResource("instruments.csv");
             try (BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
                 String line;
-                boolean isFirstLine = true;
+                int lineNumber = 0;
 
                 while ((line = br.readLine()) != null) {
-                    if (isFirstLine) {
-                        isFirstLine = false;
+                    lineNumber++;
+                    if (lineNumber <= 5) {
                         continue;
                     }
 
                     String[] data = line.split(",");
-                    if (data.length >= 7) {
-                        String tag = data[0].trim();
-                        String description = data[1].trim();
-                        String serial = data[2].trim();
-                        String locationName = data[3].trim();
-                        String calibDateStr = data[4].trim();
-                        String nextCalibDateStr = data[5].trim();
-                        String certificate = data[6].trim();
+                    if (data.length >= 10) {
+                        String description = data[0].trim();
+                        String manufacturer = data[2].trim(); // Coluna Fabricante
+                        String patrimonyCode = data[3].trim();
+                        String tag = data[4].trim();
+                        String serialOriginal = data[5].trim();
+                        String model = data[6].trim(); // Coluna Modelo
+                        String laboratory = data[7].trim(); // Coluna Laboratório
+                        String certificate = data[8].trim();
+                        String calibDateStr = data[9].trim();
+                        String nextCalibDateStr = data.length > 10 ? data[10].trim() : "";
+                        String locationName = data.length > 11 ? data[11].trim() : "Não Informado";
+                        String tempSerial;
+                        if (serialOriginal.equalsIgnoreCase("N/C") || serialOriginal.equalsIgnoreCase("S/N") || serialOriginal.isEmpty()) {
+                            tempSerial = "GENERIC-" + patrimonyCode;
+                        } else {
+                            tempSerial = serialOriginal;
+                        }
 
-                        Patrimony patrimony = patrimonyRepository.findByPatrimonyCode(tag)
+                        String serialForLambda = tempSerial;
+
+                        Patrimony patrimony = patrimonyRepository.findByPatrimonyCode(patrimonyCode)
                                 .orElseGet(() -> {
                                     Patrimony newP = new Patrimony();
-                                    newP.setPatrimonyCode(tag);
-                                    newP.setTag(tag);
+                                    newP.setPatrimonyCode(patrimonyCode);
+                                    newP.setTag(tag.isEmpty() ? patrimonyCode : tag);
                                     return patrimonyRepository.save(newP);
                                 });
 
@@ -76,11 +89,13 @@ public class DatabaseSeeder implements CommandLineRunner {
 
                         Category category = categoryRepository.findAll().stream().findFirst().orElse(null);
 
-                        Instrument instrument = instrumentRepository.findBySerialNumber(serial)
+                        Instrument instrument = instrumentRepository.findBySerialNumber(serialForLambda)
                                 .orElseGet(() -> {
                                     Instrument newI = new Instrument();
                                     newI.setName(description);
-                                    newI.setSerialNumber(serial);
+                                    newI.setManufacturer(manufacturer);
+                                    newI.setModel(model);
+                                    newI.setSerialNumber(serialForLambda); // Uso permitido aqui
                                     newI.setPatrimony(patrimony);
                                     newI.setLocation(location);
                                     newI.setCategory(category);
@@ -88,22 +103,32 @@ public class DatabaseSeeder implements CommandLineRunner {
                                     return instrumentRepository.save(newI);
                                 });
 
-                        if (!calibrationRepository.existsByInstrumentAndCertificateNumber(instrument, certificate)) {
-                            Calibration calibration = new Calibration();
-                            calibration.setInstrument(instrument);
-                            calibration.setCalibrationDate(LocalDate.parse(calibDateStr, formatter));
-                            calibration.setNextCalibrationDate(LocalDate.parse(nextCalibDateStr, formatter));
-                            calibration.setCertificateNumber(certificate);
-                            calibration.setLaboratory("Laboratório Externo (Migração)");
+                        if (!calibDateStr.isEmpty() && !calibDateStr.equals("N/C")) {
+                            try {
+                                LocalDate calDate = LocalDate.parse(calibDateStr, formatter);
+                                LocalDate nextCalDate = null;
+                                if (!nextCalibDateStr.isEmpty() && !nextCalibDateStr.equals("N/C")) {
+                                    nextCalDate = LocalDate.parse(nextCalibDateStr, formatter);
+                                }
 
-                            calibrationRepository.save(calibration);
+                                if (!calibrationRepository.existsByInstrumentAndCertificateNumber(instrument, certificate)) {
+                                    Calibration calibration = new Calibration();
+                                    calibration.setInstrument(instrument);
+                                    calibration.setCalibrationDate(calDate);
+                                    calibration.setNextCalibrationDate(nextCalDate);
+                                    calibration.setCertificateNumber(certificate);
+                                    calibration.setLaboratory(laboratory.isEmpty() ? "Externo" : laboratory);
+
+                                    calibrationRepository.save(calibration);
+                                }
+                            } catch (DateTimeParseException ignored) { }
                         }
                     }
                 }
-                System.out.println(">>> CalibraFlow: Importação total concluída!");
+                System.out.println(">>> CalibraFlow: Migração da Planilha Real finalizada com sucesso!");
             }
         } catch (Exception e) {
-            System.out.println("Erro na carga completa: " + e.getMessage());
+            System.out.println("Erro na migração: " + e.getMessage());
         }
     }
 }
