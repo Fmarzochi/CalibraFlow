@@ -23,55 +23,52 @@ public class MigrationService {
 
     @Transactional
     public void importFromCsv(List<String[]> rows) {
-        log.info(">>> MIGRATION: Iniciando importação de {} instrumentos...", rows.size());
+        log.info(">>> MIGRATION: Iniciando processamento de {} registros", rows.size());
 
         for (String[] row : rows) {
             try {
-                if (row.length < 12) continue;
+                if (row.length < 10) continue;
 
-                String description = row[0].trim();
+                String instrumentName = row[0].trim();
                 String patrimonyCode = row[3].trim();
-                String tag = row[4].trim();
-                String serialNumber = row[5].trim();
-                String lab = row[7].trim();
-                String certNumber = row[8].trim();
-                String calDateStr = row[9].trim();
-                String locationName = row[11].trim();
+                String serial = row[5].trim();
+                String cert = row[8].trim();
+                String dateStr = row[9].trim();
+                String locName = row[11].trim();
 
-                if (instrumentRepository.existsByPatrimonyCode(patrimonyCode)) {
-                    continue;
-                }
+                if (instrumentRepository.existsByPatrimonyCode(patrimonyCode)) continue;
 
-                Integer intervalDays = periodicityRepository.findByInstrumentName(description)
+                // Aqui entra a inteligência da planilha de periodicidade
+                Integer days = periodicityRepository.findByInstrumentName(instrumentName)
                         .map(Periodicity::getDays)
                         .orElse(365);
 
-                Category category = findOrCreateCategory(description, intervalDays);
-                Location location = findOrCreateLocation(locationName);
+                Category category = findOrCreateCategory(instrumentName, days);
+                Location location = findOrCreateLocation(locName);
 
                 Instrument instrument = new Instrument();
-                instrument.setName(description);
-                instrument.setSerialNumber(serialNumber);
+                instrument.setName(instrumentName);
+                instrument.setSerialNumber(serial);
                 instrument.setCategory(category);
                 instrument.setLocation(location);
                 instrument.setActive(true);
 
+                // Sincronizando com a tua entidade Patrimony
                 Patrimony patrimony = new Patrimony();
                 patrimony.setPatrimonyCode(patrimonyCode);
-                patrimony.setTag(tag);
+                patrimony.setTag(patrimonyCode);
                 instrument.setPatrimony(patrimony);
 
                 instrumentRepository.save(instrument);
 
-                if (!calDateStr.isEmpty() && !certNumber.equalsIgnoreCase("N/C") && !certNumber.isEmpty()) {
-                    createCalibration(instrument, calDateStr, certNumber, lab, intervalDays);
+                if (!cert.isEmpty() && !cert.equalsIgnoreCase("N/C")) {
+                    createCalibration(instrument, cert, dateStr, days);
                 }
 
             } catch (Exception e) {
-                log.error(">>> MIGRATION: Erro ao processar instrumento {}: {}", row[3], e.getMessage());
+                log.error("Erro ao processar linha: {}", e.getMessage());
             }
         }
-        log.info(">>> MIGRATION: Importação concluída com sucesso!");
     }
 
     private Category findOrCreateCategory(String name, Integer days) {
@@ -79,7 +76,6 @@ public class MigrationService {
                 .orElseGet(() -> {
                     Category c = new Category();
                     c.setName(name);
-                    c.setDescription("Categoria importada automaticamente");
                     c.setCalibrationIntervalDays(days);
                     return categoryRepository.save(c);
                 });
@@ -90,20 +86,17 @@ public class MigrationService {
                 .orElseGet(() -> {
                     Location l = new Location();
                     l.setName(name);
-                    l.setDescription("Local importado automaticamente");
                     l.setActive(true);
                     return locationRepository.save(l);
                 });
     }
 
-    private void createCalibration(Instrument instrument, String dateStr, String cert, String lab, Integer days) {
-        LocalDate calDate = LocalDate.parse(dateStr);
+    private void createCalibration(Instrument instrument, String cert, String date, Integer days) {
         Calibration cal = new Calibration();
         cal.setInstrument(instrument);
-        cal.setLaboratory(lab);
         cal.setCertificateNumber(cert);
-        cal.setCalibrationDate(calDate);
-        cal.setNextCalibrationDate(calDate.plusDays(days));
+        cal.setCalibrationDate(LocalDate.parse(date));
+        cal.setNextCalibrationDate(LocalDate.parse(date).plusDays(days));
         calibrationRepository.save(cal);
     }
 }
