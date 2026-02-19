@@ -23,8 +23,6 @@ public class MigrationService {
 
     @Transactional
     public void importFromCsv(List<String[]> rows) {
-        log.info(">>> MIGRATION: Iniciando processamento de {} registros", rows.size());
-
         for (String[] row : rows) {
             try {
                 if (row.length < 10) continue;
@@ -38,7 +36,6 @@ public class MigrationService {
 
                 if (instrumentRepository.existsByPatrimonyCode(patrimonyCode)) continue;
 
-                // Aqui entra a inteligência da planilha de periodicidade
                 Integer days = periodicityRepository.findByInstrumentName(instrumentName)
                         .map(Periodicity::getDays)
                         .orElse(365);
@@ -46,27 +43,26 @@ public class MigrationService {
                 Category category = findOrCreateCategory(instrumentName, days);
                 Location location = findOrCreateLocation(locName);
 
+                Patrimony patrimony = new Patrimony();
+                patrimony.setPatrimonyCode(patrimonyCode);
+                patrimony.setTag(patrimonyCode);
+
                 Instrument instrument = new Instrument();
                 instrument.setName(instrumentName);
                 instrument.setSerialNumber(serial);
                 instrument.setCategory(category);
                 instrument.setLocation(location);
-                instrument.setActive(true);
-
-                // Sincronizando com a tua entidade Patrimony
-                Patrimony patrimony = new Patrimony();
-                patrimony.setPatrimonyCode(patrimonyCode);
-                patrimony.setTag(patrimonyCode);
                 instrument.setPatrimony(patrimony);
+                instrument.setActive(true);
 
                 instrumentRepository.save(instrument);
 
-                if (!cert.isEmpty() && !cert.equalsIgnoreCase("N/C")) {
+                if (!cert.isEmpty() && !cert.equalsIgnoreCase("N/C") && !dateStr.isEmpty()) {
                     createCalibration(instrument, cert, dateStr, days);
                 }
 
             } catch (Exception e) {
-                log.error("Erro ao processar linha: {}", e.getMessage());
+                log.error("Erro no registro: " + e.getMessage());
             }
         }
     }
@@ -92,11 +88,13 @@ public class MigrationService {
     }
 
     private void createCalibration(Instrument instrument, String cert, String date, Integer days) {
+        LocalDate calDate = LocalDate.parse(date);
         Calibration cal = new Calibration();
         cal.setInstrument(instrument);
         cal.setCertificateNumber(cert);
-        cal.setCalibrationDate(LocalDate.parse(date));
-        cal.setNextCalibrationDate(LocalDate.parse(date).plusDays(days));
+        cal.setLaboratory("Importacao");
+        cal.setCalibrationDate(calDate);
+        cal.setNextCalibrationDate(calDate.plusDays(days));
         calibrationRepository.save(cal);
     }
 }
