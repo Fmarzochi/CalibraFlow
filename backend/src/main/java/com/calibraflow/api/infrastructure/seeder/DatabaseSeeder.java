@@ -6,13 +6,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 
 @Component
 @Order(2)
@@ -34,8 +32,8 @@ public class DatabaseSeeder implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
-        // Só executa se o banco estiver vazio
         if (instrumentRepository.count() > 0) {
             return;
         }
@@ -59,19 +57,24 @@ public class DatabaseSeeder implements CommandLineRunner {
                         String serial = data[2].trim();
                         String locationName = data[3].trim();
 
-                        Patrimony patrimony = new Patrimony();
-                        patrimony.setPatrimonyCode(tag);
-                        patrimony.setTag(tag);
-                        patrimony = patrimonyRepository.save(patrimony);
+                        // SOLUÇÃO: Busca se o patrimônio já existe no banco
+                        Patrimony patrimony = patrimonyRepository.findByPatrimonyCode(tag)
+                                .orElseGet(() -> {
+                                    Patrimony newP = new Patrimony();
+                                    newP.setPatrimonyCode(tag);
+                                    newP.setTag(tag);
+                                    return patrimonyRepository.save(newP);
+                                });
 
                         Location location = locationRepository.findByName(locationName)
-                                .orElseGet(() -> locationRepository.save(new Location(null, locationName, "Importado via planilha", true)));
+                                .orElseGet(() -> locationRepository.save(new Location(null, locationName, "Importado", true)));
+
                         Category category = categoryRepository.findAll().stream().findFirst().orElse(null);
 
                         Instrument instrument = new Instrument();
                         instrument.setName(description);
                         instrument.setSerialNumber(serial);
-                        instrument.setPatrimony(patrimony);
+                        instrument.setPatrimony(patrimony); // Aqui usamos a entidade gerenciada pelo Hibernate
                         instrument.setLocation(location);
                         instrument.setCategory(category);
                         instrument.setActive(true);
@@ -79,7 +82,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                         instrumentRepository.save(instrument);
                     }
                 }
-                System.out.println(">>> CalibraFlow: Migração de " + instrumentRepository.count() + " instrumentos concluída!");
+                System.out.println(">>> CalibraFlow: Migração finalizada com sucesso!");
             }
         } catch (Exception e) {
             System.out.println("Erro na migração de instrumentos: " + e.getMessage());
