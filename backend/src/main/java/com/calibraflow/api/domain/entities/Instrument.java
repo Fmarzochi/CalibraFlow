@@ -1,9 +1,10 @@
-package com.calibraflow.api.entities;
+package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_instruments")
@@ -15,8 +16,8 @@ import java.time.LocalDateTime;
 public class Instrument {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false)
     private String description;
@@ -34,16 +35,12 @@ public class Instrument {
 
     private String model;
 
-    @Column(name = "calibration_laboratory")
     private String laboratory;
 
-    @Column(name = "certificate_number")
     private String certificateNumber;
 
-    @Column(name = "calibration_date")
     private LocalDate calibrationDate;
 
-    @Column(name = "next_calibration_date")
     private LocalDate nextCalibrationDate;
 
     private String location;
@@ -56,7 +53,7 @@ public class Instrument {
 
     private LocalDateTime deletedAt;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
