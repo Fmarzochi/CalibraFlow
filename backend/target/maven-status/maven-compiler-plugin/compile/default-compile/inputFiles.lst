@@ -23,6 +23,7 @@
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/PatrimonyRepository.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Patrimony.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/MovementService.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/PeriodicityService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/infrastructure/seeder/DatabaseSeeder.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/MovementController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Periodicity.java
@@ -33,4 +34,5 @@
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/MigrationController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Category.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Movement.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/PeriodicityController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/config/TestConfig.java
