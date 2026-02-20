@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/periodicities")
@@ -25,7 +24,7 @@ public class PeriodicityController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Periodicity> findById(@PathVariable UUID id) {
+    public ResponseEntity<Periodicity> findById(@PathVariable Long id) {
         return periodicityService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
