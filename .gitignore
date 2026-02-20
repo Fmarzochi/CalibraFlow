@@ -1,5 +1,5 @@
 # ==============================
-# Banco de Dados / Docker
+# Banco de Dados / Docker 
 # ==============================
 postgres-data/
 postgres-data-NOVO/
@@ -7,9 +7,106 @@ postgres-data-NOVO/
 *.conf
 pg_*
 PG_*
-
-# ==============================
-# Logs do Docker/PostgreSQL
-# ==============================
 *.log
 docker-compose.override.yml
+
+# ==============================
+# IDEs: IntelliJ IDEA e Eclipse
+# ==============================
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.classpath
+.project
+.settings/
+.metadata/
+.recommenders/
+
+# ==============================
+# Backend: Java + Spring Boot
+# ==============================
+# Arquivos compilados
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Diretórios de build do Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Diretórios de build do Gradle
+.gradle/
+build/
+!src/**/build/
+
+# ==============================
+# Frontend: React + Vite
+# ==============================
+# Dependências do Node
+node_modules/
+.pnp
+.pnp.js
+
+# Diretórios de build de produção (Vite)
+dist/
+dist-ssr/
+build/
+
+# Logs de gerenciadores de pacote
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ==============================
+# Segurança / Variáveis de Ambiente
+# ==============================
+# Arquivos locais de ambiente
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ==============================
+# Sistema Operacional
+# ==============================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
