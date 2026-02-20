@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.Optional;
 
 @Service
@@ -22,7 +21,7 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Category> findById(UUID id) {
+    public Optional<Category> findById(Long id) {
         return categoryRepository.findById(id);
     }
 
@@ -32,7 +31,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public void delete(UUID id) {
+    public void delete(Long id) {
         categoryRepository.deleteById(id);
     }
 }
