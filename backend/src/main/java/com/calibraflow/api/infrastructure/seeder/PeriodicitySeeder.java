@@ -6,67 +6,82 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
 @Component
 @Order(1)
-public class PeriodicitySeeder implements CommandLineRunner {
+@RequiredArgsConstructor
+@Slf4j
+public class PeriodicityDataSeeder implements CommandLineRunner {
 
     private final PeriodicityRepository periodicityRepository;
-
-    public PeriodicitySeeder(PeriodicityRepository periodicityRepository) {
-        this.periodicityRepository = periodicityRepository;
-    }
 
     @Override
     @Transactional
     public void run(String... args) throws Exception {
         if (periodicityRepository.count() > 0) {
+            log.info("Tabela de periodicidades já populada. Ignorando seeder.");
             return;
         }
 
-        CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
+        InputStream is = getClass().getResourceAsStream("/periodicidades.csv");
+        if (is == null) {
+            log.error("Arquivo periodicidades.csv não encontrado no diretório resources.");
+            return;
+        }
 
-        try (CSVReader reader = new CSVReaderBuilder(
-                new InputStreamReader(new ClassPathResource("periodicities.csv").getInputStream(), StandardCharsets.UTF_8))
-                .withSkipLines(3)
-                .withCSVParser(parser)
-                .build()) {
+        CSVParser parser = new CSVParserBuilder().withSeparator(',').build();
+
+        try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+             CSVReader csvReader = new CSVReaderBuilder(reader)
+                     .withSkipLines(3)
+                     .withCSVParser(parser)
+                     .build()) {
 
             String[] line;
-            List<Periodicity> periodicities = new ArrayList<>();
             int count = 0;
 
-            while ((line = reader.readNext()) != null) {
-                if (line.length >= 3 && !line[0].trim().isEmpty()) {
-                    String name = line[0].trim();
-                    String daysStr = line[2].trim();
+            while ((line = csvReader.readNext()) != null) {
+                if (line.length < 2 || line[0].trim().isEmpty()) {
+                    continue;
+                }
 
-                    if (!daysStr.equalsIgnoreCase("Indeterminado") && !daysStr.isEmpty()) {
-                        try {
-                            Integer days = Integer.parseInt(daysStr);
-                            periodicities.add(new Periodicity(name, days));
-                            count++;
-                        } catch (NumberFormatException ignored) {
-                        }
-                    }
+                String instrumentName = line[0].trim();
+                String daysStr = line[1].trim();
+
+                if (daysStr.equalsIgnoreCase("Indeterminado") || daysStr.isEmpty() || daysStr.equalsIgnoreCase("N/C")) {
+                    continue;
+                }
+
+                if (periodicityRepository.findByInstrumentName(instrumentName).isPresent()) {
+                    continue;
+                }
+
+                try {
+                    int days = Integer.parseInt(daysStr);
+                    Periodicity periodicity = new Periodicity();
+                    periodicity.setId(UUID.randomUUID());
+                    periodicity.setInstrumentName(instrumentName);
+                    periodicity.setDays(days);
+
+                    periodicityRepository.save(periodicity);
+                    count++;
+                } catch (NumberFormatException e) {
+                    log.warn("Formato de dias inválido para o instrumento {}: {}", instrumentName, daysStr);
                 }
             }
-
-            periodicityRepository.saveAll(periodicities);
-            System.out.println(">>> CalibraFlow: Regras de periodicidade importadas com sucesso via OpenCSV! Total: " + count);
-
-        } catch (Exception e) {
-            System.out.println("Erro ao importar periodicidades: " + e.getMessage());
+            log.info("Carga de periodicidades finalizada. {} novos registros inseridos.", count);
         }
     }
 }
