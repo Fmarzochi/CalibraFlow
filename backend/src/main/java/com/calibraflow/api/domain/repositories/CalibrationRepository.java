@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Repository
-public interface CalibrationRepository extends JpaRepository<Calibration, UUID> {
+public interface CalibrationRepository extends JpaRepository<Calibration, Long> {
 
-    List<Calibration> findByInstrumentIdOrderByCalibrationDateDesc(UUID instrumentId);
+    List<Calibration> findByInstrumentIdOrderByCalibrationDateDesc(Long instrumentId);
+
     boolean existsByInstrumentAndCertificateNumber(Instrument instrument, String certificateNumber);
 }
