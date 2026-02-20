@@ -74,7 +74,7 @@ public class PeriodicityDataSeeder implements CommandLineRunner {
                     periodicity.setId(UUID.randomUUID());
                     periodicity.setInstrumentName(instrumentName);
                     periodicity.setDays(days);
-                    
+
                     periodicityRepository.save(periodicity);
                     count++;
                 } catch (NumberFormatException e) {
