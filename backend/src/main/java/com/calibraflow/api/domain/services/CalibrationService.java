@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.Optional;
 
 @Service
@@ -22,12 +21,12 @@ public class CalibrationService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Calibration> findById(UUID id) {
+    public Optional<Calibration> findById(Long id) {
         return calibrationRepository.findById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Calibration> findByInstrument(UUID instrumentId) {
+    public List<Calibration> findByInstrument(Long instrumentId) {
         return calibrationRepository.findByInstrumentIdOrderByCalibrationDateDesc(instrumentId);
     }
 
