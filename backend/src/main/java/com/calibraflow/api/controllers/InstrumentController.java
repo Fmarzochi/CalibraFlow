@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/instruments")
@@ -28,7 +27,7 @@ public class InstrumentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Instrument> findById(@PathVariable UUID id) {
+    public ResponseEntity<Instrument> findById(@PathVariable Long id) {
         return instrumentService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -41,7 +40,7 @@ public class InstrumentController {
 
     @PutMapping("/{id}/location")
     public ResponseEntity<Instrument> updateLocation(
-            @PathVariable UUID id,
+            @PathVariable Long id,
             @RequestBody Location newLocation,
             @RequestParam Long userId,
             @RequestParam String reason) {
@@ -52,8 +51,11 @@ public class InstrumentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> softDelete(@PathVariable UUID id) {
-        return instrumentService.softDelete(id)
+    public ResponseEntity<Void> softDelete(
+            @PathVariable Long id,
+            @RequestParam Long userId,
+            @RequestParam(required = false) String reason) {
+        return instrumentService.softDelete(id, userId, reason)
                 .map(instrument -> ResponseEntity.noContent().<Void>build())
                 .orElse(ResponseEntity.notFound().build());
     }
