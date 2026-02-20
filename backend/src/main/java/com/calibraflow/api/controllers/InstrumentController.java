@@ -3,6 +3,7 @@ package com.calibraflow.api.controllers;
 import com.calibraflow.api.domain.entities.Instrument;
 import com.calibraflow.api.domain.entities.Location;
 import com.calibraflow.api.domain.services.InstrumentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class InstrumentController {
     }
 
     @PostMapping
-    public ResponseEntity<Instrument> create(@RequestBody Instrument instrument) {
+    public ResponseEntity<Instrument> create(@Valid @RequestBody Instrument instrument) {
         return ResponseEntity.ok(instrumentService.save(instrument));
     }
 

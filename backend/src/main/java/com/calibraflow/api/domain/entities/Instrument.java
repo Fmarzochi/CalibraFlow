@@ -1,6 +1,8 @@
 package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,9 +20,11 @@ public class Instrument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "A tag do instrumento é obrigatória")
     @Column(nullable = false, unique = true)
     private String tag;
 
+    @NotBlank(message = "O nome do instrumento é obrigatório")
     @Column(nullable = false)
     private String name;
 
@@ -37,10 +41,12 @@ public class Instrument {
 
     private String resolution;
 
+    @NotNull(message = "A categoria é obrigatória")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @NotNull(message = "A localização é obrigatória")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
     private Location location;
@@ -69,7 +75,10 @@ public class Instrument {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+        // Garante que novos registros comecem ativos e não deletados se não informados
         this.active = true;
         this.deleted = false;
     }
