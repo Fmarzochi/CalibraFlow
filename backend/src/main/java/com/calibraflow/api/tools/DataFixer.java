@@ -1,5 +1,6 @@
 package com.calibraflow.api.tools;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,32 +14,33 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Component
 public class DataFixer {
 
     @Value("${datafixer.input.filename:instrumentos_completo.csv}")
     private String inputFileName;
-    
+
     @Value("${datafixer.output.filename:instrumentos_limpos.xlsx}")
     private String outputFileName;
-    
+
     @Value("${datafixer.processing.skip-lines:5}")
     private int skipLines;
 
     public Path process() {
-        System.out.println("=== CalibraFlow Data Engineering: Iniciando Tratamento com Apache POI ===");
+        log.info("=== CalibraFlow Data Engineering: Iniciando Tratamento com Apache POI ===");
 
         try {
             Path root = Paths.get("").toAbsolutePath();
             Path inputPath = findFilePath(root, inputFileName);
 
             if (inputPath == null) {
-                System.err.println("ERRO CRÍTICO: Não foi possível localizar " + inputFileName);
+                log.error("ERRO CRÍTICO: Não foi possível localizar {}", inputFileName);
                 return null;
             }
 
             Path outputPath = inputPath.getParent().resolve(outputFileName);
-            System.out.println("Lendo arquivo de: " + inputPath);
+            log.info("Lendo arquivo de: {}", inputPath);
 
             try (Workbook workbook = new XSSFWorkbook()) {
                 Sheet sheet = workbook.createSheet("Dados_Tratados");
@@ -63,16 +65,15 @@ public class DataFixer {
                     workbook.write(fos);
                 }
 
-                System.out.println("=== SUCESSO ===");
-                System.out.println("Arquivo gerado: " + outputPath.toAbsolutePath());
-                System.out.println("Total de registros limpos: " + (rowIdx - 1));
-                
+                log.info("=== SUCESSO ===");
+                log.info("Arquivo gerado: {}", outputPath.toAbsolutePath());
+                log.info("Total de registros limpos: {}", (rowIdx - 1));
+
                 return outputPath;
             }
 
         } catch (Exception e) {
-            System.err.println("FALHA NA OPERAÇÃO: " + e.getMessage());
-            e.printStackTrace();
+            log.error("FALHA NA OPERAÇÃO: {}", e.getMessage(), e);
             return null;
         }
     }

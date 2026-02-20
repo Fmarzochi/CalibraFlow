@@ -1,6 +1,6 @@
-package com.calibraflow.controller;
+package com.calibraflow.api.controllers;
 
-import com.calibraflow.service.DataFixerService;
+import com.calibraflow.api.domain.services.DataFixerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,7 @@ public class DataFixerController {
     @PostMapping("/process")
     public ResponseEntity<Map<String, Object>> processData() {
         Path result = dataFixerService.processData();
-        
+
         Map<String, Object> response = new HashMap<>();
         if (result != null) {
             response.put("success", true);

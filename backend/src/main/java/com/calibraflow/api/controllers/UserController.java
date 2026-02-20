@@ -1,28 +1,27 @@
 package com.calibraflow.api.controllers;
 
 import com.calibraflow.api.domain.entities.User;
-import com.calibraflow.api.domain.repositories.UserRepository;
+import com.calibraflow.api.domain.services.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
-
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserService userService;
 
     @GetMapping
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public ResponseEntity<List<User>> findAll() {
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @PostMapping
-    public User create(@RequestBody User user) {
-        return userRepository.save(user);
+    public ResponseEntity<User> create(@RequestBody User user) {
+        return ResponseEntity.ok(userService.save(user));
     }
 }

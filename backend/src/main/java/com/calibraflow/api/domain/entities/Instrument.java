@@ -53,9 +53,11 @@ public class Instrument {
     @JoinColumn(name = "periodicity_id")
     private Periodicity periodicity;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean active = true;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean deleted = false;
 
