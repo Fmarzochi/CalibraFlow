@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/locations")
@@ -23,7 +22,7 @@ public class LocationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Location> findById(@PathVariable UUID id) {
+    public ResponseEntity<Location> findById(@PathVariable Long id) {
         return locationService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -35,7 +34,7 @@ public class LocationController {
     }
 
     @PatchMapping("/{id}/toggle-active")
-    public ResponseEntity<Location> toggleActive(@PathVariable UUID id) {
+    public ResponseEntity<Location> toggleActive(@PathVariable Long id) {
         return locationService.toggleActive(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
