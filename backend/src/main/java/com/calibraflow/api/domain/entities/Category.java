@@ -1,26 +1,26 @@
 package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.util.UUID;
+import lombok.*;
 
 @Entity
-@Table(name = "tb_categories")
-@Data
+@Table(name = "categories")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Category {
 
     @Id
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
-    private Integer calibrationIntervalDays;
+    @Column(name = "validity_months")
+    private Integer validityMonths;
 
     private String description;
 }
