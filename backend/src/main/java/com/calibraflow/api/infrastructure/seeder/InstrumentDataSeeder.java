@@ -1,7 +1,13 @@
 package com.calibraflow.api.infrastructure.seeder;
 
-import com.calibraflow.api.domain.entities.*;
-import com.calibraflow.api.domain.repositories.*;
+import com.calibraflow.api.domain.entities.Category;
+import com.calibraflow.api.domain.entities.Instrument;
+import com.calibraflow.api.domain.entities.Location;
+import com.calibraflow.api.domain.entities.Periodicity;
+import com.calibraflow.api.domain.repositories.CategoryRepository;
+import com.calibraflow.api.domain.repositories.InstrumentRepository;
+import com.calibraflow.api.domain.repositories.LocationRepository;
+import com.calibraflow.api.domain.repositories.PeriodicityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -47,7 +53,7 @@ public class InstrumentDataSeeder implements CommandLineRunner {
 
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",", -1);
-                if (data.length < 8) continue; // Pula linhas malformadas
+                if (data.length < 8) continue;
 
                 String tag = data[0].trim();
                 if (tag.isEmpty()) continue;
@@ -97,7 +103,7 @@ public class InstrumentDataSeeder implements CommandLineRunner {
     private Location findOrCreateLocation(String name) {
         if (name == null || name.isEmpty()) return null;
         return locationRepository.findByName(name)
-                .orElseGet(() -> locationRepository.save(Location.builder().name(name).build()));
+                .orElseGet(() -> locationRepository.save(Location.builder().name(name).active(true).build()));
     }
 
     private LocalDate parseDateSafe(String dateStr) {
