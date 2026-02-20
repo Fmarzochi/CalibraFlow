@@ -53,23 +53,20 @@ public class PeriodicityDataSeeder implements CommandLineRunner {
             int count = 0;
 
             while ((line = csvReader.readNext()) != null) {
-                if (line.length < 2 || line[0].trim().isEmpty()) {
-                    continue;
-                }
-
-                String instrumentName = line[0].trim();
-                String daysStr = line[1].trim();
-
-                if (daysStr.equalsIgnoreCase("Indeterminado") || daysStr.isEmpty() || daysStr.equalsIgnoreCase("N/C")) {
-                    continue;
-                }
-
-                if (periodicityRepository.findByInstrumentName(instrumentName).isPresent()) {
+                if (line.length < 3 || line[0].trim().isEmpty()) {
                     continue;
                 }
 
                 try {
-                    int days = Integer.parseInt(daysStr);
+                    String instrumentName = line[0].trim();
+                    String daysStr = line[2].trim();
+
+                    if (daysStr.equalsIgnoreCase("Indeterminado")) {
+                        continue;
+                    }
+
+                    Integer days = Integer.parseInt(daysStr);
+
                     Periodicity periodicity = new Periodicity();
                     periodicity.setId(UUID.randomUUID());
                     periodicity.setInstrumentName(instrumentName);
@@ -77,8 +74,8 @@ public class PeriodicityDataSeeder implements CommandLineRunner {
 
                     periodicityRepository.save(periodicity);
                     count++;
-                } catch (NumberFormatException e) {
-                    log.warn("Formato de dias inválido para o instrumento {}: {}", instrumentName, daysStr);
+                } catch (Exception e) {
+                    log.warn("Falha ao processar linha de periodicidade: {}", e.getMessage());
                 }
             }
             log.info("Carga de periodicidades finalizada. {} novos registros inseridos.", count);

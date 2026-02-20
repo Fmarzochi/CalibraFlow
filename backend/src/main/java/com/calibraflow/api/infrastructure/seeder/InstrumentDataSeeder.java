@@ -19,6 +19,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Component
@@ -37,21 +38,22 @@ public class InstrumentDataSeeder implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
         if (instrumentRepository.count() > 0) {
-            log.info("Tabela de instrumentos já populada. Ignorando seeder.");
+            log.info("Banco já possui dados. Ignorando carga de instrumentos.");
             return;
         }
 
         InputStream is = getClass().getResourceAsStream("/instrumentos.csv");
         if (is == null) {
-            log.error("Arquivo instrumentos.csv não encontrado no diretório resources.");
+            log.error("Arquivo instrumentos.csv não encontrado.");
             return;
         }
 
         CSVParser parser = new CSVParserBuilder().withSeparator(',').build();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("d/M/yyyy");
 
         try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
              CSVReader csvReader = new CSVReaderBuilder(reader)
-                     .withSkipLines(1)
+                     .withSkipLines(5) // Pula as 5 linhas de cabeçalho (CCI-INS, DATA, REVISÃO, etc)
                      .withCSVParser(parser)
                      .build()) {
 
@@ -59,78 +61,54 @@ public class InstrumentDataSeeder implements CommandLineRunner {
             int count = 0;
 
             while ((line = csvReader.readNext()) != null) {
-                if (line.length < 12 || line[0].trim().isEmpty()) {
-                    continue;
-                }
-
-                String patrimonyCode = getValidString(line[3]);
-                if (patrimonyCode == null || patrimonyRepository.findByPatrimonyCode(patrimonyCode).isPresent()) {
-                    continue;
-                }
-
                 try {
-                    String name = getValidString(line[0]);
-                    String tag = getValidString(line[4]);
-                    String serial = getValidString(line[5]);
-                    String rawLocName = getValidString(line[11]);
+                    if (line.length < 11 || line[0].trim().isEmpty()) continue;
+
+                    String name = line[0].trim();
+                    String patrimonyCode = line[3].trim();
+                    if (patrimonyCode.isEmpty() || patrimonyCode.equalsIgnoreCase("N/C")) continue;
                     
-                    final String locName = (rawLocName == null) ? "ALMOXARIFADO" : rawLocName;
+                    if (patrimonyRepository.findByPatrimonyCode(patrimonyCode).isPresent()) continue;
 
-                    Category category = categoryRepository.findByName(name)
-                            .orElseGet(() -> categoryRepository.save(new Category(UUID.randomUUID(), name, 365, "Importação Automática")));
+                    Category cat = categoryRepository.findByName(name)
+                            .orElseGet(() -> categoryRepository.save(new Category(UUID.randomUUID(), name, 365, "Importação")));
 
-                    Location location = locationRepository.findByName(locName)
-                            .orElseGet(() -> locationRepository.save(new Location(UUID.randomUUID(), locName, "Local Padrão", true)));
+                    String locName = (line.length > 11 && !line[11].trim().isEmpty()) ? line[11].trim() : "ALMOXARIFADO";
+                    Location loc = locationRepository.findByName(locName)
+                            .orElseGet(() -> locationRepository.save(new Location(UUID.randomUUID(), locName, "Local", true)));
 
-                    Patrimony patrimony = new Patrimony(UUID.randomUUID(), patrimonyCode, tag);
+                    Patrimony pat = patrimonyRepository.save(new Patrimony(UUID.randomUUID(), patrimonyCode, line[4].trim()));
 
-                    Instrument instrument = new Instrument();
-                    instrument.setId(UUID.randomUUID());
-                    instrument.setName(name);
-                    instrument.setSerialNumber(serial);
-                    instrument.setCategory(category);
-                    instrument.setLocation(location);
-                    instrument.setPatrimony(patrimony);
-                    instrument.setActive(true);
-                    instrument.setDeleted(false);
-                    instrument.setCreatedAt(LocalDateTime.now());
+                    Instrument ins = new Instrument();
+                    ins.setId(UUID.randomUUID());
+                    ins.setName(name);
+                    ins.setSerialNumber(line[5].trim());
+                    ins.setCategory(cat);
+                    ins.setLocation(loc);
+                    ins.setPatrimony(pat);
+                    ins.setActive(true);
+                    ins.setDeleted(false);
+                    ins.setCreatedAt(LocalDateTime.now());
+                    instrumentRepository.save(ins);
 
-                    instrument = instrumentRepository.save(instrument);
-
-                    String dateCalStr = getValidString(line[9]);
-                    String dateNextStr = getValidString(line[10]);
-                    String lab = getValidString(line[7]);
-                    String cert = getValidString(line[8]);
-
-                    if (dateCalStr != null) {
-                        Calibration calibration = new Calibration();
-                        calibration.setId(UUID.randomUUID());
-                        calibration.setInstrument(instrument);
-                        calibration.setCalibrationDate(LocalDate.parse(dateCalStr));
-                        
-                        if (dateNextStr != null) {
-                            calibration.setNextCalibrationDate(LocalDate.parse(dateNextStr));
+                    if (!line[9].trim().isEmpty() && !line[9].equalsIgnoreCase("N/C")) {
+                        Calibration cal = new Calibration();
+                        cal.setId(UUID.randomUUID());
+                        cal.setInstrument(ins);
+                        cal.setCalibrationDate(LocalDate.parse(line[9].trim(), fmt));
+                        if (!line[10].trim().isEmpty() && !line[10].equalsIgnoreCase("N/C")) {
+                            cal.setNextCalibrationDate(LocalDate.parse(line[10].trim(), fmt));
                         }
-                        
-                        calibration.setLaboratory(lab);
-                        calibration.setCertificateNumber(cert);
-                        
-                        calibrationRepository.save(calibration);
+                        cal.setLaboratory(line[7].trim());
+                        cal.setCertificateNumber(line[8].trim());
+                        calibrationRepository.save(cal);
                     }
-
                     count++;
                 } catch (Exception e) {
-                    log.warn("Falha ao processar linha do patrimônio {}: {}", patrimonyCode, e.getMessage());
+                    log.warn("Erro na linha {}: {}", count + 6, e.getMessage());
                 }
             }
-            log.info("Carga de instrumentos finalizada. {} novos registros e calibrações inseridos.", count);
+            log.info("Carga finalizada: {} instrumentos inseridos.", count);
         }
-    }
-
-    private String getValidString(String value) {
-        if (value == null || value.trim().isEmpty() || value.trim().equalsIgnoreCase("N/C")) {
-            return null;
-        }
-        return value.trim();
     }
 }
