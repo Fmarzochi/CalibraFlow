@@ -1,53 +1,74 @@
 package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
-@Table(name = "tb_instruments")
-@Data
+@Table(name = "instruments")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Instrument {
 
     @Id
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String tag;
 
     @Column(nullable = false)
     private String name;
 
+    private String manufacturer;
+
+    private String model;
+
+    @Column(name = "serial_number")
     private String serialNumber;
 
-    @Column(nullable = false)
-    private Boolean active;
+    private String range;
 
-    @Column(nullable = false)
-    private Boolean deleted;
+    private String tolerance;
 
-    private LocalDateTime createdAt;
+    private String resolution;
 
-    private LocalDateTime deletedAt;
-
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
     private Location location;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "patrimony_id")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "patrimony_id", referencedColumnName = "id")
     private Patrimony patrimony;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "periodicity_id")
+    private Periodicity periodicity;
+
+    @Column(nullable = false)
+    private boolean active = true;
+
+    @Column(nullable = false)
+    private boolean deleted = false;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @PrePersist
     protected void onCreate() {
-        if (this.createdAt == null) this.createdAt = LocalDateTime.now();
-        if (this.active == null) this.active = true;
-        if (this.deleted == null) this.deleted = false;
+        this.createdAt = LocalDateTime.now();
+        this.active = true;
+        this.deleted = false;
     }
 }
