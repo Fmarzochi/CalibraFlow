@@ -1,0 +1,15 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+datafixer:
+  input:
+    filename: instrumentos_completo.csv
+    directory: ./data/input
+  output:
+    filename: instrumentos_limpos.xlsx
+    directory: ./data/output
+  processing:
+    skip-lines: 5

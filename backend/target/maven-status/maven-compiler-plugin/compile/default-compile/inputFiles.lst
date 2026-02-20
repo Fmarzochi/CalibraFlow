@@ -8,10 +8,12 @@
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/MovementRepository.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/CalibrationService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/InstrumentRepository.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/config/AsyncConfig.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/UserRepository.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/CategoryController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/CategoryService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/config/SecurityConfig.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/controller/DataFixerController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/CalibrationRepository.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/CalibraFlowApiApplication.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Location.java
@@ -31,8 +33,10 @@
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/CalibrationController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/MigrationService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/LocationService.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/tools/DataFixer.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/MigrationController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Category.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Movement.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/PeriodicityController.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/service/DataFixerService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/config/TestConfig.java
