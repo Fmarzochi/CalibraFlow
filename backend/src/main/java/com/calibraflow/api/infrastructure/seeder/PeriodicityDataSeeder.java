@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 @Component
 @Order(1)
@@ -68,7 +67,6 @@ public class PeriodicityDataSeeder implements CommandLineRunner {
                     Integer days = Integer.parseInt(daysStr);
 
                     Periodicity periodicity = new Periodicity();
-                    periodicity.setId(UUID.randomUUID());
                     periodicity.setInstrumentName(instrumentName);
                     periodicity.setDays(days);
 
