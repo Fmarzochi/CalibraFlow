@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.Optional;
 
 @Service
@@ -22,12 +21,12 @@ public class MovementService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Movement> findById(UUID id) {
+    public Optional<Movement> findById(Long id) {
         return movementRepository.findById(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Movement> findByInstrument(UUID instrumentId) {
+    public List<Movement> findByInstrument(Long instrumentId) {
         return movementRepository.findByInstrumentIdOrderByMovementDateDesc(instrumentId);
     }
 
