@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "tb_movements")
@@ -16,14 +15,14 @@ import java.util.UUID;
 public class Movement {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime movementDate; // Data e Hora exata da movimentação
+    private LocalDateTime movementDate;
 
     @Column(columnDefinition = "TEXT")
-    private String reason; // Motivo (Ex: "Envio para calibração externa")
+    private String reason;
 
     @ManyToOne
     @JoinColumn(name = "instrument_id", nullable = false)
@@ -31,15 +30,15 @@ public class Movement {
 
     @ManyToOne
     @JoinColumn(name = "origin_id")
-    private Location origin; // De onde saiu (pode ser null se for novo)
+    private Location origin;
 
     @ManyToOne
     @JoinColumn(name = "destination_id", nullable = false)
-    private Location destination; // Para onde foi
+    private Location destination;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User movedBy; // Quem realizou a movimentação (Auditoria)
+    private User movedBy;
 
     @PrePersist
     public void prePersist() {
