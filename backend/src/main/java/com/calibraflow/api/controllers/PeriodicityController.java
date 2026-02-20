@@ -1,7 +1,7 @@
 package com.calibraflow.api.controllers;
 
 import com.calibraflow.api.domain.entities.Periodicity;
-import com.calibraflow.api.services.PeriodicityService;
+import com.calibraflow.api.domain.services.PeriodicityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
