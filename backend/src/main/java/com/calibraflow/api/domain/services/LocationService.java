@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.Optional;
 
 @Service
@@ -22,7 +21,7 @@ public class LocationService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Location> findById(UUID id) {
+    public Optional<Location> findById(Long id) {
         return locationRepository.findById(id);
     }
 
@@ -32,7 +31,7 @@ public class LocationService {
     }
 
     @Transactional
-    public Optional<Location> toggleActive(UUID id) {
+    public Optional<Location> toggleActive(Long id) {
         return locationRepository.findById(id)
                 .map(location -> {
                     location.setActive(!location.getActive());
