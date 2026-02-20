@@ -72,11 +72,9 @@ public class InstrumentDataSeeder implements CommandLineRunner {
                     String name = getValidString(line[0]);
                     String tag = getValidString(line[4]);
                     String serial = getValidString(line[5]);
-                    String locName = getValidString(line[11]);
+                    String rawLocName = getValidString(line[11]);
                     
-                    if (locName == null) {
-                        locName = "ALMOXARIFADO";
-                    }
+                    final String locName = (rawLocName == null) ? "ALMOXARIFADO" : rawLocName;
 
                     Category category = categoryRepository.findByName(name)
                             .orElseGet(() -> categoryRepository.save(new Category(UUID.randomUUID(), name, 365, "Importação Automática")));
