@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +19,7 @@ public class PeriodicityService {
         return periodicityRepository.findAll();
     }
 
-    public Optional<Periodicity> findById(UUID id) {
+    public Optional<Periodicity> findById(Long id) {
         return periodicityRepository.findById(id);
     }
 
