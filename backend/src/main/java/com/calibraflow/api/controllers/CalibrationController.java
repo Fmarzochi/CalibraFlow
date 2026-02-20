@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/calibrations")
@@ -23,14 +22,14 @@ public class CalibrationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Calibration> findById(@PathVariable UUID id) {
+    public ResponseEntity<Calibration> findById(@PathVariable Long id) {
         return calibrationService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/instrument/{instrumentId}")
-    public ResponseEntity<List<Calibration>> findByInstrument(@PathVariable UUID instrumentId) {
+    public ResponseEntity<List<Calibration>> findByInstrument(@PathVariable Long instrumentId) {
         return ResponseEntity.ok(calibrationService.findByInstrument(instrumentId));
     }
 
