@@ -1,109 +1,137 @@
 package com.calibraflow.api.tools;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-@Slf4j
 @Component
 public class DataFixer {
 
-    @Value("${datafixer.input.filename:instrumentos_completo.csv}")
-    private String inputFileName;
-
-    @Value("${datafixer.output.filename:instrumentos_limpos.xlsx}")
-    private String outputFileName;
-
-    @Value("${datafixer.processing.skip-lines:5}")
-    private int skipLines;
+    private static final Logger log = LoggerFactory.getLogger(DataFixer.class);
+    private static final Path INPUT_PATH = Paths.get("src/main/resources/instrumentos_completo.csv");
+    private static final Path OUTPUT_PATH = Paths.get("src/main/resources/instrumentos_limpos.csv");
+    private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy");
+    private static final DateTimeFormatter OUTPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public Path process() {
-        log.info("=== CalibraFlow Data Engineering: Iniciando Tratamento com Apache POI ===");
+        log.info("Iniciando processo de ETL no arquivo: {}", INPUT_PATH);
 
-        try {
-            Path root = Paths.get("").toAbsolutePath();
-            Path inputPath = findFilePath(root, inputFileName);
+        if (!Files.exists(INPUT_PATH)) {
+            log.error("Arquivo de entrada não encontrado: {}", INPUT_PATH);
+            return null;
+        }
 
-            if (inputPath == null) {
-                log.error("ERRO CRÍTICO: Não foi possível localizar {}", inputFileName);
-                return null;
+        Map<String, String[]> deduplicatedRecords = new LinkedHashMap<>();
+        int linesRead = 0;
+        int duplicatesRemoved = 0;
+        int discardedRecords = 0;
+
+        try (BufferedReader reader = Files.newBufferedReader(INPUT_PATH, StandardCharsets.UTF_8)) {
+            String line;
+            int skipCount = 5;
+
+            while (skipCount > 0 && reader.readLine() != null) {
+                skipCount--;
             }
 
-            Path outputPath = inputPath.getParent().resolve(outputFileName);
-            log.info("Lendo arquivo de: {}", inputPath);
+            while ((line = reader.readLine()) != null) {
+                linesRead++;
+                String[] columns = line.split(",", -1);
 
-            try (Workbook workbook = new XSSFWorkbook()) {
-                Sheet sheet = workbook.createSheet("Dados_Tratados");
+                for (int i = 0; i < columns.length; i++) {
+                    columns[i] = columns[i].trim();
+                }
 
-                List<String[]> rows = readRawCsv(inputPath.toFile(), skipLines);
+                if (columns.length <= 3) {
+                    discardedRecords++;
+                    continue;
+                }
 
-                int rowIdx = 0;
-                for (String[] columns : rows) {
-                    Row row = sheet.createRow(rowIdx++);
-                    for (int colIdx = 0; colIdx < columns.length; colIdx++) {
-                        String rawValue = columns[colIdx].trim();
+                String patrimony = columns[3];
 
-                        if ((colIdx == 9 || colIdx == 10) && isGarbage(rawValue)) {
-                            row.createCell(colIdx).setCellValue("");
-                        } else {
-                            row.createCell(colIdx).setCellValue(rawValue);
-                        }
+                if (patrimony.isEmpty() || patrimony.equalsIgnoreCase("N/C")) {
+                    log.warn("Registro descartado: Patrimônio inválido ou vazio. Linha relativa: {}", linesRead);
+                    discardedRecords++;
+                    continue;
+                }
+
+                if (columns.length > 9) {
+                    columns[9] = normalizeDate(columns[9]);
+                }
+                if (columns.length > 10) {
+                    columns[10] = normalizeDate(columns[10]);
+                }
+
+                if (deduplicatedRecords.containsKey(patrimony)) {
+                    String[] existing = deduplicatedRecords.get(patrimony);
+                    if (countFilledColumns(columns) >= countFilledColumns(existing)) {
+                        deduplicatedRecords.put(patrimony, columns);
                     }
+                    duplicatesRemoved++;
+                } else {
+                    deduplicatedRecords.put(patrimony, columns);
                 }
-
-                try (FileOutputStream fos = new FileOutputStream(outputPath.toFile())) {
-                    workbook.write(fos);
-                }
-
-                log.info("=== SUCESSO ===");
-                log.info("Arquivo gerado: {}", outputPath.toAbsolutePath());
-                log.info("Total de registros limpos: {}", (rowIdx - 1));
-
-                return outputPath;
             }
 
         } catch (Exception e) {
-            log.error("FALHA NA OPERAÇÃO: {}", e.getMessage(), e);
+            log.error("Erro durante a extração e transformação: {}", e.getMessage());
+            return null;
+        }
+
+        try (BufferedWriter writer = Files.newBufferedWriter(OUTPUT_PATH, StandardCharsets.UTF_8);
+             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+
+            for (String[] record : deduplicatedRecords.values()) {
+                csvPrinter.printRecord((Object[]) record);
+            }
+
+            log.info("ETL concluído com sucesso.");
+            log.info("Linhas lidas: {}", linesRead);
+            log.info("Registros descartados: {}", discardedRecords);
+            log.info("Duplicatas removidas: {}", duplicatesRemoved);
+            log.info("Linhas salvas: {}", deduplicatedRecords.size());
+
+            return OUTPUT_PATH;
+
+        } catch (Exception e) {
+            log.error("Erro durante o carregamento: {}", e.getMessage());
             return null;
         }
     }
 
-    private boolean isGarbage(String val) {
-        if (val == null || val.isEmpty()) return true;
-        String v = val.toUpperCase();
-        return v.contains("INDETERMINADO") || v.contains("DESATIVADO") || v.equals("N/C");
+    private String normalizeDate(String dateStr) {
+        if (dateStr.isEmpty() || dateStr.equalsIgnoreCase("INDETERMINADO") || dateStr.equalsIgnoreCase("N/C")) {
+            return "";
+        }
+        try {
+            LocalDate date = LocalDate.parse(dateStr, INPUT_DATE_FORMAT);
+            return date.format(OUTPUT_DATE_FORMAT);
+        } catch (DateTimeParseException e) {
+            return "";
+        }
     }
 
-    private Path findFilePath(Path start, String name) throws IOException {
-        return Files.walk(start)
-                .filter(p -> p.getFileName().toString().equals(name))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private List<String[]> readRawCsv(File file, int skip) throws IOException {
-        List<String[]> list = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
-            String line;
-            int count = 0;
-            while ((line = br.readLine()) != null) {
-                if (count < skip) {
-                    count++;
-                    continue;
-                }
-                list.add(line.split(",", -1));
+    private int countFilledColumns(String[] columns) {
+        int count = 0;
+        for (String col : columns) {
+            if (!col.isEmpty()) {
+                count++;
             }
         }
-        return list;
+        return count;
     }
 }
