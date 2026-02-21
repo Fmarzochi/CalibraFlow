@@ -14,10 +14,10 @@ datafixer:
   processing:
     skip-lines: 5
 
-    api:
-      security:
-        token:
-          secret: ${JWT_SECRET:calibraflow-secret-default}
-          expiration: 7200000 # 2 horas
-        refresh-token:
-          expiration: 86400000 # 24 horas
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:calibraflow-secret-default}
+      expiration: 7200000 # 2 horas
+    refresh-token:
+      expiration: 86400000 # 24 horas
