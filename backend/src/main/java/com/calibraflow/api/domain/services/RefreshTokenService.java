@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RefreshTokenService {
 
-    @Value("${api.security.refresh-token.expiration:86400000}") // 24 horas em ms (padrão)
+    @Value("${api.security.refresh-token.expiration:86400000}")
     private Long refreshTokenDurationMs;
 
     private final RefreshTokenRepository refreshTokenRepository;
@@ -27,8 +27,10 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken createRefreshToken(User user) {
-        // Remove tokens antigos do usuário (opcional)
+        // Remove tokens antigos do usuário
         refreshTokenRepository.deleteByUser(user);
+        // Garante que a deleção seja aplicada antes da inserção
+        refreshTokenRepository.flush();
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
