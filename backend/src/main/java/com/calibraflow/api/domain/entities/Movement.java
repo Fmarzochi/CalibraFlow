@@ -33,7 +33,7 @@ public class Movement {
     private Location origin;
 
     @ManyToOne
-    @JoinColumn(name = "destination_id", nullable = false)
+    @JoinColumn(name = "destination_id", nullable = true)
     private Location destination;
 
     @ManyToOne
