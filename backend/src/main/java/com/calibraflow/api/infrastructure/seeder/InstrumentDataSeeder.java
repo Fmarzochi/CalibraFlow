@@ -3,7 +3,6 @@ package com.calibraflow.api.infrastructure.seeder;
 import com.calibraflow.api.domain.entities.Category;
 import com.calibraflow.api.domain.entities.Instrument;
 import com.calibraflow.api.domain.entities.Location;
-import com.calibraflow.api.domain.entities.Patrimony;
 import com.calibraflow.api.domain.entities.Periodicity;
 import com.calibraflow.api.domain.repositories.CategoryRepository;
 import com.calibraflow.api.domain.repositories.InstrumentRepository;
@@ -33,7 +32,7 @@ import java.util.Optional;
 public class InstrumentDataSeeder implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(InstrumentDataSeeder.class);
-    private static final Path CLEAN_CSV_PATH = Paths.get("src/main/resources/instrumentos_limpos.csv");
+    private static final Path CLEAN_CSV_PATH = Paths.get("backend/src/main/resources/instrumentos_limpos.csv");
 
     private final InstrumentRepository instrumentRepository;
     private final CategoryRepository categoryRepository;
@@ -77,22 +76,18 @@ public class InstrumentDataSeeder implements CommandLineRunner {
                 Location location = findOrCreateLocation(data[2]);
                 Optional<Periodicity> periodicity = periodicityRepository.findByInstrumentName(name);
 
-                Patrimony patrimony = new Patrimony();
-                patrimony.setPatrimonyCode(data[3]);
-                patrimony.setTag(tag);
-
                 Instrument instrument = Instrument.builder()
                         .tag(tag)
                         .name(name)
                         .category(category)
                         .location(location)
-                        .patrimony(patrimony)
                         .periodicity(periodicity.orElse(null))
                         .manufacturer(data.length > 4 ? data[4] : "")
                         .model(data.length > 5 ? data[5] : "")
                         .serialNumber(data.length > 6 ? data[6] : "")
                         .range(data.length > 7 ? data[7] : "")
                         .tolerance(data.length > 8 ? data[8] : "")
+                        .patrimonyCode(data.length > 3 ? data[3] : null)
                         .active(true)
                         .deleted(false)
                         .build();

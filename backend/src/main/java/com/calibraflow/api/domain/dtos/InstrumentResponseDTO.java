@@ -31,7 +31,7 @@ public record InstrumentResponseDTO(
                 instrument.getResolution(),
                 instrument.getCategory() != null ? instrument.getCategory().getName() : null,
                 instrument.getLocation() != null ? instrument.getLocation().getName() : null,
-                instrument.getPatrimony() != null ? instrument.getPatrimony().getPatrimonyCode() : null,
+                instrument.getPatrimonyCode(),
                 instrument.getPeriodicity() != null ? instrument.getPeriodicity().getInstrumentName() : null,
                 instrument.isActive()
         );

@@ -41,6 +41,9 @@ public class Instrument {
 
     private String resolution;
 
+    @Column(name = "patrimony_code", unique = true)
+    private String patrimonyCode;
+
     @NotNull(message = "A categoria é obrigatória")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -50,10 +53,6 @@ public class Instrument {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_id")
     private Location location;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "patrimony_id", referencedColumnName = "id")
-    private Patrimony patrimony;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "periodicity_id")
