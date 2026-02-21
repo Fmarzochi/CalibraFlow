@@ -15,4 +15,6 @@ public interface InstrumentRepository extends JpaRepository<Instrument, Long> {
 
     @Query("SELECT i FROM Instrument i WHERE i.id = :id AND i.active = true AND i.deleted = false")
     Optional<Instrument> findActiveById(@Param("id") Long id);
+
+    Optional<Instrument> findByTag(String tag);
 }
