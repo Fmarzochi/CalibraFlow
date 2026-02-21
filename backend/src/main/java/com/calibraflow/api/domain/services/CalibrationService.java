@@ -1,13 +1,16 @@
 package com.calibraflow.api.domain.services;
 
+import com.calibraflow.api.domain.dtos.UpcomingCalibrationDTO;
 import com.calibraflow.api.domain.entities.Calibration;
 import com.calibraflow.api.domain.repositories.CalibrationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,5 +36,17 @@ public class CalibrationService {
     @Transactional
     public Calibration save(Calibration calibration) {
         return calibrationRepository.save(calibration);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UpcomingCalibrationDTO> findUpcomingCalibrations(int daysAhead) {
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = today.plusDays(daysAhead);
+
+        List<Calibration> calibrations = calibrationRepository.findByNextCalibrationDateBetween(today, endDate);
+
+        return calibrations.stream()
+                .map(UpcomingCalibrationDTO::new)
+                .collect(Collectors.toList());
     }
 }
