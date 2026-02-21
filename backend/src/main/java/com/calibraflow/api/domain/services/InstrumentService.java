@@ -1,11 +1,17 @@
 package com.calibraflow.api.domain.services;
 
+import com.calibraflow.api.domain.dtos.InstrumentRequestDTO;
+import com.calibraflow.api.domain.entities.Category;
 import com.calibraflow.api.domain.entities.Instrument;
 import com.calibraflow.api.domain.entities.Location;
 import com.calibraflow.api.domain.entities.Movement;
+import com.calibraflow.api.domain.entities.Periodicity;
 import com.calibraflow.api.domain.entities.User;
+import com.calibraflow.api.domain.repositories.CategoryRepository;
 import com.calibraflow.api.domain.repositories.InstrumentRepository;
+import com.calibraflow.api.domain.repositories.LocationRepository;
 import com.calibraflow.api.domain.repositories.MovementRepository;
+import com.calibraflow.api.domain.repositories.PeriodicityRepository;
 import com.calibraflow.api.domain.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +28,9 @@ public class InstrumentService {
     private final InstrumentRepository instrumentRepository;
     private final MovementRepository movementRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
+    private final LocationRepository locationRepository;
+    private final PeriodicityRepository periodicityRepository;
 
     @Transactional(readOnly = true)
     public List<Instrument> findAllActive() {
@@ -40,6 +49,38 @@ public class InstrumentService {
 
     @Transactional
     public Instrument save(Instrument instrument) {
+        return instrumentRepository.save(instrument);
+    }
+
+    @Transactional
+    public Instrument createFromDTO(InstrumentRequestDTO dto) {
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Categoria não encontrada"));
+        Location location = locationRepository.findById(dto.getLocationId())
+                .orElseThrow(() -> new IllegalArgumentException("Localização não encontrada"));
+        Periodicity periodicity = null;
+        if (dto.getPeriodicityId() != null) {
+            periodicity = periodicityRepository.findById(dto.getPeriodicityId())
+                    .orElseThrow(() -> new IllegalArgumentException("Periodicidade não encontrada"));
+        }
+
+        Instrument instrument = Instrument.builder()
+                .tag(dto.getTag())
+                .name(dto.getName())
+                .manufacturer(dto.getManufacturer())
+                .model(dto.getModel())
+                .serialNumber(dto.getSerialNumber())
+                .range(dto.getRange())
+                .tolerance(dto.getTolerance())
+                .resolution(dto.getResolution())
+                .patrimonyCode(dto.getPatrimonyCode())
+                .category(category)
+                .location(location)
+                .periodicity(periodicity)
+                .active(true)
+                .deleted(false)
+                .build();
+
         return instrumentRepository.save(instrument);
     }
 

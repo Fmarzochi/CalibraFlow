@@ -1,5 +1,6 @@
 package com.calibraflow.api.controllers;
 
+import com.calibraflow.api.domain.dtos.InstrumentRequestDTO;
 import com.calibraflow.api.domain.dtos.InstrumentResponseDTO;
 import com.calibraflow.api.domain.entities.Location;
 import com.calibraflow.api.domain.entities.Instrument;
@@ -45,8 +46,8 @@ public class InstrumentController {
     }
 
     @PostMapping
-    public ResponseEntity<InstrumentResponseDTO> create(@Valid @RequestBody Instrument instrument) {
-        Instrument savedInstrument = instrumentService.save(instrument);
+    public ResponseEntity<InstrumentResponseDTO> create(@Valid @RequestBody InstrumentRequestDTO dto) {
+        Instrument savedInstrument = instrumentService.createFromDTO(dto);
         return ResponseEntity.ok(new InstrumentResponseDTO(savedInstrument));
     }
 
