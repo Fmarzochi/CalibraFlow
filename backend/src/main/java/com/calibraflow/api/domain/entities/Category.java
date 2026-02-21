@@ -19,8 +19,8 @@ public class Category {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(name = "validity_months")
-    private Integer validityMonths;
+    @Column(name = "validity_days")
+    private Integer validityDays; // renomeado de validity_months para validity_days, mas podemos manter os dois? Vamos padronizar para dias.
 
     private String description;
 }
