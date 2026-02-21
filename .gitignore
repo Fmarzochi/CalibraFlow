@@ -1,6 +1,6 @@
-# ==============================
+# =============================
 # Banco de Dados / Docker
-# ==============================
+# =============================
 postgres-data/
 postgres-data-NOVO/
 calibraflow_data/
@@ -12,8 +12,7 @@ PG_*
 docker-compose.override.yml
 
 # ==============================
-<<<<<<< HEAD
-# Dados Brutos / ETL (Segurança de Dados)
+# Dados Brutos / ETL (Segurança)
 # ==============================
 *.csv
 *.xlsx
@@ -21,15 +20,6 @@ docker-compose.override.yml
 /data/
 /src/main/resources/*.csv
 /src/main/resources/*.xlsx
-=======
-# Dados Brutos / Planilhas (Segurança)
-# ==============================
-*.xlsx
-*.xls
-*.csv
-/data/
-Instrumentos_Tratados.xlsx
->>>>>>> d1e5cab (Removo planilha de dados do rastreio e blindo o gitignore contra arquivos xlsx)
 
 # ==============================
 # IDEs: IntelliJ IDEA e Eclipse
@@ -85,21 +75,12 @@ pnpm-debug.log*
 # Segurança / Variáveis de Ambiente
 # ==============================
 .env
-<<<<<<< HEAD
 .env.*
 !.env.example
 application-secret.properties
 application-secret.yml
 secrets.yml
 key.json
-=======
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-application-secret.properties
-application-secret.yml
->>>>>>> d1e5cab (Removo planilha de dados do rastreio e blindo o gitignore contra arquivos xlsx)
 
 # ==============================
 # Sistema Operacional
