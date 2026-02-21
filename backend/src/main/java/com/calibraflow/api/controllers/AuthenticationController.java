@@ -30,9 +30,7 @@ public class AuthenticationController {
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
-
         var token = tokenService.generateToken((User) auth.getPrincipal());
-
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
@@ -41,12 +39,9 @@ public class AuthenticationController {
         if (this.userRepository.findByUsername(data.username()).isPresent()) {
             return ResponseEntity.badRequest().build();
         }
-
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.username(), encryptedPassword, data.roles());
-
         this.userRepository.save(newUser);
-
         return ResponseEntity.ok().build();
     }
 }

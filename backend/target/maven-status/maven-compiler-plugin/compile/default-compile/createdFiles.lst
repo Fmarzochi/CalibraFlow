@@ -35,7 +35,6 @@ com/calibraflow/api/infrastructure/exceptions/ErrorResponse.class
 com/calibraflow/api/domain/entities/Patrimony.class
 com/calibraflow/api/domain/services/InstrumentService.class
 com/calibraflow/api/domain/entities/Patrimony$PatrimonyBuilder.class
-com/calibraflow/api/config/SecurityConfig.class
 com/calibraflow/api/domain/services/UserService.class
 com/calibraflow/api/domain/repositories/CalibrationRepository.class
 com/calibraflow/api/controllers/PeriodicityController.class
