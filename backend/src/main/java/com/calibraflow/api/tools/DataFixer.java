@@ -1,13 +1,18 @@
 package com.calibraflow.api.tools;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
+import com.calibraflow.config.DataFixerConfig;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,16 +27,23 @@ import java.util.Map;
 public class DataFixer {
 
     private static final Logger log = LoggerFactory.getLogger(DataFixer.class);
-    private static final Path INPUT_PATH = Paths.get("src/main/resources/instrumentos_completo.csv");
-    private static final Path OUTPUT_PATH = Paths.get("src/main/resources/instrumentos_limpos.csv");
     private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy");
     private static final DateTimeFormatter OUTPUT_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public Path process() {
-        log.info("Iniciando processo de ETL no arquivo: {}", INPUT_PATH);
+    private final DataFixerConfig config;
 
-        if (!Files.exists(INPUT_PATH)) {
-            log.error("Arquivo de entrada não encontrado: {}", INPUT_PATH);
+    public DataFixer(DataFixerConfig config) {
+        this.config = config;
+    }
+
+    public Path process() {
+        Path inputPath = Paths.get(config.getInput().getDirectory(), config.getInput().getFilename());
+        Path outputPath = Paths.get(config.getOutput().getDirectory(), config.getOutput().getFilename());
+
+        log.info("Iniciando processo de ETL no arquivo: {}", inputPath);
+
+        if (!Files.exists(inputPath)) {
+            log.error("Arquivo de entrada não encontrado: {}", inputPath);
             return null;
         }
 
@@ -40,20 +52,25 @@ public class DataFixer {
         int duplicatesRemoved = 0;
         int discardedRecords = 0;
 
-        try (BufferedReader reader = Files.newBufferedReader(INPUT_PATH, StandardCharsets.UTF_8)) {
-            String line;
-            int skipCount = 5;
+        CSVParser parser = new CSVParserBuilder()
+                .withSeparator(',')
+                .withIgnoreQuotations(false)
+                .build();
 
-            while (skipCount > 0 && reader.readLine() != null) {
-                skipCount--;
-            }
+        try (BufferedReader reader = Files.newBufferedReader(inputPath, StandardCharsets.UTF_8);
+             CSVReader csvReader = new CSVReaderBuilder(reader)
+                     .withSkipLines(config.getProcessing().getSkipLines())
+                     .withCSVParser(parser)
+                     .build()) {
 
-            while ((line = reader.readLine()) != null) {
+            String[] columns;
+            while ((columns = csvReader.readNext()) != null) {
                 linesRead++;
-                String[] columns = line.split(",", -1);
 
                 for (int i = 0; i < columns.length; i++) {
-                    columns[i] = columns[i].trim();
+                    if (columns[i] != null) {
+                        columns[i] = columns[i].trim();
+                    }
                 }
 
                 if (columns.length <= 3) {
@@ -63,7 +80,7 @@ public class DataFixer {
 
                 String patrimony = columns[3];
 
-                if (patrimony.isEmpty() || patrimony.equalsIgnoreCase("N/C")) {
+                if (patrimony == null || patrimony.isEmpty() || patrimony.equalsIgnoreCase("N/C")) {
                     log.warn("Registro descartado: Patrimônio inválido ou vazio. Linha relativa: {}", linesRead);
                     discardedRecords++;
                     continue;
@@ -87,16 +104,19 @@ public class DataFixer {
                 }
             }
 
+        } catch (IOException e) {
+            log.error("Erro durante a leitura do arquivo CSV: {}", e.getMessage());
+            return null;
         } catch (Exception e) {
-            log.error("Erro durante a extração e transformação: {}", e.getMessage());
+            log.error("Erro inesperado durante o processamento: {}", e.getMessage());
             return null;
         }
 
-        try (BufferedWriter writer = Files.newBufferedWriter(OUTPUT_PATH, StandardCharsets.UTF_8);
-             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardCharsets.UTF_8);
+             CSVWriter csvWriter = new CSVWriter(writer)) {
 
             for (String[] record : deduplicatedRecords.values()) {
-                csvPrinter.printRecord((Object[]) record);
+                csvWriter.writeNext(record);
             }
 
             log.info("ETL concluído com sucesso.");
@@ -105,16 +125,16 @@ public class DataFixer {
             log.info("Duplicatas removidas: {}", duplicatesRemoved);
             log.info("Linhas salvas: {}", deduplicatedRecords.size());
 
-            return OUTPUT_PATH;
+            return outputPath;
 
-        } catch (Exception e) {
-            log.error("Erro durante o carregamento: {}", e.getMessage());
+        } catch (IOException e) {
+            log.error("Erro durante a escrita do arquivo CSV: {}", e.getMessage());
             return null;
         }
     }
 
     private String normalizeDate(String dateStr) {
-        if (dateStr.isEmpty() || dateStr.equalsIgnoreCase("INDETERMINADO") || dateStr.equalsIgnoreCase("N/C")) {
+        if (dateStr == null || dateStr.isEmpty() || dateStr.equalsIgnoreCase("INDETERMINADO") || dateStr.equalsIgnoreCase("N/C")) {
             return "";
         }
         try {
@@ -128,7 +148,7 @@ public class DataFixer {
     private int countFilledColumns(String[] columns) {
         int count = 0;
         for (String col : columns) {
-            if (!col.isEmpty()) {
+            if (col != null && !col.isEmpty()) {
                 count++;
             }
         }

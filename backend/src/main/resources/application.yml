@@ -7,9 +7,9 @@ spring:
 datafixer:
   input:
     filename: instrumentos_completo.csv
-    directory: ./data/input
+    directory: ./backend/src/main/resources
   output:
-    filename: instrumentos_limpos.xlsx
-    directory: ./data/output
+    filename: instrumentos_limpos.csv
+    directory: ./backend/src/main/resources
   processing:
     skip-lines: 5
