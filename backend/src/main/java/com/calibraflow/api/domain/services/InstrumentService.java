@@ -102,6 +102,11 @@ public class InstrumentService {
     }
 
     @Transactional
+    public Optional<Instrument> softDelete(Long id, User user, String reason) {
+        return softDelete(id, user.getId(), reason);
+    }
+
+    @Transactional
     public Optional<Instrument> updateLocation(Long id, Location newLocation, Long userId, String reason) {
         return instrumentRepository.findById(id)
                 .map(instrument -> {
@@ -114,6 +119,11 @@ public class InstrumentService {
 
                     return savedInstrument;
                 });
+    }
+
+    @Transactional
+    public Optional<Instrument> updateLocation(Long id, Location newLocation, User user, String reason) {
+        return updateLocation(id, newLocation, user.getId(), reason);
     }
 
     private void registrarMovimento(Instrument instrument, Location origin, Location destination, Long userId, String reason) {
