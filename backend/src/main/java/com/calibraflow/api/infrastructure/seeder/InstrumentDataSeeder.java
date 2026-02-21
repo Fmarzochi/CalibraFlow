@@ -23,7 +23,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -58,6 +60,8 @@ public class InstrumentDataSeeder implements CommandLineRunner {
         }
 
         List<Instrument> instrumentsToSave = new ArrayList<>();
+        Map<String, Category> categoryCache = new HashMap<>();
+        Map<String, Location> locationCache = new HashMap<>();
 
         try (BufferedReader reader = Files.newBufferedReader(CLEAN_CSV_PATH, StandardCharsets.UTF_8)) {
             String line;
@@ -72,22 +76,35 @@ public class InstrumentDataSeeder implements CommandLineRunner {
 
                 if (tag.isEmpty() || name.isEmpty()) continue;
 
-                Category category = findOrCreateCategory(name);
-                Location location = findOrCreateLocation(data[2]);
+                Category category = categoryCache.computeIfAbsent(name, k ->
+                        categoryRepository.findByName(k).orElseGet(() ->
+                                categoryRepository.save(Category.builder().name(k).build())
+                        )
+                );
+
+                Location location = locationCache.computeIfAbsent(data[2], locName -> {
+                    String finalName = (locName == null || locName.isEmpty()) ? "Não Informado" : locName;
+                    return locationRepository.findByName(finalName).orElseGet(() ->
+                            locationRepository.save(Location.builder().name(finalName).active(true).build())
+                    );
+                });
+
                 Optional<Periodicity> periodicity = periodicityRepository.findByInstrumentName(name);
+
+                String patrimonyCode = data.length > 3 ? data[3] : "";
 
                 Instrument instrument = Instrument.builder()
                         .tag(tag)
                         .name(name)
                         .category(category)
                         .location(location)
+                        .patrimonyCode(patrimonyCode)
                         .periodicity(periodicity.orElse(null))
                         .manufacturer(data.length > 4 ? data[4] : "")
                         .model(data.length > 5 ? data[5] : "")
                         .serialNumber(data.length > 6 ? data[6] : "")
                         .range(data.length > 7 ? data[7] : "")
                         .tolerance(data.length > 8 ? data[8] : "")
-                        .patrimonyCode(data.length > 3 ? data[3] : null)
                         .active(true)
                         .deleted(false)
                         .build();
@@ -103,16 +120,5 @@ public class InstrumentDataSeeder implements CommandLineRunner {
             log.error("Erro crítico durante a execução do seeder: {}", e.getMessage());
             throw new RuntimeException(e);
         }
-    }
-
-    private Category findOrCreateCategory(String name) {
-        return categoryRepository.findByName(name)
-                .orElseGet(() -> categoryRepository.save(Category.builder().name(name).build()));
-    }
-
-    private Location findOrCreateLocation(String name) {
-        String finalName = (name == null || name.isEmpty()) ? "Não Informado" : name;
-        return locationRepository.findByName(finalName)
-                .orElseGet(() -> locationRepository.save(Location.builder().name(finalName).active(true).build()));
     }
 }

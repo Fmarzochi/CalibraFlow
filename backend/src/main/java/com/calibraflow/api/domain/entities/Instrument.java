@@ -41,7 +41,7 @@ public class Instrument {
 
     private String resolution;
 
-    @Column(name = "patrimony_code", unique = true)
+    @Column(name = "patrimony_code")
     private String patrimonyCode;
 
     @NotNull(message = "A categoria é obrigatória")
