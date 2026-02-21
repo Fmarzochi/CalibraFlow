@@ -1,7 +1,8 @@
 package com.calibraflow.api.controllers;
 
-import com.calibraflow.api.domain.entities.Instrument;
+import com.calibraflow.api.domain.dtos.InstrumentResponseDTO;
 import com.calibraflow.api.domain.entities.Location;
+import com.calibraflow.api.domain.entities.Instrument;
 import com.calibraflow.api.domain.services.InstrumentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/instruments")
@@ -18,36 +20,45 @@ public class InstrumentController {
     private final InstrumentService instrumentService;
 
     @GetMapping
-    public ResponseEntity<List<Instrument>> findAll() {
-        return ResponseEntity.ok(instrumentService.findAllActive());
+    public ResponseEntity<List<InstrumentResponseDTO>> findAll() {
+        List<InstrumentResponseDTO> instruments = instrumentService.findAllActive()
+                .stream()
+                .map(InstrumentResponseDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(instruments);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Instrument>> findAllIncludingDeleted() {
-        return ResponseEntity.ok(instrumentService.findAll());
+    public ResponseEntity<List<InstrumentResponseDTO>> findAllIncludingDeleted() {
+        List<InstrumentResponseDTO> instruments = instrumentService.findAll()
+                .stream()
+                .map(InstrumentResponseDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(instruments);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Instrument> findById(@PathVariable Long id) {
+    public ResponseEntity<InstrumentResponseDTO> findById(@PathVariable Long id) {
         return instrumentService.findById(id)
-                .map(ResponseEntity::ok)
+                .map(instrument -> ResponseEntity.ok(new InstrumentResponseDTO(instrument)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Instrument> create(@Valid @RequestBody Instrument instrument) {
-        return ResponseEntity.ok(instrumentService.save(instrument));
+    public ResponseEntity<InstrumentResponseDTO> create(@Valid @RequestBody Instrument instrument) {
+        Instrument savedInstrument = instrumentService.save(instrument);
+        return ResponseEntity.ok(new InstrumentResponseDTO(savedInstrument));
     }
 
     @PutMapping("/{id}/location")
-    public ResponseEntity<Instrument> updateLocation(
+    public ResponseEntity<InstrumentResponseDTO> updateLocation(
             @PathVariable Long id,
             @RequestBody Location newLocation,
             @RequestParam Long userId,
             @RequestParam String reason) {
 
         return instrumentService.updateLocation(id, newLocation, userId, reason)
-                .map(ResponseEntity::ok)
+                .map(instrument -> ResponseEntity.ok(new InstrumentResponseDTO(instrument)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
