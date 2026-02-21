@@ -1,8 +1,16 @@
 # CalibraFlow
 
+![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
+![Java](https://img.shields.io/badge/Backend-Java%2021-orange)
+![Spring](https://img.shields.io/badge/Framework-Spring%20Boot%203.2-green)
+![Security](https://img.shields.io/badge/Security-JWT%20%26%20Spring%20Security-blue)
+![Database](https://img.shields.io/badge/Database-PostgreSQL-blue)
+![Data](https://img.shields.io/badge/Data-Apache%20POI%20%26%20OpenCSV-red)
+
 ## 📌 Sobre o Projeto
 
-Eu desenvolvi o **CalibraFlow** como um sistema corporativo auditável para gestão do ciclo de vida de calibração de instrumentos.
+Eu desenvolvi o **CalibraFlow** como um sistema corporativo auditável para gestão do ciclo de vida de
+calibração de instrumentos.
 
 O objetivo do sistema é garantir:
 
@@ -11,16 +19,19 @@ O objetivo do sistema é garantir:
 - **Histórico imutável** de calibrações
 - **Auditoria total** de movimentações e responsáveis
 
-O CalibraFlow substitui controles manuais descentralizados por uma aplicação segura, centralizada e preparada para uso multiusuário em ambiente corporativo.
+O CalibraFlow substitui controles manuais descentralizados por uma aplicação segura, centralizada e preparada
+para uso multiusuário em ambiente corporativo.
 
 ---
 
 ## 🚀 Tecnologias (Stack)
 
 - **Backend:** Java 21 + Spring Boot 3.2 (Foco em SOLID)
-- **Frontend:** React + Vite (Planejado)
+- **Segurança:** Spring Security + JWT (Auth0)
+- **Processamento de Dados:** Apache POI (Excel/XLSX) e OpenCSV
 - **Banco de Dados:** PostgreSQL (Dockerizado)
 - **Persistência:** Spring Data JPA + Hibernate
+- **Ferramentas:** Flyway (Migrações), Lombok e Bean Validation
 
 ---
 
@@ -51,36 +62,31 @@ O CalibraFlow substitui controles manuais descentralizados por uma aplicação s
 **Infraestrutura e Persistência (Estabilizada):**
 - [x] Configuração do ambiente com Java 21 e Spring Boot 3.2.
 - [x] Dockerização do banco de dados PostgreSQL.
-- [x] **Refatoração de Identificadores:** Migração concluída de identificadores UUID para 
-- identificadores sequenciais (`Long`/`BigInt`) para garantir compatibilidade e performance.
-- [x] **Estratégia de Identidade:** Implementação de `GenerationType.IDENTITY` em todas as 
-- entidades.
+- [x] **Refatoração de Identificadores:** Migração de UUID para sequenciais (`Long`/`BigInt`) concluída.
+- [x] **Estratégia de Identidade:** Implementação de `GenerationType.IDENTITY`.
 
 **Domínio e Mapeamento (Concluído):**
-- [x] Mapeamento relacional das entidades: `Role`, `User`, `Patrimony`, `Instrument`, `Category`, `Location`, `Movement` e `Calibration`.
-- [x] Repositórios JPA estabilizados e validados após refatoração de tipos.
+- [x] Mapeamento relacional das entidades principais.
+- [x] Repositórios JPA estabilizados e validados.
+- [x] **Camada de Transferência (DTO):** Implementação de `InstrumentResponseDTO` para evitar erros de
+- recursividade e proteger dados sensíveis.
 
-**Ingestão de Dados e Lógica de Negócio (EM ANDAMENTO):**
-- [/] **Importação de Periodicidade:** Implementado o motor de leitura para `periodicities.csv`,
-- mas aguarda carga de dados completa e fiel à planilha original.
-- [/] **Ingestão de Instrumentos:** O `DatabaseSeeder` está funcional para carga via CSV, porém 
-- a **lógica de vínculo inteligente** (match entre descrição e categoria) ainda apresenta falhas
-- de precisão e precisa de refinamento.
-- [ ] Implementação de Bean Validation para garantir integridade de entrada via API.
+**Ingestão de Dados e Lógica de Negócio (Estabilizada):**
+- [x] **Integração Apache POI:** Motor preparado para leitura de planilhas `.xlsx`.
+- [x] **OpenCSV:** Processamento funcional de arquivos `.csv` para carga de periodicidades.
+- [x] Implementação de Bean Validation para garantir integridade de entrada via API.
 
-**Segurança e Auditoria (Pendente):**
-- [ ] Global Exception Handler (Tratamento de erros centralizado).
-- [ ] Spring Security + JWT (Controle de acesso e autenticação).
-- [ ] JPA Audit (Registro automático de autoria e data em cada registro).
-- [ ] Soft Delete (Preservação de histórico para auditoria ISO).
+**Segurança e Auditoria (Concluído):**
+- [x] **Spring Security + JWT:** Autenticação robusta e geração de tokens de acesso funcionando.
+- [x] **Security Filter:** Implementação de filtro de interceptação para validar tokens em cada requisição.
+- [x] **Global Exception Handler:** Tratamento centralizado de erros (403 Forbidden, 404, 500).
+- [x] **Soft Delete:** Implementado no `InstrumentController` para garantir rastreabilidade ISO.
 
 📌 **Status atual:**
-A fundação do banco de dados foi totalmente refatorada para utilizar IDs numéricos (`Long`), 
-resolvendo conflitos de migração e estabilizando a compilação. O sistema já é capaz de realizar 
-o `boot` completo e criar as tabelas automaticamente. No entanto, a **camada de ingestão 
-de dados via Seeders ainda não é confiável**: instrumentos estão sendo vinculados a categorias 
-genéricas ou incorretas. O projeto encontra-se na fase de ajuste fino da lógica de comparação
-de dados antes de avançar para a implementação da segurança e APIs.
+O motor de segurança está **totalmente operacional**, protegendo as rotas da API com JWT. O backend agora 
+utiliza DTOs para comunicação, eliminando falhas de processamento de JSON. O repositório Git foi saneado e 
+blindado contra o envio de planilhas de dados locais. O sistema está pronto para o refinamento final da carga 
+de dados antes de iniciar o Frontend.
 
 ---
 
