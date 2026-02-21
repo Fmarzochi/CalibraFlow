@@ -3,12 +3,23 @@
 # ==============================
 postgres-data/
 postgres-data-NOVO/
+calibraflow_data/
 *.pid
 *.conf
 pg_*
 PG_*
 *.log
 docker-compose.override.yml
+
+# ==============================
+# Dados Brutos / ETL (Segurança de Dados)
+# ==============================
+*.csv
+*.xlsx
+*.xls
+/data/
+/src/main/resources/*.csv
+/src/main/resources/*.xlsx
 
 # ==============================
 # IDEs: IntelliJ IDEA e Eclipse
@@ -27,14 +38,11 @@ out/
 # ==============================
 # Backend: Java + Spring Boot
 # ==============================
-# Arquivos compilados
 *.class
 *.jar
 *.war
 *.ear
 *.nar
-
-# Diretórios de build do Maven
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -45,8 +53,6 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
-
-# Diretórios de build do Gradle
 .gradle/
 build/
 !src/**/build/
@@ -54,17 +60,12 @@ build/
 # ==============================
 # Frontend: React + Vite
 # ==============================
-# Dependências do Node
 node_modules/
 .pnp
 .pnp.js
-
-# Diretórios de build de produção (Vite)
 dist/
 dist-ssr/
 build/
-
-# Logs de gerenciadores de pacote
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -73,17 +74,17 @@ pnpm-debug.log*
 # ==============================
 # Segurança / Variáveis de Ambiente
 # ==============================
-# Arquivos locais de ambiente
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
+application-secret.properties
+application-secret.yml
+secrets.yml
+key.json
 
 # ==============================
 # Sistema Operacional
 # ==============================
-# macOS
 .DS_Store
 .DS_Store?
 ._*
@@ -91,8 +92,6 @@ pnpm-debug.log*
 .Trashes
 .AppleDouble
 .LSOverride
-
-# Windows
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
@@ -103,8 +102,6 @@ ehthumbs_vista.db
 *.msm
 *.msp
 $RECYCLE.BIN/
-
-# Linux
 *~
 .fuse_hidden*
 .directory
