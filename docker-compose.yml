@@ -6,13 +6,16 @@ services:
     environment:
       - POSTGRES_DB=calibraflow
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
     ports:
       - "5433:5432"
     volumes:
-      - ./postgres-data-NOVO:/var/lib/postgresql/data
+      - calibraflow_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+volumes:
+  calibraflow_data:
