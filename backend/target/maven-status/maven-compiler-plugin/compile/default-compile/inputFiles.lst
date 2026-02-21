@@ -3,6 +3,7 @@
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/infrastructure/exceptions/GlobalExceptionHandler.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/infrastructure/security/SecurityFilter.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/dtos/RegisterDTO.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/RefreshToken.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/InstrumentRepository.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/AuthorizationService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/UserRepository.java
@@ -11,8 +12,11 @@
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/LocationRepository.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/DataFixerController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/dtos/AuthenticationDTO.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/dtos/RefreshTokenResponseDTO.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/dtos/RefreshTokenResponse.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/PeriodicityService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/DataFixerService.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/RoleRepository.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Movement.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/PeriodicityController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/infrastructure/seeder/InstrumentDataSeeder.java
@@ -30,7 +34,9 @@
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/CategoryService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/infrastructure/security/TokenService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/CalibrationRepository.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/dtos/RefreshTokenRequestDTO.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/CalibraFlowApiApplication.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/dtos/RefreshTokenRequest.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Location.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Calibration.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/tools/DataFixer.java
@@ -38,12 +44,15 @@
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Role.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/InstrumentService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/MovementService.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/RefreshTokenRepository.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/MovementController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Periodicity.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/dtos/InstrumentRequestDTO.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Instrument.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/CalibrationController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/config/DataFixerConfig.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/dtos/UpcomingCalibrationDTO.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/infrastructure/exceptions/ErrorResponse.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/LocationService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/entities/Category.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/RefreshTokenService.java

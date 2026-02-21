@@ -1,6 +1,8 @@
 package com.calibraflow.api.infrastructure.seeder;
 
+import com.calibraflow.api.domain.entities.Category;
 import com.calibraflow.api.domain.entities.Periodicity;
+import com.calibraflow.api.domain.repositories.CategoryRepository;
 import com.calibraflow.api.domain.repositories.PeriodicityRepository;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
@@ -9,6 +11,7 @@ import com.opencsv.CSVReaderBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,14 +20,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 @Component
 @Order(1)
 @RequiredArgsConstructor
 @Slf4j
+@Profile("!test")
 public class PeriodicityDataSeeder implements CommandLineRunner {
 
     private final PeriodicityRepository periodicityRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     @Transactional
@@ -66,9 +72,14 @@ public class PeriodicityDataSeeder implements CommandLineRunner {
 
                     Integer days = Integer.parseInt(daysStr);
 
-                    Periodicity periodicity = new Periodicity();
-                    periodicity.setInstrumentName(instrumentName);
-                    periodicity.setDays(days);
+                    Optional<Category> categoryOpt = categoryRepository.findByName(instrumentName);
+                    Category category = categoryOpt.orElse(null);
+
+                    Periodicity periodicity = Periodicity.builder()
+                            .instrumentName(instrumentName)
+                            .days(days)
+                            .category(category)
+                            .build();
 
                     periodicityRepository.save(periodicity);
                     count++;

@@ -17,4 +17,6 @@ public interface InstrumentRepository extends JpaRepository<Instrument, Long> {
     Optional<Instrument> findActiveById(@Param("id") Long id);
 
     Optional<Instrument> findByTag(String tag);
+
+    Optional<Instrument> findByPatrimonyCode(String patrimonyCode);
 }

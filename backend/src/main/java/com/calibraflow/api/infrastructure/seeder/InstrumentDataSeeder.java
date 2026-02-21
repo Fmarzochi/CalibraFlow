@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,10 +48,17 @@ public class InstrumentDataSeeder implements CommandLineRunner {
     private final PeriodicityRepository periodicityRepository;
     private final CalibrationRepository calibrationRepository;
     private final DataFixer dataFixer;
+    private final Environment environment;
 
     @Override
     @Transactional
     public void run(String... args) {
+        // Verifica se o perfil "test" está ativo
+        if (Arrays.asList(environment.getActiveProfiles()).contains("test")) {
+            log.info("Perfil 'test' detectado. Ignorando execução do InstrumentDataSeeder.");
+            return;
+        }
+
         if (instrumentRepository.count() > 0) {
             log.info("Banco de dados já possui instrumentos. Seeder ignorado.");
             return;
@@ -75,16 +84,16 @@ public class InstrumentDataSeeder implements CommandLineRunner {
                 String[] data = line.split(",", -1);
                 if (data.length <= 3) continue;
 
-                String tag = data[1]; // TAG
-                String name = data[0]; // Descrição
+                String tag = data[1];
+                String name = data[0];
 
                 if (tag.isEmpty() || name.isEmpty()) continue;
 
                 Category category = findOrCreateCategory(name);
-                Location location = findOrCreateLocation(data[11]); // Obra/Local
+                Location location = findOrCreateLocation(data.length > 11 ? data[11] : "");
                 Optional<Periodicity> periodicity = periodicityRepository.findByInstrumentName(name);
 
-                String patrimonyCode = data[3]; // Patrimônio
+                String patrimonyCode = data[3];
 
                 Instrument instrument = Instrument.builder()
                         .tag(tag)
@@ -93,53 +102,66 @@ public class InstrumentDataSeeder implements CommandLineRunner {
                         .location(location)
                         .patrimonyCode(patrimonyCode)
                         .periodicity(periodicity.orElse(null))
-                        .manufacturer(data.length > 2 ? data[2] : "") // Fabricante
-                        .model(data.length > 6 ? data[6] : "") // Modelo
-                        .serialNumber(data.length > 5 ? data[5] : "") // Número de Série
-                        .range(data.length > 1 ? data[1] : "") // especificação (range)
-                        .tolerance("") // não temos na planilha
+                        .manufacturer(data.length > 2 ? data[2] : "")
+                        .model(data.length > 6 ? data[6] : "")
+                        .serialNumber(data.length > 5 ? data[5] : "")
+                        .range(data.length > 1 ? data[1] : "")
+                        .tolerance("")
                         .active(true)
                         .deleted(false)
                         .build();
 
                 instrumentsToSave.add(instrument);
-
-                LocalDate calibrationDate = parseDate(data.length > 9 ? data[9] : "");
-                LocalDate nextCalibrationDate = parseDate(data.length > 10 ? data[10] : "");
-                String certificateNumber = data.length > 8 ? data[8] : ""; // Certificado
-                String laboratory = data.length > 7 ? data[7] : ""; // Laboratório
-
-                if (calibrationDate != null || nextCalibrationDate != null || !certificateNumber.isEmpty()) {
-                    Calibration calibration = Calibration.builder()
-                            .calibrationDate(calibrationDate)
-                            .nextCalibrationDate(nextCalibrationDate)
-                            .certificateNumber(certificateNumber)
-                            .laboratory(laboratory)
-                            .instrument(instrument) // Associação temporária, será salva após persistência do instrumento
-                            .build();
-                    calibrationsToSave.add(calibration);
-                }
-
                 count++;
             }
 
-            List<Instrument> savedInstruments = instrumentRepository.saveAll(instrumentsToSave);
-            log.info("Seeder finalizado. {} instrumentos inseridos.", savedInstruments.size());
+            instrumentRepository.saveAll(instrumentsToSave);
+            log.info("Seeder finalizado. {} instrumentos inseridos em lote.", count);
 
-            int calibrationCount = 0;
-            for (int i = 0; i < savedInstruments.size(); i++) {
-                Instrument savedInstrument = savedInstruments.get(i);
-                // Filtra as calibrações que foram criadas para este instrumento (pela posição)
-                if (i < calibrationsToSave.size()) {
-                    Calibration cal = calibrationsToSave.get(i);
-                    cal.setInstrument(savedInstrument);
-                    calibrationsToSave.set(i, cal);
-                    calibrationCount++;
+            try (BufferedReader reader2 = Files.newBufferedReader(CLEAN_CSV_PATH, StandardCharsets.UTF_8)) {
+                String line2;
+                int calCount = 0;
+
+                while ((line2 = reader2.readLine()) != null) {
+                    String[] data = line2.split(",", -1);
+                    if (data.length <= 3) continue;
+
+                    String patrimonyCode = data[3];
+                    String name = data[0];
+                    if (patrimonyCode.isEmpty() || name.isEmpty()) continue;
+
+                    Optional<Instrument> instrumentOpt = instrumentRepository.findByPatrimonyCode(patrimonyCode);
+                    if (instrumentOpt.isEmpty()) {
+                        log.warn("Instrumento com patrimônio {} não encontrado para criar calibração.", patrimonyCode);
+                        continue;
+                    }
+
+                    Instrument instrument = instrumentOpt.get();
+
+                    String calDateStr = data.length > 9 ? data[9] : "";
+                    String nextCalDateStr = data.length > 10 ? data[10] : "";
+                    String laboratory = data.length > 7 ? data[7] : "";
+                    String certificate = data.length > 8 ? data[8] : "";
+
+                    LocalDate calibrationDate = parseDate(calDateStr);
+                    LocalDate nextCalibrationDate = parseDate(nextCalDateStr);
+
+                    if (calibrationDate != null) {
+                        Calibration calibration = Calibration.builder()
+                                .calibrationDate(calibrationDate)
+                                .nextCalibrationDate(nextCalibrationDate)
+                                .laboratory(laboratory)
+                                .certificateNumber(certificate)
+                                .instrument(instrument)
+                                .build();
+                        calibrationsToSave.add(calibration);
+                        calCount++;
+                    }
                 }
-            }
 
-            calibrationRepository.saveAll(calibrationsToSave);
-            log.info("{} calibrações inseridas.", calibrationCount);
+                calibrationRepository.saveAll(calibrationsToSave);
+                log.info("{} calibrações inseridas.", calCount);
+            }
 
         } catch (Exception e) {
             log.error("Erro crítico durante a execução do seeder: {}", e.getMessage());
@@ -159,9 +181,7 @@ public class InstrumentDataSeeder implements CommandLineRunner {
     }
 
     private LocalDate parseDate(String dateStr) {
-        if (dateStr == null || dateStr.isEmpty() || dateStr.equalsIgnoreCase("INDETERMINADO") || dateStr.equalsIgnoreCase("N/C")) {
-            return null;
-        }
+        if (dateStr == null || dateStr.isEmpty()) return null;
         try {
             return LocalDate.parse(dateStr, DATE_FORMATTER);
         } catch (DateTimeParseException e) {

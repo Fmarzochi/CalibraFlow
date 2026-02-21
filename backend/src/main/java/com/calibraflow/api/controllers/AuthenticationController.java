@@ -64,11 +64,10 @@ public class AuthenticationController {
                 .map(RefreshToken::getUser)
                 .map(user -> {
                     String newAccessToken = tokenService.generateToken(user);
-                    // Opcional: gerar novo refresh token (rotação)
                     RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
                     return ResponseEntity.ok(new RefreshTokenResponseDTO(newAccessToken, newRefreshToken.getToken()));
                 })
-                .orElseThrow(() -> new RuntimeException("Refresh token não encontrado"));
+                .orElseThrow(() -> new IllegalArgumentException("Refresh token não encontrado"));
     }
 
     @PostMapping("/logout")
