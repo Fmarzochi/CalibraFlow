@@ -21,7 +21,7 @@ public class Instrument {
     private Long id;
 
     @NotBlank(message = "A tag do instrumento é obrigatória")
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String tag;
 
     @NotBlank(message = "O nome do instrumento é obrigatório")
@@ -78,8 +78,5 @@ public class Instrument {
         if (this.createdAt == null) {
             this.createdAt = LocalDateTime.now();
         }
-        // Garante que novos registros comecem ativos e não deletados se não informados
-        this.active = true;
-        this.deleted = false;
     }
 }
