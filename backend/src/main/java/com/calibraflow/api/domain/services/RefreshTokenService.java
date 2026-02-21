@@ -27,9 +27,7 @@ public class RefreshTokenService {
 
     @Transactional
     public RefreshToken createRefreshToken(User user) {
-        // Remove tokens antigos do usuário
         refreshTokenRepository.deleteByUser(user);
-        // Garante que a deleção seja aplicada antes da inserção
         refreshTokenRepository.flush();
 
         RefreshToken refreshToken = RefreshToken.builder()
