@@ -18,13 +18,20 @@ public class TokenService {
     @Value("${api.security.token.secret:calibraflow-secret-default}")
     private String secret;
 
+    @Value("${api.security.token.expiration:7200000}") // 2 horas em ms
+    private Long accessTokenDurationMs;
+
     public String generateToken(User user) {
+        return generateToken(user, accessTokenDurationMs);
+    }
+
+    public String generateToken(User user, Long durationMs) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("calibraflow-api")
                     .withSubject(user.getUsername())
-                    .withExpiresAt(genExpirationDate())
+                    .withExpiresAt(genExpirationDate(durationMs))
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Erro ao gerar token JWT", exception);
@@ -44,7 +51,7 @@ public class TokenService {
         }
     }
 
-    private Instant genExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+    private Instant genExpirationDate(Long durationMs) {
+        return Instant.now().plusMillis(durationMs);
     }
 }
