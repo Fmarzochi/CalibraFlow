@@ -5,4 +5,3 @@ CREATE TABLE tb_refresh_tokens (
     expiry_date TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id) REFERENCES tb_users(id)
 );
-

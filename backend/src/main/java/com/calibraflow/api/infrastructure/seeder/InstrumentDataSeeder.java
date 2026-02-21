@@ -53,7 +53,6 @@ public class InstrumentDataSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        // Verifica se o perfil "test" está ativo
         if (Arrays.asList(environment.getActiveProfiles()).contains("test")) {
             log.info("Perfil 'test' detectado. Ignorando execução do InstrumentDataSeeder.");
             return;
@@ -82,30 +81,34 @@ public class InstrumentDataSeeder implements CommandLineRunner {
 
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",", -1);
-                if (data.length <= 3) continue;
+                if (data.length <= 4) continue; // precisa ter pelo menos 5 colunas
 
-                String tag = data[1];
-                String name = data[0];
+                String descricao = data[0].trim();       // Descrição
+                String tag = data[4].trim();              // TAG (índice 4)
+                String patrimonyCode = data[3].trim();    // Patrimônio (índice 3)
+                String fabricante = data.length > 2 ? data[2].trim() : "";
+                String modelo = data.length > 6 ? data[6].trim() : "";
+                String serialNumber = data.length > 5 ? data[5].trim() : "";
+                String range = data.length > 1 ? data[1].trim() : "";
+                String local = data.length > 11 ? data[11].trim() : "";
 
-                if (tag.isEmpty() || name.isEmpty()) continue;
+                if (tag.isEmpty() || descricao.isEmpty() || patrimonyCode.isEmpty()) continue;
 
-                Category category = findOrCreateCategory(name);
-                Location location = findOrCreateLocation(data.length > 11 ? data[11] : "");
-                Optional<Periodicity> periodicity = periodicityRepository.findByInstrumentName(name);
-
-                String patrimonyCode = data[3];
+                Category category = findOrCreateCategory(descricao);
+                Location location = findOrCreateLocation(local);
+                Optional<Periodicity> periodicity = periodicityRepository.findByInstrumentName(descricao);
 
                 Instrument instrument = Instrument.builder()
                         .tag(tag)
-                        .name(name)
+                        .name(descricao)
                         .category(category)
                         .location(location)
                         .patrimonyCode(patrimonyCode)
                         .periodicity(periodicity.orElse(null))
-                        .manufacturer(data.length > 2 ? data[2] : "")
-                        .model(data.length > 6 ? data[6] : "")
-                        .serialNumber(data.length > 5 ? data[5] : "")
-                        .range(data.length > 1 ? data[1] : "")
+                        .manufacturer(fabricante)
+                        .model(modelo)
+                        .serialNumber(serialNumber)
+                        .range(range)
                         .tolerance("")
                         .active(true)
                         .deleted(false)
@@ -118,17 +121,18 @@ public class InstrumentDataSeeder implements CommandLineRunner {
             instrumentRepository.saveAll(instrumentsToSave);
             log.info("Seeder finalizado. {} instrumentos inseridos em lote.", count);
 
+            // Segunda leitura para criar calibrações
             try (BufferedReader reader2 = Files.newBufferedReader(CLEAN_CSV_PATH, StandardCharsets.UTF_8)) {
                 String line2;
                 int calCount = 0;
 
                 while ((line2 = reader2.readLine()) != null) {
                     String[] data = line2.split(",", -1);
-                    if (data.length <= 3) continue;
+                    if (data.length <= 4) continue;
 
-                    String patrimonyCode = data[3];
-                    String name = data[0];
-                    if (patrimonyCode.isEmpty() || name.isEmpty()) continue;
+                    String patrimonyCode = data[3].trim();
+                    String descricao = data[0].trim();
+                    if (patrimonyCode.isEmpty() || descricao.isEmpty()) continue;
 
                     Optional<Instrument> instrumentOpt = instrumentRepository.findByPatrimonyCode(patrimonyCode);
                     if (instrumentOpt.isEmpty()) {
@@ -138,10 +142,10 @@ public class InstrumentDataSeeder implements CommandLineRunner {
 
                     Instrument instrument = instrumentOpt.get();
 
-                    String calDateStr = data.length > 9 ? data[9] : "";
-                    String nextCalDateStr = data.length > 10 ? data[10] : "";
-                    String laboratory = data.length > 7 ? data[7] : "";
-                    String certificate = data.length > 8 ? data[8] : "";
+                    String calDateStr = data.length > 9 ? data[9].trim() : "";
+                    String nextCalDateStr = data.length > 10 ? data[10].trim() : "";
+                    String laboratory = data.length > 7 ? data[7].trim() : "";
+                    String certificate = data.length > 8 ? data[8].trim() : "";
 
                     LocalDate calibrationDate = parseDate(calDateStr);
                     LocalDate nextCalibrationDate = parseDate(nextCalDateStr);
