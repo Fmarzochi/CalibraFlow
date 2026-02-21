@@ -4,10 +4,12 @@ import com.calibraflow.api.domain.dtos.InstrumentRequestDTO;
 import com.calibraflow.api.domain.dtos.InstrumentResponseDTO;
 import com.calibraflow.api.domain.entities.Location;
 import com.calibraflow.api.domain.entities.Instrument;
+import com.calibraflow.api.domain.entities.User;
 import com.calibraflow.api.domain.services.InstrumentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,10 +57,10 @@ public class InstrumentController {
     public ResponseEntity<InstrumentResponseDTO> updateLocation(
             @PathVariable Long id,
             @RequestBody Location newLocation,
-            @RequestParam Long userId,
+            @AuthenticationPrincipal User user,
             @RequestParam String reason) {
 
-        return instrumentService.updateLocation(id, newLocation, userId, reason)
+        return instrumentService.updateLocation(id, newLocation, user, reason)
                 .map(instrument -> ResponseEntity.ok(new InstrumentResponseDTO(instrument)))
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -66,9 +68,9 @@ public class InstrumentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDelete(
             @PathVariable Long id,
-            @RequestParam Long userId,
+            @AuthenticationPrincipal User user,
             @RequestParam(required = false) String reason) {
-        return instrumentService.softDelete(id, userId, reason)
+        return instrumentService.softDelete(id, user, reason)
                 .map(instrument -> ResponseEntity.noContent().<Void>build())
                 .orElse(ResponseEntity.notFound().build());
     }
