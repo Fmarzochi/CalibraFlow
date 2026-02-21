@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "instruments")
@@ -71,6 +73,10 @@ public class Instrument {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "instrument", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Calibration> calibrations = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
