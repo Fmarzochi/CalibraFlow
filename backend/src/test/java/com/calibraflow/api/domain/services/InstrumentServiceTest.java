@@ -4,12 +4,11 @@ import com.calibraflow.api.domain.dtos.InstrumentRequestDTO;
 import com.calibraflow.api.domain.entities.Category;
 import com.calibraflow.api.domain.entities.Instrument;
 import com.calibraflow.api.domain.entities.Location;
-import com.calibraflow.api.domain.entities.Periodicity;
 import com.calibraflow.api.domain.repositories.CategoryRepository;
 import com.calibraflow.api.domain.repositories.InstrumentRepository;
 import com.calibraflow.api.domain.repositories.LocationRepository;
-import com.calibraflow.api.domain.repositories.PeriodicityRepository;
 import com.calibraflow.api.domain.repositories.MovementRepository;
+import com.calibraflow.api.domain.repositories.PeriodicityRepository;
 import com.calibraflow.api.domain.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +30,12 @@ class InstrumentServiceTest {
     private InstrumentRepository instrumentRepository;
 
     @Mock
+    private MovementRepository movementRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private CategoryRepository categoryRepository;
 
     @Mock
@@ -39,94 +44,76 @@ class InstrumentServiceTest {
     @Mock
     private PeriodicityRepository periodicityRepository;
 
-    @Mock
-    private MovementRepository movementRepository;
-
-    @Mock
-    private UserRepository userRepository;
-
     @InjectMocks
     private InstrumentService instrumentService;
 
     private Category category;
     private Location location;
-    private Periodicity periodicity;
     private InstrumentRequestDTO dto;
 
     @BeforeEach
     void setUp() {
         category = Category.builder().id(1L).name("Test Category").build();
         location = Location.builder().id(1L).name("Test Location").active(true).build();
-        periodicity = Periodicity.builder().id(1L).instrumentName("Test").days(365).build();
 
         dto = new InstrumentRequestDTO();
-        dto.setTag("TAG001");
+        dto.setTag("TAG-001");
         dto.setName("Test Instrument");
         dto.setManufacturer("Test Manufacturer");
-        dto.setModel("Test Model");
+        dto.setModel("Model X");
         dto.setSerialNumber("SN123");
         dto.setRange("0-100");
         dto.setTolerance("±1");
         dto.setResolution("0.1");
-        dto.setPatrimonyCode("PAT001");
+        dto.setPatrimonyCode("PAT-001");
         dto.setCategoryId(1L);
         dto.setLocationId(1L);
-        dto.setPeriodicityId(1L);
+        dto.setPeriodicityId(null);
     }
 
     @Test
     void createFromDTO_WithValidData_ShouldCreateInstrument() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
         when(locationRepository.findById(1L)).thenReturn(Optional.of(location));
-        when(periodicityRepository.findById(1L)).thenReturn(Optional.of(periodicity));
+        when(instrumentRepository.save(any(Instrument.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Instrument savedInstrument = Instrument.builder()
-                .id(1L)
-                .tag(dto.getTag())
-                .name(dto.getName())
-                .category(category)
-                .location(location)
-                .periodicity(periodicity)
-                .build();
+        Instrument created = instrumentService.createFromDTO(dto);
 
-        when(instrumentRepository.save(any(Instrument.class))).thenReturn(savedInstrument);
+        assertNotNull(created);
+        assertEquals("TAG-001", created.getTag());
+        assertEquals("Test Instrument", created.getName());
+        assertEquals(category, created.getCategory());
+        assertEquals(location, created.getLocation());
+        assertNull(created.getPeriodicity());
+        assertTrue(created.isActive());
+        assertFalse(created.isDeleted());
 
-        Instrument result = instrumentService.createFromDTO(dto);
-
-        assertNotNull(result);
-        assertEquals("TAG001", result.getTag());
-        assertEquals(category, result.getCategory());
-        assertEquals(location, result.getLocation());
-        assertEquals(periodicity, result.getPeriodicity());
-
-        verify(categoryRepository, times(1)).findById(1L);
-        verify(locationRepository, times(1)).findById(1L);
-        verify(periodicityRepository, times(1)).findById(1L);
-        verify(instrumentRepository, times(1)).save(any(Instrument.class));
+        verify(categoryRepository).findById(1L);
+        verify(locationRepository).findById(1L);
+        verify(instrumentRepository).save(any(Instrument.class));
+        verify(periodicityRepository, never()).findById(any());
     }
 
     @Test
-    void createFromDTO_WithInvalidCategory_ShouldThrowException() {
+    void createFromDTO_WithNonExistentCategory_ShouldThrowException() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(IllegalArgumentException.class, () -> instrumentService.createFromDTO(dto));
 
-        verify(categoryRepository, times(1)).findById(1L);
-        verify(locationRepository, never()).findById(anyLong());
-        verify(periodicityRepository, never()).findById(anyLong());
+        verify(categoryRepository).findById(1L);
+        verify(locationRepository, never()).findById(any());
         verify(instrumentRepository, never()).save(any());
     }
 
     @Test
-    void createFromDTO_WithInvalidLocation_ShouldThrowException() {
+    void createFromDTO_WithNonExistentLocation_ShouldThrowException() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
         when(locationRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(IllegalArgumentException.class, () -> instrumentService.createFromDTO(dto));
 
-        verify(categoryRepository, times(1)).findById(1L);
-        verify(locationRepository, times(1)).findById(1L);
-        verify(periodicityRepository, never()).findById(anyLong());
+        verify(categoryRepository).findById(1L);
+        verify(locationRepository).findById(1L);
         verify(instrumentRepository, never()).save(any());
     }
 }
