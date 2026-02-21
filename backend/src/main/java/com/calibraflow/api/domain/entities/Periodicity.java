@@ -24,8 +24,7 @@ public class Periodicity {
     @Column(nullable = false)
     private Integer days;
 
-    public Periodicity(String instrumentName, Integer days) {
-        this.instrumentName = instrumentName;
-        this.days = days;
-    }
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
