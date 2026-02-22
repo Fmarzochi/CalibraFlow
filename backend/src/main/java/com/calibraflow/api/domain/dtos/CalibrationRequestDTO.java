@@ -1,13 +1,25 @@
-package com.calibraflow.api.domain.dtos;
+package com.calibraflow.api.application.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 public record CalibrationRequestDTO(
-        @NotNull(message = "A data da calibração é obrigatória") LocalDate calibrationDate,
-        @NotNull(message = "A data da próxima calibração é obrigatória") LocalDate nextCalibrationDate,
-        @NotBlank(message = "O número do certificado é obrigatório") String certificateNumber,
-        @NotBlank(message = "O laboratório é obrigatório") String laboratory,
-        @NotNull(message = "O ID do instrumento é obrigatório") Long instrumentId
+
+        @NotNull(message = "O ID do instrumento e obrigatorio")
+        Long instrumentId,
+
+        @NotNull(message = "A data da calibracao e obrigatoria")
+        LocalDate calibrationDate,
+
+        LocalDate nextCalibrationDate,
+
+        @NotBlank(message = "O numero do certificado e obrigatorio")
+        String certificateNumber,
+
+        @NotNull(message = "O status de aprovacao e obrigatorio")
+        Boolean approved,
+
+        String observations
 ) {}
