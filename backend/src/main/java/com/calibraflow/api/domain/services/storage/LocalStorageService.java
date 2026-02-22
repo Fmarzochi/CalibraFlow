@@ -1,16 +1,18 @@
 package com.calibraflow.api.domain.services.storage;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -47,6 +49,22 @@ public class LocalStorageService implements StorageService {
             return tenantId + "/" + uniqueFileName;
         } catch (IOException e) {
             throw new RuntimeException("Falha ao armazenar o arquivo no disco local.", e);
+        }
+    }
+
+    @Override
+    public Resource loadAsResource(String storagePath) {
+        try {
+            Path file = this.rootLocation.resolve(storagePath).normalize();
+            Resource resource = new UrlResource(file.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new IllegalArgumentException("Nao foi possivel ler o arquivo: " + storagePath);
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Caminho de arquivo mal formatado: " + storagePath, e);
         }
     }
 

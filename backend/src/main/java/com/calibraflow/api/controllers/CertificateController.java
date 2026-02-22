@@ -5,6 +5,8 @@ import com.calibraflow.api.domain.entities.Certificate;
 import com.calibraflow.api.domain.entities.User;
 import com.calibraflow.api.domain.services.CertificateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +39,19 @@ public class CertificateController {
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    @GetMapping("/certificates/{certificateId}/download")
+    public ResponseEntity<Resource> download(
+            @PathVariable Long certificateId,
+            @AuthenticationPrincipal User loggedUser) {
+
+        Certificate certificate = certificateService.getCertificateInfo(certificateId, loggedUser);
+        Resource file = certificateService.downloadCertificate(certificateId, loggedUser);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(certificate.getContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + certificate.getOriginalFileName() + "\"")
+                .body(file);
     }
 }

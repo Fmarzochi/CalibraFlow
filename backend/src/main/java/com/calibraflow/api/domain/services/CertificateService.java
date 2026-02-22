@@ -7,6 +7,7 @@ import com.calibraflow.api.domain.repositories.CalibrationRepository;
 import com.calibraflow.api.domain.repositories.CertificateRepository;
 import com.calibraflow.api.domain.services.storage.StorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,5 +42,29 @@ public class CertificateService {
         certificate.setUploadedByName(loggedUser.getName());
 
         return certificateRepository.save(certificate);
+    }
+
+    @Transactional(readOnly = true)
+    public Resource downloadCertificate(Long certificateId, User loggedUser) {
+        Certificate certificate = certificateRepository.findById(certificateId)
+                .orElseThrow(() -> new IllegalArgumentException("Certificado nao encontrado no sistema."));
+
+        if (!certificate.getTenant().getId().equals(loggedUser.getTenant().getId())) {
+            throw new IllegalArgumentException("Acesso negado. O certificado pertence a outra corporacao.");
+        }
+
+        return storageService.loadAsResource(certificate.getStoragePath());
+    }
+
+    @Transactional(readOnly = true)
+    public Certificate getCertificateInfo(Long certificateId, User loggedUser) {
+        Certificate certificate = certificateRepository.findById(certificateId)
+                .orElseThrow(() -> new IllegalArgumentException("Certificado nao encontrado no sistema."));
+
+        if (!certificate.getTenant().getId().equals(loggedUser.getTenant().getId())) {
+            throw new IllegalArgumentException("Acesso negado. O certificado pertence a outra corporacao.");
+        }
+
+        return certificate;
     }
 }
