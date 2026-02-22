@@ -1,96 +1,82 @@
 # CalibraFlow
 
-![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
+![Status](https://img.shields.io/badge/Status-Arquitetura_SaaS_Pronta-green)
 ![Java](https://img.shields.io/badge/Backend-Java%2021-orange)
 ![Spring](https://img.shields.io/badge/Framework-Spring%20Boot%203.2-green)
-![Security](https://img.shields.io/badge/Security-JWT%20%26%20Spring%20Security-blue)
-![Database](https://img.shields.io/badge/Database-PostgreSQL-blue)
-![Data](https://img.shields.io/badge/Data-Apache%20POI%20%26%20OpenCSV-red)
+![Security](https://img.shields.io/badge/Security-JWT_Multi--tenant-blue)
+![Database](https://img.shields.io/badge/Database-PostgreSQL_SaaS-blue)
+![Architecture](https://img.shields.io/badge/Architecture-Monolito_Conteinerizado-lightgrey)
 
 ## 📌 Sobre o Projeto
 
-Eu desenvolvi o **CalibraFlow** como um sistema corporativo auditável para gestão do ciclo de vida de
-calibração de instrumentos.
+Eu desenvolvi o **CalibraFlow** como um sistema corporativo SaaS (Software as a Service) auditável
+para gestão do ciclo de vida de calibração de instrumentos. O sistema foi projetado com uma arquitetura 
+de isolamento total de dados, permitindo que múltiplas empresas utilizem a mesma infraestrutura de forma segura
+e independente.
 
 O objetivo do sistema é garantir:
 
-- **Controle automático de vencimentos**
-- **Rastreabilidade completa** conforme padrões ISO
-- **Histórico imutável** de calibrações
-- **Auditoria total** de movimentações e responsáveis
+- **Isolamento Multi-tenant:** Dados blindados por empresa (`tenant_id`).
+- **Controle automático de vencimentos:** Robôs diários que gerenciam o status dos instrumentos.
+- **Rastreabilidade ISO:** Histórico imutável com auditoria de IP, CPF e responsável.
+- **Gestão de Provas Documentais:** Armazenamento seguro de certificados de calibração em PDF.
 
-O CalibraFlow substitui controles manuais descentralizados por uma aplicação segura, centralizada e preparada
-para uso multiusuário em ambiente corporativo.
-
----
-
-## 🚀 Tecnologias (Stack)
-
-- **Backend:** Java 21 + Spring Boot 3.2 (Foco em SOLID)
-- **Segurança:** Spring Security + JWT (Auth0)
-- **Processamento de Dados:** Apache POI (Excel/XLSX) e OpenCSV
-- **Banco de Dados:** PostgreSQL (Dockerizado)
-- **Persistência:** Spring Data JPA + Hibernate
-- **Ferramentas:** Flyway (Migrações), Lombok e Bean Validation
+O CalibraFlow é uma solução de baixo custo operacional (Zero-Budget Ready) preparada para rodar 24/7 em 
+infraestrutura de nuvem gratuita.
 
 ---
 
-## 👥 Perfis de Acesso
+## 🚀 Tecnologias & Arquitetura
 
-1. **ADMIN**
-   - Controle total do sistema e usuários.
-   - Invalidação de registros via *soft delete* (mantendo integridade).
+- **Backend:** Java 21 + Spring Boot 3.2.
+- **Segurança Avançada:** JWT (Auth0) com Claims customizadas (Tenant, CPF, Nome).
+- **Isolamento de Dados:** Hibernate Filters + AspectJ (AOP) para injeção automática de `WHERE tenant_id`.
+- **Banco de Dados:** PostgreSQL com Migrações via Flyway.
+- **Jobs Automáticos:** Spring Scheduling para verificação de conformidade diária.
+- **Gestão de Arquivos:** Storage Service abstrato (Local/Cloud) para certificados.
+- **Validações:** Bean Validation com algoritmo matemático de CPF customizado.
 
+---
+
+## 👥 Perfis de Acesso (RBAC)
+
+1. **ADMINISTRADOR**
+   - Controle total da empresa, usuários e configurações.
 2. **USUÁRIO**
-   - Registro de calibrações e movimentação de instrumentos.
-   - Sem permissão para apagar histórico.
-
+   - Registro de calibrações, upload de certificados e movimentação.
 3. **AUDITOR**
-   - Acesso somente leitura e exportação de relatórios.
+   - Acesso exclusivo para consulta de histórico e download de evidências (PDF).
 
 ---
 
 ## 📅 Histórico de Evolução
 
 ### Fase 1: Fundação ✅
-- [x] Eu criei o repositório e a estrutura inicial do CalibraFlow.
-- [x] Eu configurei README.md e .gitignore corporativo.
-- [x] Eu defini o padrão de commits e evolução por fases.
+- [x] Eu criei o repositório e a estrutura inicial corporativa.
+- [x] Eu defini o padrão de commits e organização por domínios.
 
-### Fase 2: Backend Core 🛠️ (Em andamento)
+### Fase 2: Backend Core & SaaS Multi-tenant ✅
+- [x] **Arquitetura Multi-tenant:** Implementação de `TenantContext` e filtros automáticos do Hibernate.
+- [x] **Segurança de Identidade:** Validação matemática de CPF e JWT enriquecido com dados de auditoria.
+- [x] **Máquina de Estados ISO:** Implementação de status (`ATIVO`, `VENCIDO`, `QUARENTENA`) com histórico imutável.
+- [x] **Robô de Conformidade:** Job automático (`DailyExpirationJob`) que bloqueia instrumentos vencidos às 00:01.
+- [x] **Gestão de Documentos:** Motor de upload/download de certificados em PDF com isolamento físico por empresa.
+- [x] **Tratamento Global:** Escudo de exceções (`GlobalExceptionHandler`) para respostas JSON padronizadas.
+- [x] **CRUD de Instrumentos:** Gestão completa com validação de TAG única por tenant.
 
-**Infraestrutura e Persistência (Estabilizada):**
-- [x] Configuração do ambiente com Java 21 e Spring Boot 3.2.
-- [x] Dockerização do banco de dados PostgreSQL.
-- [x] **Refatoração de Identificadores:** Migração de UUID para sequenciais (`Long`/`BigInt`) concluída.
-- [x] **Estratégia de Identidade:** Implementação de `GenerationType.IDENTITY`.
+### Fase 3: Cloud & Deploy 🛠️ (Próximo Passo)
+- [ ] Configuração de Docker Compose para ambiente produtivo.
+- [ ] Script de deploy para Oracle Cloud (Always Free).
+- [ ] Configuração de banco de dados gerenciado (Neon.tech/Supabase).
 
-**Domínio e Mapeamento (Concluído):**
-- [x] Mapeamento relacional das entidades principais.
-- [x] Repositórios JPA estabilizados e validados.
-- [x] **Camada de Transferência (DTO):** Implementação de `InstrumentResponseDTO` para evitar erros de
-- recursividade e proteger dados sensíveis.
-
-**Ingestão de Dados e Lógica de Negócio (Estabilizada):**
-- [x] **Integração Apache POI:** Motor preparado para leitura de planilhas `.xlsx`.
-- [x] **OpenCSV:** Processamento funcional de arquivos `.csv` para carga de periodicidades.
-- [x] Implementação de Bean Validation para garantir integridade de entrada via API.
-
-**Segurança e Auditoria (Concluído):**
-- [x] **Spring Security + JWT:** Autenticação robusta e geração de tokens de acesso funcionando.
-- [x] **Security Filter:** Implementação de filtro de interceptação para validar tokens em cada requisição.
-- [x] **Global Exception Handler:** Tratamento centralizado de erros (403 Forbidden, 404, 500).
-- [x] **Soft Delete:** Implementado no `InstrumentController` para garantir rastreabilidade ISO.
-
-📌 **Status atual:**
-O motor de segurança está **totalmente operacional**, protegendo as rotas da API com JWT. O backend agora 
-utiliza DTOs para comunicação, eliminando falhas de processamento de JSON. O repositório Git foi saneado e 
-blindado contra o envio de planilhas de dados locais. O sistema está pronto para o refinamento final da carga 
-de dados antes de iniciar o Frontend.
+### Fase 4: Frontend & Dashboard 🎨 (Planejado)
+- [ ] Desenvolvimento da interface em React + Vite.
+- [ ] Dashboard de indicadores (Instrumentos próximos do vencimento).
+- [ ] Visualizador de certificados integrado.
 
 ---
 
-### Fase 3: Frontend & UX 🎨 (Planejado)
-- [ ] Configuração do ambiente React + Vite.
-- [ ] Desenvolvimento de Dashboard para visualização de vencimentos.
-- [ ] Implementação de filtros avançados e relatórios auditáveis.
+📌 **Status atual:**
+O Backend está **Enterprise Ready**. Toda a inteligência de isolamento multi-empresa, segurança baseada em CPF 
+e auditoria ISO está operacional. O sistema já é capaz de gerenciar instrumentos e certificados com total 
+rastreabilidade, garantindo que o CalibraFlow seja uma ferramenta de nível profissional para auditorias reais.
