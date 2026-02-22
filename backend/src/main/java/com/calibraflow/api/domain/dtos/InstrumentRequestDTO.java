@@ -1,5 +1,6 @@
 package com.calibraflow.api.domain.dtos;
 
+import com.calibraflow.api.domain.entities.enums.InstrumentStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -28,4 +29,14 @@ public class InstrumentRequestDTO {
     private Long locationId;
 
     private Long periodicityId;
+
+    public static record InstrumentStatusChangeDTO(
+
+            @NotNull(message = "O novo status e obrigatorio")
+            InstrumentStatus newStatus,
+
+            @NotBlank(message = "A justificativa e obrigatoria para fins de auditoria ISO")
+            String justification
+
+    ) {}
 }

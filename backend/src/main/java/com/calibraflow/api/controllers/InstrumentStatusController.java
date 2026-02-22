@@ -1,6 +1,6 @@
 package com.calibraflow.api.application.controllers;
 
-import com.calibraflow.api.application.dtos.InstrumentStatusChangeDTO;
+import com.calibraflow.api.domain.dtos.InstrumentRequestDTO;
 import com.calibraflow.api.domain.entities.User;
 import com.calibraflow.api.domain.services.InstrumentStatusService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ public class InstrumentStatusController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<Void> changeStatus(
             @PathVariable Long id,
-            @RequestBody @Valid InstrumentStatusChangeDTO dto,
+            @RequestBody @Valid InstrumentRequestDTO.InstrumentStatusChangeDTO dto,
             @AuthenticationPrincipal User loggedUser,
             HttpServletRequest request) {
 

@@ -1,6 +1,6 @@
 package com.calibraflow.api.domain.services;
 
-import com.calibraflow.api.application.dtos.InstrumentStatusChangeDTO;
+import com.calibraflow.api.domain.dtos.InstrumentRequestDTO;
 import com.calibraflow.api.domain.entities.Instrument;
 import com.calibraflow.api.domain.entities.InstrumentStatusHistory;
 import com.calibraflow.api.domain.entities.User;
@@ -19,7 +19,7 @@ public class InstrumentStatusService {
     private final InstrumentStatusHistoryRepository historyRepository;
 
     @Transactional
-    public void changeStatus(Long instrumentId, InstrumentStatusChangeDTO dto, User loggedUser, String sourceIp) {
+    public void changeStatus(Long instrumentId, InstrumentRequestDTO.InstrumentStatusChangeDTO dto, User loggedUser, String sourceIp) {
         Instrument instrument = instrumentRepository.findById(instrumentId)
                 .orElseThrow(() -> new IllegalArgumentException("Instrumento nao encontrado no sistema."));
 
