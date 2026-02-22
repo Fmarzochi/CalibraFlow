@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.calibraflow.api.domain.entities.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,26 +16,23 @@ import java.time.ZoneOffset;
 @Service
 public class TokenService {
 
-    @Value("${api.security.token.secret:calibraflow-secret-default}")
+    @Value("${api.security.token.secret}")
     private String secret;
 
-    @Value("${api.security.token.expiration:7200000}") // 2 horas em ms
-    private Long accessTokenDurationMs;
-
     public String generateToken(User user) {
-        return generateToken(user, accessTokenDurationMs);
-    }
-
-    public String generateToken(User user, Long durationMs) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("calibraflow-api")
-                    .withSubject(user.getUsername())
-                    .withExpiresAt(genExpirationDate(durationMs))
+                    .withSubject(user.getEmail())
+                    .withClaim("tenant_id", user.getTenant() != null ? user.getTenant().getId() : null)
+                    .withClaim("name", user.getName())
+                    .withClaim("cpf", user.getCpf())
+                    .withClaim("role", user.getRole().name())
+                    .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
-            throw new RuntimeException("Erro ao gerar token JWT", exception);
+            throw new RuntimeException("Erro ao gerar token jwt", exception);
         }
     }
 
@@ -51,7 +49,19 @@ public class TokenService {
         }
     }
 
-    private Instant genExpirationDate(Long durationMs) {
-        return Instant.now().plusMillis(durationMs);
+    public DecodedJWT decodeToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.require(algorithm)
+                    .withIssuer("calibraflow-api")
+                    .build()
+                    .verify(token);
+        } catch (JWTVerificationException exception) {
+            throw new RuntimeException("Token JWT invalido ou expirado", exception);
+        }
+    }
+
+    private Instant genExpirationDate() {
+        return LocalDateTime.now().plusHours(8).toInstant(ZoneOffset.of("-03:00"));
     }
 }
