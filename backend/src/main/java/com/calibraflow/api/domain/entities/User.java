@@ -3,6 +3,9 @@ package com.calibraflow.api.domain.entities;
 import com.calibraflow.api.domain.entities.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +15,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = Long.class))
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Getter
 @Setter
 @NoArgsConstructor
