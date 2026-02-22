@@ -1,6 +1,6 @@
 # CalibraFlow
 
-![Status](https://img.shields.io/badge/Status-Arquitetura_SaaS_Pronta-green)
+![Status](https://img.shields.io/badge/Status-Arquitetura_SaaS_Em_Construção-green)
 ![Java](https://img.shields.io/badge/Backend-Java%2021-orange)
 ![Spring](https://img.shields.io/badge/Framework-Spring%20Boot%203.2-green)
 ![Security](https://img.shields.io/badge/Security-JWT_Multi--tenant-blue)
