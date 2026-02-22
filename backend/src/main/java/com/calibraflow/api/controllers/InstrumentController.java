@@ -1,19 +1,18 @@
-package com.calibraflow.api.controllers;
+package com.calibraflow.api.application.controllers;
 
-import com.calibraflow.api.domain.dtos.InstrumentRequestDTO;
-import com.calibraflow.api.domain.dtos.InstrumentResponseDTO;
-import com.calibraflow.api.domain.entities.Location;
-import com.calibraflow.api.domain.entities.Instrument;
+import com.calibraflow.api.application.dtos.InstrumentRequestDTO;
+import com.calibraflow.api.application.dtos.InstrumentResponseDTO;
 import com.calibraflow.api.domain.entities.User;
 import com.calibraflow.api.domain.services.InstrumentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/instruments")
@@ -22,56 +21,36 @@ public class InstrumentController {
 
     private final InstrumentService instrumentService;
 
-    @GetMapping
-    public ResponseEntity<List<InstrumentResponseDTO>> findAll() {
-        List<InstrumentResponseDTO> instruments = instrumentService.findAllActive()
-                .stream()
-                .map(InstrumentResponseDTO::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(instruments);
+    @PostMapping
+    public ResponseEntity<InstrumentResponseDTO> create(
+            @RequestBody @Valid InstrumentRequestDTO dto,
+            @AuthenticationPrincipal User loggedUser) {
+
+        InstrumentResponseDTO response = instrumentService.create(dto, loggedUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<InstrumentResponseDTO>> findAllIncludingDeleted() {
-        List<InstrumentResponseDTO> instruments = instrumentService.findAll()
-                .stream()
-                .map(InstrumentResponseDTO::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(instruments);
+    @GetMapping
+    public ResponseEntity<Page<InstrumentResponseDTO>> findAll(
+            @PageableDefault(size = 20, sort = "tag") Pageable pageable) {
+
+        Page<InstrumentResponseDTO> response = instrumentService.findAll(pageable);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<InstrumentResponseDTO> findById(@PathVariable Long id) {
-        return instrumentService.findById(id)
-                .map(instrument -> ResponseEntity.ok(new InstrumentResponseDTO(instrument)))
-                .orElse(ResponseEntity.notFound().build());
+        InstrumentResponseDTO response = instrumentService.findById(id);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping
-    public ResponseEntity<InstrumentResponseDTO> create(@Valid @RequestBody InstrumentRequestDTO dto) {
-        Instrument savedInstrument = instrumentService.createFromDTO(dto);
-        return ResponseEntity.ok(new InstrumentResponseDTO(savedInstrument));
-    }
-
-    @PutMapping("/{id}/location")
-    public ResponseEntity<InstrumentResponseDTO> updateLocation(
+    @PutMapping("/{id}")
+    public ResponseEntity<InstrumentResponseDTO> update(
             @PathVariable Long id,
-            @RequestBody Location newLocation,
-            @AuthenticationPrincipal User user,
-            @RequestParam String reason) {
+            @RequestBody @Valid InstrumentRequestDTO dto,
+            @AuthenticationPrincipal User loggedUser) {
 
-        return instrumentService.updateLocation(id, newLocation, user, reason)
-                .map(instrument -> ResponseEntity.ok(new InstrumentResponseDTO(instrument)))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> softDelete(
-            @PathVariable Long id,
-            @AuthenticationPrincipal User user,
-            @RequestParam(required = false) String reason) {
-        return instrumentService.softDelete(id, user, reason)
-                .map(instrument -> ResponseEntity.noContent().<Void>build())
-                .orElse(ResponseEntity.notFound().build());
+        InstrumentResponseDTO response = instrumentService.update(id, dto, loggedUser);
+        return ResponseEntity.ok(response);
     }
 }

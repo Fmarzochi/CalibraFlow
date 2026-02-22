@@ -1,42 +1,25 @@
-package com.calibraflow.api.domain.dtos;
+package com.calibraflow.api.application.dtos;
 
-import com.calibraflow.api.domain.entities.enums.InstrumentStatus;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import jakarta.validation.constraints.Size;
 
-@Data
-public class InstrumentRequestDTO {
+public record InstrumentRequestDTO(
 
-    @NotBlank(message = "A tag é obrigatória")
-    private String tag;
+        @NotBlank(message = "A TAG do instrumento e obrigatoria")
+        @Size(max = 100, message = "A TAG deve ter no maximo 100 caracteres")
+        String tag,
 
-    @NotBlank(message = "O nome é obrigatório")
-    private String name;
+        @NotBlank(message = "O nome do instrumento e obrigatorio")
+        @Size(max = 255, message = "O nome deve ter no maximo 255 caracteres")
+        String name,
 
-    private String manufacturer;
-    private String model;
-    private String serialNumber;
-    private String range;
-    private String tolerance;
-    private String resolution;
-    private String patrimonyCode;
+        String serialNumber,
 
-    @NotNull(message = "O ID da categoria é obrigatório")
-    private Long categoryId;
+        String manufacturer,
 
-    @NotNull(message = "O ID da localização é obrigatório")
-    private Long locationId;
+        String model,
 
-    private Long periodicityId;
+        String location,
 
-    public static record InstrumentStatusChangeDTO(
-
-            @NotNull(message = "O novo status e obrigatorio")
-            InstrumentStatus newStatus,
-
-            @NotBlank(message = "A justificativa e obrigatoria para fins de auditoria ISO")
-            String justification
-
-    ) {}
-}
+        String tolerance
+) {}
