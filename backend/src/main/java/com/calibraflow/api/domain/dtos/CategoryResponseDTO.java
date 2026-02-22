@@ -1,11 +1,16 @@
-package com.calibraflow.api.domain.repositories;
+package com.calibraflow.api.application.dtos;
 
-import com.calibraflow.api.domain.entities.Calibration;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.calibraflow.api.domain.entities.enums.UserPermission;
+import com.calibraflow.api.domain.entities.enums.UserRole;
 
-public interface CalibrationRepository extends JpaRepository<Calibration, Long> {
+import java.util.Set;
 
-    Page<Calibration> findByInstrumentId(Long instrumentId, Pageable pageable);
-}
+public record UserResponseDTO(
+        Long id,
+        String name,
+        String email,
+        String cpf,
+        UserRole role,
+        boolean enabled,
+        Set<UserPermission> permissions
+) {}

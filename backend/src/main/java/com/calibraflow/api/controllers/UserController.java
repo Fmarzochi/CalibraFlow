@@ -1,12 +1,16 @@
-package com.calibraflow.api.controllers;
+package com.calibraflow.api.application.controllers;
 
-import com.calibraflow.api.domain.entities.User;
+import com.calibraflow.api.application.dtos.UserResponseDTO;
+import com.calibraflow.api.application.dtos.UserUpdatePermissionsDTO;
 import com.calibraflow.api.domain.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -16,12 +20,29 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> findAll() {
-        return ResponseEntity.ok(userService.findAll());
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<Page<UserResponseDTO>> findAll(@PageableDefault(size = 20) Pageable pageable) {
+        return ResponseEntity.ok(userService.findAll(pageable));
     }
 
-    @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user) {
-        return ResponseEntity.ok(userService.save(user));
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.findById(id));
+    }
+
+    @PutMapping("/{id}/permissions")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<UserResponseDTO> updatePermissions(
+            @PathVariable Long id,
+            @RequestBody @Valid UserUpdatePermissionsDTO dto) {
+        return ResponseEntity.ok(userService.updatePermissions(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<Void> softDelete(@PathVariable Long id) {
+        userService.softDelete(id);
+        return ResponseEntity.noContent().build();
     }
 }
