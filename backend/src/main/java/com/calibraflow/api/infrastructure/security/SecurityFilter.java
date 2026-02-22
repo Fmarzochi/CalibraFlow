@@ -23,18 +23,29 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = this.recoverToken(request);
-        if (token != null) {
-            var login = tokenService.validateToken(token);
-            if (!login.isEmpty()) {
-                UserDetails user = userRepository.findByUsername(login).orElse(null);
-                if (user != null) {
-                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            var token = this.recoverToken(request);
+            if (token != null) {
+                var login = tokenService.validateToken(token);
+                if (!login.isEmpty()) {
+                    var decodedJWT = tokenService.decodeToken(token);
+                    Long tenantId = decodedJWT.getClaim("tenant_id").asLong();
+
+                    if (tenantId != null) {
+                        TenantContext.setCurrentTenant(tenantId);
+                    }
+
+                    UserDetails user = userRepository.findByUsername(login).orElse(null);
+                    if (user != null) {
+                        var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
                 }
             }
+            filterChain.doFilter(request, response);
+        } finally {
+            TenantContext.clear();
         }
-        filterChain.doFilter(request, response);
     }
 
     private String recoverToken(HttpServletRequest request) {
