@@ -1,13 +1,8 @@
 package com.calibraflow.api.domain.entities;
 
+import com.calibraflow.api.domain.entities.enums.InstrumentStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "instruments")
@@ -15,73 +10,36 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@EqualsAndHashCode(of = "id")
 public class Instrument {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "A tag do instrumento é obrigatória")
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "tenant_id", nullable = false)
+    private Tenant tenant;
+
+    @Column(nullable = false, unique = true)
     private String tag;
 
-    @NotBlank(message = "O nome do instrumento é obrigatório")
     @Column(nullable = false)
     private String name;
+
+    @Column(name = "serial_number")
+    private String serialNumber;
 
     private String manufacturer;
 
     private String model;
 
-    @Column(name = "serial_number")
-    private String serialNumber;
-
-    private String range;
+    private String location;
 
     private String tolerance;
 
-    private String resolution;
-
-    @Column(name = "patrimony_code")
-    private String patrimonyCode;
-
-    @NotNull(message = "A categoria é obrigatória")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    @NotNull(message = "A localização é obrigatória")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "location_id")
-    private Location location;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "periodicity_id")
-    private Periodicity periodicity;
-
-    @Builder.Default
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean active = true;
+    private InstrumentStatus status = InstrumentStatus.ATIVO;
 
-    @Builder.Default
-    @Column(nullable = false)
-    private boolean deleted = false;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-
-    @OneToMany(mappedBy = "instrument", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Calibration> calibrations = new ArrayList<>();
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
-        }
-    }
 }
