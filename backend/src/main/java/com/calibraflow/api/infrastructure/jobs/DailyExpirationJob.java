@@ -7,6 +7,7 @@ import com.calibraflow.api.domain.entities.User;
 import com.calibraflow.api.domain.entities.enums.InstrumentStatus;
 import com.calibraflow.api.domain.entities.enums.UserRole;
 import com.calibraflow.api.domain.services.EmailService;
+import com.calibraflow.api.infrastructure.security.TenantContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -38,60 +37,57 @@ public class DailyExpirationJob {
 
         LocalDate hoje = LocalDate.now(ZoneId.of("America/Sao_Paulo"));
 
-        String queryStr = "SELECT c.instrument FROM Calibration c " +
-                "JOIN c.instrument i " +
-                "WHERE i.status = 'ATIVO' AND c.nextCalibrationDate < :hoje";
+        List<Tenant> tenants = entityManager.createQuery("SELECT t FROM Tenant t WHERE t.active = true", Tenant.class).getResultList();
 
-        List<Instrument> expirados = entityManager.createQuery(queryStr, Instrument.class)
-                .setParameter("hoje", hoje)
-                .getResultList();
+        for (Tenant tenant : tenants) {
+            try {
+                TenantContext.setCurrentTenant(tenant.getId());
 
-        if (expirados.isEmpty()) {
-            log.info("Nenhum instrumento venceu na data de hoje.");
-            return;
-        }
+                String queryStr = "SELECT c.instrument FROM Calibration c " +
+                        "JOIN c.instrument i " +
+                        "WHERE i.status = 'ATIVO' AND c.nextCalibrationDate < :hoje";
 
-        Map<Tenant, List<Instrument>> porEmpresa = expirados.stream()
-                .collect(Collectors.groupingBy(Instrument::getTenant));
+                List<Instrument> expirados = entityManager.createQuery(queryStr, Instrument.class)
+                        .setParameter("hoje", hoje)
+                        .getResultList();
 
-        for (Map.Entry<Tenant, List<Instrument>> entry : porEmpresa.entrySet()) {
-            Tenant tenant = entry.getKey();
-            List<Instrument> instrumentos = entry.getValue();
+                if (expirados.isEmpty()) {
+                    continue;
+                }
 
-            StringBuilder mensagem = new StringBuilder();
-            mensagem.append("ALERTA CRITICO: Os instrumentos abaixo VENCERAM e foram bloqueados pelo sistema.\n");
-            mensagem.append("O uso na fabrica esta EXPRESSAMENTE PROIBIDO a partir de hoje.\n\n");
+                StringBuilder mensagem = new StringBuilder();
+                mensagem.append("ALERTA CRITICO: Os instrumentos abaixo VENCERAM e foram bloqueados pelo sistema.\n");
+                mensagem.append("O uso na fabrica esta EXPRESSAMENTE PROIBIDO a partir de hoje.\n\n");
 
-            for (Instrument inst : instrumentos) {
-                inst.setStatus(InstrumentStatus.VENCIDO);
-                entityManager.merge(inst);
+                for (Instrument inst : expirados) {
+                    inst.setStatus(InstrumentStatus.VENCIDO);
+                    entityManager.merge(inst);
 
-                InstrumentStatusHistory history = new InstrumentStatusHistory();
-                history.setInstrument(inst);
-                history.setTenant(tenant);
-                history.setPreviousStatus(InstrumentStatus.ATIVO);
-                history.setNewStatus(InstrumentStatus.VENCIDO);
-                history.setResponsibleId(0L);
-                history.setResponsibleFullName("SISTEMA AUTOMATICO");
-                history.setResponsibleCpf("00000000000");
-                history.setSourceIp("127.0.0.1");
-                history.setJustification("Bloqueio automatico por vencimento de prazo de calibracao.");
-                entityManager.persist(history);
+                    InstrumentStatusHistory history = new InstrumentStatusHistory();
+                    history.setInstrument(inst);
+                    history.setTenant(tenant);
+                    history.setPreviousStatus(InstrumentStatus.ATIVO);
+                    history.setNewStatus(InstrumentStatus.VENCIDO);
+                    history.setResponsibleId(0L);
+                    history.setResponsibleFullName("SISTEMA AUTOMATICO");
+                    history.setResponsibleCpf("00000000000");
+                    history.setSourceIp("127.0.0.1");
+                    history.setJustification("Bloqueio automatico por vencimento de prazo de calibracao.");
+                    entityManager.persist(history);
 
-                mensagem.append("TAG: ").append(inst.getTag())
-                        .append(" | Nome: ").append(inst.getName())
-                        .append("\n");
-            }
+                    mensagem.append("TAG: ").append(inst.getTag())
+                            .append(" | Nome: ").append(inst.getName())
+                            .append("\n");
+                }
 
-            mensagem.append("\nAcesse o painel do CalibraFlow imediatamente para providenciar a calibracao e o desbloqueio.");
+                mensagem.append("\nAcesse o painel do CalibraFlow imediatamente para providenciar a calibracao e o desbloqueio.");
 
-            List<User> usuarios = entityManager.createQuery(
-                            "SELECT u FROM User u WHERE u.tenant.id = :tenantId AND u.enabled = true", User.class)
-                    .setParameter("tenantId", tenant.getId())
-                    .getResultList();
+                List<User> usuarios = entityManager.createQuery(
+                                "SELECT u FROM User u WHERE u.role IN (:roles) AND u.enabled = true", User.class)
+                        .setParameter("roles", List.of(UserRole.ADMINISTRADOR, UserRole.USUARIO))
+                        .getResultList();
 
-            for (User usuario : usuarios) {
-                if (usuario.getRole() == UserRole.ADMINISTRADOR || usuario.getRole() == UserRole.USUARIO) {
+                for (User usuario : usuarios) {
                     try {
                         emailService.enviarEmail(
                                 usuario.getEmail(),
@@ -103,6 +99,9 @@ public class DailyExpirationJob {
                         log.error("Falha ao enviar e-mail de bloqueio para {}: {}", usuario.getEmail(), e.getMessage());
                     }
                 }
+
+            } finally {
+                TenantContext.clear();
             }
         }
     }

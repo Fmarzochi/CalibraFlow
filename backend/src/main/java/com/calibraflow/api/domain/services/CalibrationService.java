@@ -1,11 +1,11 @@
 package com.calibraflow.api.domain.services;
 
-import com.calibraflow.api.application.dtos.CalibrationRequestDTO;
-import com.calibraflow.api.application.dtos.CalibrationResponseDTO;
+import com.calibraflow.api.domain.dtos.CalibrationRequestDTO;
+import com.calibraflow.api.domain.dtos.CalibrationResponseDTO;
+import com.calibraflow.api.domain.dtos.UpcomingCalibrationDTO;
 import com.calibraflow.api.domain.entities.Calibration;
 import com.calibraflow.api.domain.entities.Instrument;
 import com.calibraflow.api.domain.entities.User;
-import com.calibraflow.api.domain.entities.enums.InstrumentStatus;
 import com.calibraflow.api.domain.repositories.CalibrationRepository;
 import com.calibraflow.api.domain.repositories.InstrumentRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,12 +15,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CalibrationService {
 
     private final CalibrationRepository calibrationRepository;
     private final InstrumentRepository instrumentRepository;
+    private final InstrumentStatusService instrumentStatusService;
 
     @Transactional
     public CalibrationResponseDTO create(CalibrationRequestDTO dto, User loggedUser) {
@@ -40,13 +45,7 @@ public class CalibrationService {
 
         calibrationRepository.save(calibration);
 
-        if (Boolean.TRUE.equals(dto.approved())) {
-            instrument.setStatus(InstrumentStatus.ATIVO);
-            instrumentRepository.save(instrument);
-        } else {
-            instrument.setStatus(InstrumentStatus.QUARENTENA);
-            instrumentRepository.save(instrument);
-        }
+        instrumentStatusService.updateStatusFromCalibration(instrument, dto.approved(), loggedUser);
 
         return mapToResponseDTO(calibration);
     }
@@ -60,8 +59,21 @@ public class CalibrationService {
     @Transactional(readOnly = true)
     public CalibrationResponseDTO findById(Long id) {
         Calibration calibration = calibrationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Registro de calibracao nao encontrado."));
+                .orElseThrow(() -> new EntityNotFoundException("Registo de calibracao nao encontrado."));
         return mapToResponseDTO(calibration);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UpcomingCalibrationDTO> findUpcomingCalibrations(LocalDate startDate, LocalDate endDate) {
+        return calibrationRepository.findUpcomingCalibrations(startDate, endDate)
+                .stream()
+                .map(c -> new UpcomingCalibrationDTO(
+                        c.getInstrument().getId(),
+                        c.getInstrument().getTag(),
+                        c.getInstrument().getName(),
+                        c.getNextCalibrationDate()
+                ))
+                .collect(Collectors.toList());
     }
 
     private CalibrationResponseDTO mapToResponseDTO(Calibration calibration) {
