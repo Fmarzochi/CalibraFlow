@@ -3,6 +3,7 @@ package com.calibraflow.api.controllers;
 import com.calibraflow.api.domain.services.DataFixerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.Path;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/datafixer")
+@PreAuthorize("hasRole('ADMINISTRADOR')")
 public class DataFixerController {
 
     @Autowired
