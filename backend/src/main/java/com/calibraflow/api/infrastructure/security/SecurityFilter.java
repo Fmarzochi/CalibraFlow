@@ -5,7 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,11 +15,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-@RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter {
 
-    private final TokenService tokenService;
-    private final UserRepository userRepository;
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -27,16 +29,13 @@ public class SecurityFilter extends OncePerRequestFilter {
             var token = this.recoverToken(request);
             if (token != null) {
                 var login = tokenService.validateToken(token);
-                if (!login.isEmpty()) {
-                    var decodedJWT = tokenService.decodeToken(token);
-                    Long tenantId = decodedJWT.getClaim("tenant_id").asLong();
+                var tenantId = tokenService.getTenantIdFromToken(token);
 
-                    if (tenantId != null) {
-                        TenantContext.setCurrentTenant(tenantId);
-                    }
+                if (login != null && !login.isEmpty() && tenantId != null) {
+                    UserDetails user = userRepository.findByEmail(login);
 
-                    UserDetails user = userRepository.findByUsername(login).orElse(null);
                     if (user != null) {
+                        TenantContext.setCurrentTenant(tenantId);
                         var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }

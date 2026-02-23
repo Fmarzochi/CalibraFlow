@@ -1,4 +1,4 @@
-package com.calibraflow.api.application.dtos;
+package com.calibraflow.api.domain.dtos;
 
 import com.calibraflow.api.domain.entities.enums.UserPermission;
 import jakarta.validation.constraints.NotNull;

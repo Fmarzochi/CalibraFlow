@@ -25,7 +25,9 @@ public class InstrumentStatusController {
             HttpServletRequest request) {
 
         String sourceIp = request.getHeader("X-Forwarded-For");
-        if (sourceIp == null || sourceIp.isEmpty()) {
+        if (sourceIp != null && !sourceIp.isEmpty()) {
+            sourceIp = sourceIp.split(",")[0].trim();
+        } else {
             sourceIp = request.getRemoteAddr();
         }
 

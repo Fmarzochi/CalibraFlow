@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -39,8 +40,9 @@ public class LocalStorageService implements StorageService {
             Path tenantFolder = this.rootLocation.resolve(String.valueOf(tenantId));
             Files.createDirectories(tenantFolder);
 
-            String originalExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-            String uniqueFileName = UUID.randomUUID().toString() + "." + originalExtension;
+            String originalFilename = Objects.requireNonNull(file.getOriginalFilename());
+            String originalExtension = StringUtils.getFilenameExtension(originalFilename);
+            String uniqueFileName = UUID.randomUUID().toString() + (originalExtension != null ? "." + originalExtension : "");
 
             Path targetLocation = tenantFolder.resolve(uniqueFileName);
 

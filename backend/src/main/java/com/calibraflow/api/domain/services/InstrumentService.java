@@ -1,6 +1,6 @@
 package com.calibraflow.api.domain.services;
 
-import com.calibraflow.api.application.dtos.InstrumentRequestDTO;
+import com.calibraflow.api.domain.dtos.InstrumentRequestDTO;
 import com.calibraflow.api.application.dtos.InstrumentResponseDTO;
 import com.calibraflow.api.domain.entities.Instrument;
 import com.calibraflow.api.domain.entities.User;

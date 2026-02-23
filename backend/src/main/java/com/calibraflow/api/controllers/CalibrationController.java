@@ -1,7 +1,7 @@
-package com.calibraflow.api.application.controllers;
+package com.calibraflow.api.controllers;
 
-import com.calibraflow.api.application.dtos.CalibrationRequestDTO;
-import com.calibraflow.api.application.dtos.CalibrationResponseDTO;
+import com.calibraflow.api.domain.dtos.CalibrationRequestDTO;
+import com.calibraflow.api.domain.dtos.CalibrationResponseDTO;
 import com.calibraflow.api.domain.entities.User;
 import com.calibraflow.api.domain.services.CalibrationService;
 import jakarta.validation.Valid;

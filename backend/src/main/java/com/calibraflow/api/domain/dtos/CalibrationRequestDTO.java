@@ -1,4 +1,4 @@
-package com.calibraflow.api.application.dtos;
+package com.calibraflow.api.domain.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public record CalibrationRequestDTO(
-
         @NotNull(message = "O ID do instrumento e obrigatorio")
         Long instrumentId,
 

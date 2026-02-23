@@ -1,7 +1,7 @@
 package com.calibraflow.api.domain.services;
 
-import com.calibraflow.api.application.dtos.UserResponseDTO;
-import com.calibraflow.api.application.dtos.UserUpdatePermissionsDTO;
+import com.calibraflow.api.domain.dtos.UserResponseDTO;
+import com.calibraflow.api.domain.dtos.UserUpdatePermissionsDTO;
 import com.calibraflow.api.domain.entities.User;
 import com.calibraflow.api.domain.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;

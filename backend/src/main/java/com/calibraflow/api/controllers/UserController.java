@@ -1,7 +1,7 @@
-package com.calibraflow.api.application.controllers;
+package com.calibraflow.api.controllers;
 
-import com.calibraflow.api.application.dtos.UserResponseDTO;
-import com.calibraflow.api.application.dtos.UserUpdatePermissionsDTO;
+import com.calibraflow.api.domain.dtos.UserResponseDTO;
+import com.calibraflow.api.domain.dtos.UserUpdatePermissionsDTO;
 import com.calibraflow.api.domain.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

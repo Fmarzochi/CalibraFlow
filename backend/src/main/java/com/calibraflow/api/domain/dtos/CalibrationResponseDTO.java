@@ -1,4 +1,4 @@
-package com.calibraflow.api.application.dtos;
+package com.calibraflow.api.domain.dtos;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;

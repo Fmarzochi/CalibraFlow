@@ -1,37 +1,18 @@
-package com.calibraflow.api.domain.entities;
+package com.calibraflow.api.infrastructure.security;
 
-import jakarta.persistence.*;
-import lombok.*;
+public class TenantContext {
 
-import java.time.OffsetDateTime;
+    private static final ThreadLocal<Long> CURRENT_TENANT = new ThreadLocal<>();
 
-@Entity
-@Table(name = "tenants")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(of = "id")
-public class Tenant {
+    public static void setCurrentTenant(Long tenantId) {
+        CURRENT_TENANT.set(tenantId);
+    }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    public static Long getCurrentTenant() {
+        return CURRENT_TENANT.get();
+    }
 
-    @Column(nullable = false, unique = true)
-    private String name;
-
-    @Column(nullable = false, unique = true)
-    private String document;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private OffsetDateTime createdAt;
-
-    @Column(name = "is_active", nullable = false)
-    private boolean active = true;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = OffsetDateTime.now();
+    public static void clear() {
+        CURRENT_TENANT.remove();
     }
 }

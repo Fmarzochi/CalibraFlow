@@ -1,15 +1,16 @@
 package com.calibraflow.api.domain.dtos;
 
-import com.calibraflow.api.domain.entities.User;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.calibraflow.api.domain.entities.enums.UserPermission;
+import com.calibraflow.api.domain.entities.enums.UserRole;
 
-public record UserResponseDTO(Long id, String username, Set<String> roles) {
-    public UserResponseDTO(User user) {
-        this(
-                user.getId(),
-                user.getUsername(),
-                user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toSet())
-        );
-    }
-}
+import java.util.Set;
+
+public record UserResponseDTO(
+        Long id,
+        String name,
+        String email,
+        String cpf,
+        UserRole role,
+        boolean enabled,
+        Set<UserPermission> permissions
+) {}
