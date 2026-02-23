@@ -1,0 +1,208 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+sh: locale: not found
+2026-02-21 01:05:41.041 UTC [35] WARNING:  no usable system locales were found
+performing post-bootstrap initialization ... ok
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-02-21 01:05:41.664 UTC [41] LOG:  starting PostgreSQL 15.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-02-21 01:05:41.665 UTC [41] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-02-21 01:05:41.668 UTC [44] LOG:  database system was shut down at 2026-02-21 01:05:41 UTC
+2026-02-21 01:05:41.673 UTC [41] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-02-21 01:05:41.814 UTC [41] LOG:  received fast shutdown request
+2026-02-21 01:05:41.815 UTC [41] LOG:  aborting any active transactions
+2026-02-21 01:05:41.817 UTC [41] LOG:  background worker "logical replication launcher" (PID 47) exited with exit code 1
+2026-02-21 01:05:41.818 UTC [42] LOG:  shutting down
+2026-02-21 01:05:41.818 UTC [42] LOG:  checkpoint starting: shutdown immediate
+2026-02-21 01:05:41.858 UTC [42] LOG:  checkpoint complete: wrote 921 buffers (5.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.017 s, sync=0.021 s, total=0.041 s; sync files=301, longest=0.002 s, average=0.001 s; distance=4239 kB, estimate=4239 kB
+2026-02-21 01:05:41.869 UTC [41] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+2026-02-21 01:05:41.937 UTC [1] LOG:  starting PostgreSQL 15.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-02-21 01:05:41.937 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-02-21 01:05:41.937 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-02-21 01:05:41.938 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-02-21 01:05:41.941 UTC [57] LOG:  database system was shut down at 2026-02-21 01:05:41 UTC
+2026-02-21 01:05:41.947 UTC [1] LOG:  database system is ready to accept connections
+2026-02-21 01:10:42.041 UTC [55] LOG:  checkpoint starting: time
+2026-02-21 01:11:01.068 UTC [55] LOG:  checkpoint complete: wrote 192 buffers (1.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=19.014 s, sync=0.009 s, total=19.028 s; sync files=114, longest=0.001 s, average=0.001 s; distance=952 kB, estimate=952 kB
+2026-02-21 02:20:43.129 UTC [55] LOG:  checkpoint starting: time
+2026-02-21 02:20:45.779 UTC [55] LOG:  checkpoint complete: wrote 27 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.642 s, sync=0.002 s, total=2.651 s; sync files=17, longest=0.001 s, average=0.001 s; distance=2 kB, estimate=857 kB
+2026-02-21 04:37:31.477 UTC [1] LOG:  received fast shutdown request
+2026-02-21 04:37:31.479 UTC [1] LOG:  aborting any active transactions
+2026-02-21 04:37:31.490 UTC [1] LOG:  background worker "logical replication launcher" (PID 60) exited with exit code 1
+2026-02-21 04:37:31.491 UTC [55] LOG:  shutting down
+2026-02-21 04:37:31.495 UTC [55] LOG:  checkpoint starting: shutdown immediate
+2026-02-21 04:37:31.535 UTC [55] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.028 s, sync=0.001 s, total=0.044 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=772 kB
+2026-02-21 04:37:31.555 UTC [1] LOG:  database system is shut down
+
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+2026-02-21 13:12:40.674 UTC [1] LOG:  starting PostgreSQL 15.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-02-21 13:12:40.675 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-02-21 13:12:40.675 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-02-21 13:12:40.676 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-02-21 13:12:40.680 UTC [29] LOG:  database system was shut down at 2026-02-21 04:37:31 UTC
+2026-02-21 13:12:40.688 UTC [1] LOG:  database system is ready to accept connections
+2026-02-21 13:17:40.780 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 13:17:41.088 UTC [27] LOG:  checkpoint complete: wrote 6 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.303 s, sync=0.002 s, total=0.308 s; sync files=3, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB
+2026-02-21 17:14:53.754 UTC [27] LOG:  checkpoint starting: immediate force wait
+2026-02-21 17:14:53.799 UTC [27] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 1 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.046 s; sync files=4, longest=0.001 s, average=0.001 s; distance=4249 kB, estimate=4249 kB
+2026-02-21 17:15:14.173 UTC [10904] ERROR:  database "calibraflow_test" already exists
+2026-02-21 17:15:14.173 UTC [10904] STATEMENT:  CREATE DATABASE calibraflow_test;
+2026-02-21 17:15:30.638 UTC [10921] ERROR:  database "calibraflow_test" already exists
+2026-02-21 17:15:30.638 UTC [10921] STATEMENT:  CREATE DATABASE calibraflow_test;
+2026-02-21 17:19:53.876 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 17:21:26.735 UTC [27] LOG:  checkpoint complete: wrote 928 buffers (5.7%); 0 WAL file(s) added, 0 removed, 1 recycled; write=92.833 s, sync=0.021 s, total=92.859 s; sync files=300, longest=0.001 s, average=0.001 s; distance=4249 kB, estimate=4249 kB
+2026-02-21 17:24:53.835 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 17:25:04.478 UTC [27] LOG:  checkpoint complete: wrote 107 buffers (0.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=10.628 s, sync=0.010 s, total=10.644 s; sync files=97, longest=0.003 s, average=0.001 s; distance=719 kB, estimate=3896 kB
+2026-02-21 17:29:53.578 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 17:30:03.518 UTC [27] LOG:  checkpoint complete: wrote 100 buffers (0.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=9.926 s, sync=0.009 s, total=9.941 s; sync files=92, longest=0.003 s, average=0.001 s; distance=845 kB, estimate=3591 kB
+2026-02-21 17:33:14.963 UTC [11743] ERROR:  duplicate key value violates unique constraint "tb_refresh_tokens_user_id_key"
+2026-02-21 17:33:14.963 UTC [11743] DETAIL:  Key (user_id)=(16) already exists.
+2026-02-21 17:33:14.963 UTC [11743] STATEMENT:  insert into tb_refresh_tokens (expiry_date,token,user_id) values ($1,$2,$3)
+	RETURNING *
+2026-02-21 17:33:51.345 UTC [11776] ERROR:  duplicate key value violates unique constraint "tb_refresh_tokens_user_id_key"
+2026-02-21 17:33:51.345 UTC [11776] DETAIL:  Key (user_id)=(16) already exists.
+2026-02-21 17:33:51.345 UTC [11776] STATEMENT:  insert into tb_refresh_tokens (expiry_date,token,user_id) values ($1,$2,$3)
+	RETURNING *
+2026-02-21 17:34:53.564 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 17:35:06.315 UTC [27] LOG:  checkpoint complete: wrote 128 buffers (0.8%); 0 WAL file(s) added, 0 removed, 0 recycled; write=12.734 s, sync=0.011 s, total=12.751 s; sync files=149, longest=0.001 s, average=0.001 s; distance=1558 kB, estimate=3388 kB
+2026-02-21 18:14:53.996 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 18:15:04.162 UTC [27] LOG:  checkpoint complete: wrote 102 buffers (0.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=10.153 s, sync=0.010 s, total=10.167 s; sync files=96, longest=0.003 s, average=0.001 s; distance=630 kB, estimate=3112 kB
+2026-02-21 18:19:53.239 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 18:20:04.407 UTC [27] LOG:  checkpoint complete: wrote 112 buffers (0.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=11.150 s, sync=0.011 s, total=11.169 s; sync files=151, longest=0.001 s, average=0.001 s; distance=1111 kB, estimate=2912 kB
+2026-02-21 18:20:29.827 UTC [13951] ERROR:  null value in column "destination_id" of relation "tb_movements" violates not-null constraint
+2026-02-21 18:20:29.827 UTC [13951] DETAIL:  Failing row contains (null, 1, 1, 2026-02-21 15:20:29.824963, 2, 2, Test delete).
+2026-02-21 18:20:29.827 UTC [13951] STATEMENT:  insert into tb_movements (destination_id,instrument_id,user_id,movement_date,origin_id,reason) values ($1,$2,$3,$4,$5,$6)
+	RETURNING *
+2026-02-21 18:24:53.508 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 18:25:07.088 UTC [27] LOG:  checkpoint complete: wrote 136 buffers (0.8%); 0 WAL file(s) added, 0 removed, 0 recycled; write=13.552 s, sync=0.023 s, total=13.581 s; sync files=295, longest=0.003 s, average=0.001 s; distance=2056 kB, estimate=2826 kB
+2026-02-21 18:29:53.140 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 18:30:05.099 UTC [27] LOG:  checkpoint complete: wrote 120 buffers (0.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=11.942 s, sync=0.011 s, total=11.959 s; sync files=151, longest=0.001 s, average=0.001 s; distance=1119 kB, estimate=2655 kB
+2026-02-21 18:34:53.183 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 18:35:04.834 UTC [27] LOG:  checkpoint complete: wrote 108 buffers (0.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=11.637 s, sync=0.011 s, total=11.651 s; sync files=139, longest=0.001 s, average=0.001 s; distance=891 kB, estimate=2479 kB
+2026-02-21 18:39:53.865 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 18:40:05.312 UTC [27] LOG:  checkpoint complete: wrote 115 buffers (0.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=11.433 s, sync=0.007 s, total=11.448 s; sync files=99, longest=0.001 s, average=0.001 s; distance=944 kB, estimate=2325 kB
+2026-02-21 18:54:52.049 UTC [15637] ERROR:  syntax error at or near "EO" at character 1
+2026-02-21 18:54:52.049 UTC [15637] STATEMENT:  EO
+	cd src/main/resources/db/migration
+	cat > V2__Remove_Patrimony_Table.sql << 'EOF'
+	-- Adiciona a coluna patrimony_code diretamente na tabela instruments
+	ALTER TABLE instruments ADD COLUMN patrimony_code VARCHAR(255)
+2026-02-21 18:54:53.533 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 18:54:56.865 UTC [27] LOG:  checkpoint complete: wrote 34 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.324 s, sync=0.004 s, total=3.333 s; sync files=15, longest=0.003 s, average=0.001 s; distance=243 kB, estimate=2117 kB
+2026-02-21 18:55:12.706 UTC [15657] ERROR:  syntax error at or near "EO" at character 1
+2026-02-21 18:55:12.706 UTC [15657] STATEMENT:  EO
+	cd src/main/resources/db/migration
+	cat > V2__Remove_Patrimony_Table.sql << 'EOF'
+	-- Adiciona a coluna patrimony_code diretamente na tabela instruments
+	ALTER TABLE instruments ADD COLUMN patrimony_code VARCHAR(255)
+2026-02-21 18:57:22.005 UTC [27] LOG:  checkpoint starting: immediate force wait
+2026-02-21 18:57:22.009 UTC [27] LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.005 s; sync files=2, longest=0.001 s, average=0.001 s; distance=262 kB, estimate=1932 kB
+2026-02-21 18:57:47.865 UTC [15779] ERROR:  duplicate key value violates unique constraint "uk_instruments_tag"
+2026-02-21 18:57:47.865 UTC [15779] DETAIL:  Key (tag)=(0 mm | 45 mm) already exists.
+2026-02-21 18:57:47.865 UTC [15779] STATEMENT:  insert into instruments (active,category_id,created_at,deleted,deleted_at,location_id,manufacturer,model,name,patrimony_code,periodicity_id,range,resolution,serial_number,tag,tolerance) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+	RETURNING *
+2026-02-21 19:00:28.717 UTC [27] LOG:  checkpoint starting: immediate force wait
+2026-02-21 19:00:28.723 UTC [27] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 1 recycled; write=0.002 s, sync=0.001 s, total=0.006 s; sync files=4, longest=0.001 s, average=0.001 s; distance=4663 kB, estimate=4663 kB
+2026-02-21 19:00:44.076 UTC [15931] ERROR:  duplicate key value violates unique constraint "uk_instruments_tag"
+2026-02-21 19:00:44.076 UTC [15931] DETAIL:  Key (tag)=(319/1) already exists.
+2026-02-21 19:00:44.076 UTC [15931] STATEMENT:  insert into instruments (active,category_id,created_at,deleted,deleted_at,location_id,manufacturer,model,name,patrimony_code,periodicity_id,range,resolution,serial_number,tag,tolerance) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+	RETURNING *
+2026-02-21 19:02:04.919 UTC [27] LOG:  checkpoint starting: immediate force wait
+2026-02-21 19:02:04.923 UTC [27] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.001 s, sync=0.001 s, total=0.005 s; sync files=4, longest=0.001 s, average=0.001 s; distance=4796 kB, estimate=4796 kB
+2026-02-21 19:07:05.018 UTC [27] LOG:  checkpoint starting: time
+2026-02-21 19:08:48.504 UTC [27] LOG:  checkpoint complete: wrote 1032 buffers (6.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=103.455 s, sync=0.027 s, total=103.487 s; sync files=372, longest=0.002 s, average=0.001 s; distance=5241 kB, estimate=5241 kB
+2026-02-22 03:31:34.602 UTC [1] LOG:  received fast shutdown request
+2026-02-22 03:31:34.604 UTC [1] LOG:  aborting any active transactions
+2026-02-22 03:31:34.616 UTC [1] LOG:  background worker "logical replication launcher" (PID 32) exited with exit code 1
+2026-02-22 03:31:34.617 UTC [27] LOG:  shutting down
+2026-02-22 03:31:34.619 UTC [27] LOG:  checkpoint starting: shutdown immediate
+2026-02-22 03:31:34.654 UTC [27] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.019 s, sync=0.002 s, total=0.037 s; sync files=1, longest=0.002 s, average=0.002 s; distance=0 kB, estimate=4717 kB
+2026-02-22 03:31:34.673 UTC [1] LOG:  database system is shut down
+
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+2026-02-22 13:19:23.421 UTC [1] LOG:  starting PostgreSQL 15.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-02-22 13:19:23.421 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-02-22 13:19:23.421 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-02-22 13:19:23.422 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-02-22 13:19:23.427 UTC [29] LOG:  database system was shut down at 2026-02-22 03:31:34 UTC
+2026-02-22 13:19:23.434 UTC [1] LOG:  database system is ready to accept connections
+2026-02-22 13:24:23.435 UTC [27] LOG:  checkpoint starting: time
+2026-02-22 13:24:23.442 UTC [27] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.008 s; sync files=2, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB
+2026-02-22 19:00:40.706 UTC [7029] FATAL:  password authentication failed for user "postgres"
+2026-02-22 19:00:40.706 UTC [7029] DETAIL:  Connection matched pg_hba.conf line 100: "host all all all scram-sha-256"
+2026-02-22 19:00:41.790 UTC [7030] FATAL:  password authentication failed for user "postgres"
+2026-02-22 19:00:41.790 UTC [7030] DETAIL:  Connection matched pg_hba.conf line 100: "host all all all scram-sha-256"
+2026-02-22 19:01:33.041 UTC [7076] ERROR:  database "calibraflow" already exists
+2026-02-22 19:01:33.041 UTC [7076] STATEMENT:  CREATE DATABASE calibraflow;
+2026-02-22 19:02:26.976 UTC [7129] FATAL:  password authentication failed for user "postgres"
+2026-02-22 19:02:26.976 UTC [7129] DETAIL:  Connection matched pg_hba.conf line 100: "host all all all scram-sha-256"
+2026-02-22 19:02:28.047 UTC [7131] FATAL:  password authentication failed for user "postgres"
+2026-02-22 19:02:28.047 UTC [7131] DETAIL:  Connection matched pg_hba.conf line 100: "host all all all scram-sha-256"
+2026-02-22 19:02:42.648 UTC [27] LOG:  checkpoint starting: time
+2026-02-22 19:02:48.500 UTC [27] LOG:  checkpoint complete: wrote 59 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=5.838 s, sync=0.005 s, total=5.852 s; sync files=26, longest=0.002 s, average=0.001 s; distance=383 kB, estimate=383 kB
+2026-02-22 19:07:42.599 UTC [27] LOG:  checkpoint starting: time
+2026-02-22 19:07:45.815 UTC [27] LOG:  checkpoint complete: wrote 32 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.210 s, sync=0.002 s, total=3.217 s; sync files=7, longest=0.001 s, average=0.001 s; distance=99 kB, estimate=355 kB
+2026-02-22 19:12:42.896 UTC [27] LOG:  checkpoint starting: time
+2026-02-22 19:12:43.209 UTC [27] LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.303 s, sync=0.004 s, total=0.314 s; sync files=4, longest=0.004 s, average=0.001 s; distance=1 kB, estimate=320 kB
+2026-02-23 06:41:16.439 UTC [1] LOG:  received fast shutdown request
+2026-02-23 06:41:16.440 UTC [1] LOG:  aborting any active transactions
+2026-02-23 06:41:16.453 UTC [1] LOG:  background worker "logical replication launcher" (PID 32) exited with exit code 1
+2026-02-23 06:41:16.457 UTC [27] LOG:  shutting down
+2026-02-23 06:41:16.459 UTC [27] LOG:  checkpoint starting: shutdown immediate
+2026-02-23 06:41:16.485 UTC [27] LOG:  checkpoint complete: wrote 0 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.017 s, sync=0.001 s, total=0.028 s; sync files=0, longest=0.000 s, average=0.000 s; distance=0 kB, estimate=288 kB
+2026-02-23 06:41:16.498 UTC [1] LOG:  database system is shut down
+
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+
+2026-02-23 15:24:02.228 UTC [1] LOG:  starting PostgreSQL 15.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-02-23 15:24:02.228 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-02-23 15:24:02.228 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-02-23 15:24:02.230 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-02-23 15:24:02.234 UTC [29] LOG:  database system was shut down at 2026-02-23 06:41:16 UTC
+2026-02-23 15:24:02.242 UTC [1] LOG:  database system is ready to accept connections
+2026-02-23 15:29:02.333 UTC [27] LOG:  checkpoint starting: time
+2026-02-23 15:29:02.339 UTC [27] LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.002 s, sync=0.001 s, total=0.007 s; sync files=2, longest=0.001 s, average=0.001 s; distance=0 kB, estimate=0 kB
+2026-02-23 19:16:13.682 UTC [10650] FATAL:  password authentication failed for user "postgres"
+2026-02-23 19:16:13.682 UTC [10650] DETAIL:  Connection matched pg_hba.conf line 100: "host all all all scram-sha-256"
+2026-02-23 19:16:14.753 UTC [10651] FATAL:  password authentication failed for user "postgres"
+2026-02-23 19:16:14.753 UTC [10651] DETAIL:  Connection matched pg_hba.conf line 100: "host all all all scram-sha-256"
+2026-02-23 19:17:24.973 UTC [10707] FATAL:  password authentication failed for user "postgres"
+2026-02-23 19:17:24.973 UTC [10707] DETAIL:  Connection matched pg_hba.conf line 100: "host all all all scram-sha-256"
+2026-02-23 19:17:26.051 UTC [10708] FATAL:  password authentication failed for user "postgres"
+2026-02-23 19:17:26.051 UTC [10708] DETAIL:  Connection matched pg_hba.conf line 100: "host all all all scram-sha-256"

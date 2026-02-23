@@ -1,6 +1,7 @@
-package com.calibraflow.api.application.dtos;
+package com.calibraflow.api.domain.dtos;
 
 import com.calibraflow.api.domain.entities.enums.InstrumentStatus;
+import java.time.LocalDateTime;
 
 public record InstrumentResponseDTO(
         Long id,
@@ -9,7 +10,11 @@ public record InstrumentResponseDTO(
         String serialNumber,
         String manufacturer,
         String model,
-        String location,
         String tolerance,
-        InstrumentStatus status
+        String categoryName,
+        String locationName,
+        Integer periodicityDays,
+        InstrumentStatus status,
+        boolean active,
+        LocalDateTime createdAt
 ) {}

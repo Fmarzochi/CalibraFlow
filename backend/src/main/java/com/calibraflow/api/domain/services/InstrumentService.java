@@ -1,10 +1,10 @@
 package com.calibraflow.api.domain.services;
 
 import com.calibraflow.api.domain.dtos.InstrumentRequestDTO;
-import com.calibraflow.api.application.dtos.InstrumentResponseDTO;
-import com.calibraflow.api.domain.entities.Instrument;
-import com.calibraflow.api.domain.entities.User;
-import com.calibraflow.api.domain.repositories.InstrumentRepository;
+import com.calibraflow.api.domain.dtos.InstrumentResponseDTO;
+import com.calibraflow.api.domain.entities.*;
+import com.calibraflow.api.domain.entities.enums.InstrumentStatus;
+import com.calibraflow.api.domain.repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,52 +12,64 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class InstrumentService {
 
     private final InstrumentRepository instrumentRepository;
+    private final CategoryRepository categoryRepository;
+    private final LocationRepository locationRepository;
+    private final PeriodicityRepository periodicityRepository;
 
     @Transactional
     public InstrumentResponseDTO create(InstrumentRequestDTO dto, User loggedUser) {
-        if (instrumentRepository.existsByTagAndTenant(dto.tag(), loggedUser.getTenant())) {
-            throw new IllegalArgumentException("Ja existe um instrumento com esta TAG cadastrado na sua empresa.");
+        Category category = categoryRepository.findById(dto.categoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada."));
+
+        Location location = locationRepository.findById(dto.locationId())
+                .orElseThrow(() -> new EntityNotFoundException("Localização não encontrada."));
+
+        Periodicity periodicity = null;
+        if (dto.periodicityId() != null) {
+            periodicity = periodicityRepository.findById(dto.periodicityId()).orElse(null);
         }
 
-        Instrument instrument = new Instrument();
-        instrument.setTenant(loggedUser.getTenant());
-        instrument.setTag(dto.tag());
-        instrument.setName(dto.name());
-        instrument.setSerialNumber(dto.serialNumber());
-        instrument.setManufacturer(dto.manufacturer());
-        instrument.setModel(dto.model());
-        instrument.setLocation(dto.location());
-        instrument.setTolerance(dto.tolerance());
+        Instrument instrument = Instrument.builder()
+                .tag(dto.tag())
+                .name(dto.name())
+                .serialNumber(dto.serialNumber())
+                .manufacturer(dto.manufacturer())
+                .model(dto.model())
+                .tolerance(dto.tolerance())
+                .category(category)
+                .location(location)
+                .periodicity(periodicity)
+                .tenant(loggedUser.getTenant())
+                .status(InstrumentStatus.ATIVO)
+                .active(true)
+                .createdAt(LocalDateTime.now())
+                .build();
 
-        instrumentRepository.save(instrument);
-
-        return mapToResponseDTO(instrument);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<InstrumentResponseDTO> findAll(Pageable pageable) {
-        return instrumentRepository.findAll(pageable).map(this::mapToResponseDTO);
-    }
-
-    @Transactional(readOnly = true)
-    public InstrumentResponseDTO findById(Long id) {
-        Instrument instrument = instrumentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Instrumento nao encontrado."));
+        instrument = instrumentRepository.save(instrument);
         return mapToResponseDTO(instrument);
     }
 
     @Transactional
     public InstrumentResponseDTO update(Long id, InstrumentRequestDTO dto, User loggedUser) {
         Instrument instrument = instrumentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Instrumento nao encontrado."));
+                .orElseThrow(() -> new EntityNotFoundException("Instrumento não encontrado."));
 
-        if (!instrument.getTag().equals(dto.tag()) && instrumentRepository.existsByTagAndTenant(dto.tag(), loggedUser.getTenant())) {
-            throw new IllegalArgumentException("Ja existe outro instrumento com esta TAG cadastrado na sua empresa.");
+        Category category = categoryRepository.findById(dto.categoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada."));
+
+        Location location = locationRepository.findById(dto.locationId())
+                .orElseThrow(() -> new EntityNotFoundException("Localização não encontrada."));
+
+        Periodicity periodicity = null;
+        if (dto.periodicityId() != null) {
+            periodicity = periodicityRepository.findById(dto.periodicityId()).orElse(null);
         }
 
         instrument.setTag(dto.tag());
@@ -65,11 +77,22 @@ public class InstrumentService {
         instrument.setSerialNumber(dto.serialNumber());
         instrument.setManufacturer(dto.manufacturer());
         instrument.setModel(dto.model());
-        instrument.setLocation(dto.location());
         instrument.setTolerance(dto.tolerance());
+        instrument.setCategory(category);
+        instrument.setLocation(location);
+        instrument.setPeriodicity(periodicity);
 
-        instrumentRepository.save(instrument);
+        instrument = instrumentRepository.save(instrument);
+        return mapToResponseDTO(instrument);
+    }
 
+    public Page<InstrumentResponseDTO> findAll(Pageable pageable) {
+        return instrumentRepository.findAll(pageable).map(this::mapToResponseDTO);
+    }
+
+    public InstrumentResponseDTO findById(Long id) {
+        Instrument instrument = instrumentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Instrumento não encontrado."));
         return mapToResponseDTO(instrument);
     }
 
@@ -81,9 +104,13 @@ public class InstrumentService {
                 instrument.getSerialNumber(),
                 instrument.getManufacturer(),
                 instrument.getModel(),
-                instrument.getLocation(),
                 instrument.getTolerance(),
-                instrument.getStatus()
+                instrument.getCategory() != null ? instrument.getCategory().getName() : null,
+                instrument.getLocation() != null ? instrument.getLocation().getName() : null,
+                instrument.getPeriodicity() != null ? instrument.getPeriodicity().getDays() : null,
+                instrument.getStatus(),
+                instrument.isActive(),
+                instrument.getCreatedAt()
         );
     }
 }

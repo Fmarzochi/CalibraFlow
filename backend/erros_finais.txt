@@ -1,0 +1,50 @@
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m------------------------< [0;36mcom.calibraflow:api[0;1m >-------------------------[m
+[[1;34mINFO[m] [1mBuilding calibraflow-api 0.0.1-SNAPSHOT[m
+[[1;34mINFO[m]   from pom.xml
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mclean:3.3.2:clean[m [1m(default-clean)[m @ [36mapi[0;1m ---[m
+[[1;34mINFO[m] Deleting /home/fmarzochi/Projects/CalibraFlow/backend/target
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:resources[m [1m(default-resources)[m @ [36mapi[0;1m ---[m
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:compile[m [1m(default-compile)[m @ [36mapi[0;1m ---[m
+[[1;34mINFO[m] Changes detected - recompiling the module! :source
+[[1;34mINFO[m] Compiling 91 source files with javac [debug release 21] to target/classes
+[[1;34mINFO[m] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:testResources[m [1m(default-testResources)[m @ [36mapi[0;1m ---[m
+[[1;34mINFO[m] Not copying test resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:testCompile[m [1m(default-testCompile)[m @ [36mapi[0;1m ---[m
+[[1;34mINFO[m] Not compiling test sources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32msurefire:3.1.2:test[m [1m(default-test)[m @ [36mapi[0;1m ---[m
+[[1;34mINFO[m] Tests are skipped.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mjar:3.3.0:jar[m [1m(default-jar)[m @ [36mapi[0;1m ---[m
+[[1;34mINFO[m] Building jar: /home/fmarzochi/Projects/CalibraFlow/backend/target/api-0.0.1-SNAPSHOT.jar
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mspring-boot:3.2.2:repackage[m [1m(repackage)[m @ [36mapi[0;1m ---[m
+[[1;34mINFO[m] Replacing main artifact /home/fmarzochi/Projects/CalibraFlow/backend/target/api-0.0.1-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[[1;34mINFO[m] The original artifact has been renamed to /home/fmarzochi/Projects/CalibraFlow/backend/target/api-0.0.1-SNAPSHOT.jar.original
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32minstall:3.1.1:install[m [1m(default-install)[m @ [36mapi[0;1m ---[m
+[[1;34mINFO[m] Installing /home/fmarzochi/Projects/CalibraFlow/backend/pom.xml to /home/fmarzochi/.m2/repository/com/calibraflow/api/0.0.1-SNAPSHOT/api-0.0.1-SNAPSHOT.pom
+[[1;34mINFO[m] Installing /home/fmarzochi/Projects/CalibraFlow/backend/target/api-0.0.1-SNAPSHOT.jar to /home/fmarzochi/.m2/repository/com/calibraflow/api/0.0.1-SNAPSHOT/api-0.0.1-SNAPSHOT.jar
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] [1;32mBUILD SUCCESS[m
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m
+[[1;34mINFO[m] Total time:  6.137 s
+[[1;34mINFO[m] Finished at: 2026-02-23T16:14:30-03:00
+[[1;34mINFO[m] [1m------------------------------------------------------------------------[m

@@ -20,9 +20,10 @@ public class Tenant {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false, unique = true)
-    private String cnpj;
+    @Column(name = "document", nullable = false, unique = true)
+    private String document;
 
+    @Column(name = "is_active")
     private boolean active;
 
     @Column(name = "created_at", updatable = false)
