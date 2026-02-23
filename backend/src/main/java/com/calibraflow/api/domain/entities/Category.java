@@ -2,9 +2,14 @@ package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 @Entity
-@Table(name = "tb_categories")
+@Table(name = "categories")
+@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = Long.class))
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,11 +21,15 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "tenant_id", nullable = false)
+    private Tenant tenant;
+
+    @Column(nullable = false)
     private String name;
 
     @Column(name = "validity_days")
-    private Integer validityDays; // renomeado de validity_months para validity_days, mas podemos manter os dois? Vamos padronizar para dias.
+    private Integer validityDays;
 
     private String description;
 }

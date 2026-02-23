@@ -26,7 +26,7 @@ public class Instrument {
     @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String tag;
 
     @Column(nullable = false)
@@ -39,12 +39,13 @@ public class Instrument {
 
     private String model;
 
-    private String location;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "location_id", nullable = false)
+    private Location location;
 
     private String tolerance;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private InstrumentStatus status = InstrumentStatus.ATIVO;
-
 }
