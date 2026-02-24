@@ -3,15 +3,12 @@ package com.calibraflow.api.domain.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "calibrations")
-@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = Long.class))
 @Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Getter
 @Setter

@@ -4,14 +4,11 @@ import com.calibraflow.api.domain.entities.enums.InstrumentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 
 import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "instrument_status_history")
-@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = Long.class))
 @Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Getter
 @Setter

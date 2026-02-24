@@ -2,7 +2,8 @@ spring:
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5433/calibraflow}
     username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:123}
+    # Correção cirúrgica: Senha padrão alterada de 123 para postgres para alinhar com o Docker
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

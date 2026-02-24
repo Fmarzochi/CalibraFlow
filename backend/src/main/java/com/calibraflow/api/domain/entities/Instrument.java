@@ -3,7 +3,6 @@ package com.calibraflow.api.domain.entities;
 import com.calibraflow.api.domain.entities.enums.InstrumentStatus;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,7 +32,7 @@ public class Instrument {
     private String tolerance;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,4 +56,9 @@ public class Instrument {
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

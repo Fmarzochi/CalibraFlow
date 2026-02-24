@@ -65,8 +65,14 @@ CREATE TABLE instruments (
     location_id BIGINT NOT NULL,
     tolerance VARCHAR(255),
     status VARCHAR(50) NOT NULL DEFAULT 'ATIVO',
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    category_id BIGINT,
+    periodicity_id BIGINT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_instruments_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id),
     CONSTRAINT fk_instruments_location FOREIGN KEY (location_id) REFERENCES locations(id),
+    CONSTRAINT fk_instruments_category FOREIGN KEY (category_id) REFERENCES categories(id),
+    CONSTRAINT fk_instruments_periodicity FOREIGN KEY (periodicity_id) REFERENCES periodicities(id),
     CONSTRAINT uk_instruments_tenant_tag UNIQUE (tenant_id, tag)
 );
 
