@@ -20,4 +20,14 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void enviarEmail(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("nao-responda@calibraflow.com");
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+
+        mailSender.send(message);
+    }
 }
