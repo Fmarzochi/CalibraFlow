@@ -53,6 +53,7 @@
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/dtos/CalibrationRequestDTO.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/dtos/InstrumentResponseDTO.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/repositories/InstrumentStatusHistoryRepository.java
+/home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/controllers/EmailController.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/domain/services/CategoryService.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/infrastructure/jobs/NotificationCronJob.java
 /home/fmarzochi/Projects/CalibraFlow/backend/src/main/java/com/calibraflow/api/infrastructure/security/TokenService.java

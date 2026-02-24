@@ -25,6 +25,7 @@ com/calibraflow/api/application/controllers/CertificateController.class
 com/calibraflow/api/controllers/CalibrationController.class
 com/calibraflow/api/infrastructure/validations/Cpf.class
 com/calibraflow/api/domain/entities/Tenant.class
+com/calibraflow/api/controllers/EmailController.class
 com/calibraflow/api/domain/repositories/CertificateRepository.class
 com/calibraflow/api/domain/entities/Instrument$InstrumentBuilder.class
 com/calibraflow/api/domain/dtos/LoginResponseDTO.class
