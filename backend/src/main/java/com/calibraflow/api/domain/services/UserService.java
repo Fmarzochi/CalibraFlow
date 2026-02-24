@@ -3,6 +3,8 @@ package com.calibraflow.api.domain.services;
 import com.calibraflow.api.domain.dtos.UserResponseDTO;
 import com.calibraflow.api.domain.dtos.UserUpdatePermissionsDTO;
 import com.calibraflow.api.domain.entities.User;
+import com.calibraflow.api.domain.entities.enums.UserPermission;
+import com.calibraflow.api.domain.entities.enums.UserRole;
 import com.calibraflow.api.domain.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +38,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario nao encontrado."));
 
-        user.setPermissions(dto.permissions());
+        user.setPermissions(dto.permissions().stream().map(Enum::name).collect(Collectors.toSet()));
         userRepository.save(user);
 
         return mapToResponseDTO(user);
@@ -55,9 +59,9 @@ public class UserService {
                 user.getName(),
                 user.getEmail(),
                 user.getCpf(),
-                user.getRole(),
+                UserRole.valueOf(user.getRole()),
                 user.isEnabled(),
-                user.getPermissions()
+                user.getPermissions().stream().map(UserPermission::valueOf).collect(Collectors.toSet())
         );
     }
 }

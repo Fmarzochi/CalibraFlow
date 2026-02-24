@@ -2,48 +2,43 @@ package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Filter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "tb_movements")
+@Table(name = "movements")
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@EqualsAndHashCode(of = "id")
 public class Movement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private LocalDateTime movementDate;
-
-    @Column(columnDefinition = "TEXT")
-    private String reason;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instrument_id", nullable = false)
     private Instrument instrument;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "origin_id")
     private Location origin;
 
-    @ManyToOne
-    @JoinColumn(name = "destination_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "destination_id")
     private Location destination;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User movedBy;
+    private User user;
 
-    @PrePersist
-    public void prePersist() {
-        if (this.movementDate == null) {
-            this.movementDate = LocalDateTime.now();
-        }
-    }
+    @Column(name = "movement_date", nullable = false)
+    private OffsetDateTime movementDate;
+
+    private String reason;
 }

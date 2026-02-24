@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
+
 @RestController
 @RequestMapping("/api/movements")
 @RequiredArgsConstructor
@@ -65,7 +67,8 @@ public class MovementController {
                 .instrument(instrument)
                 .origin(origin)
                 .destination(destination)
-                .movedBy(user)
+                .user(user)
+                .movementDate(OffsetDateTime.now())
                 .build();
 
         Movement savedMovement = movementService.save(movement);

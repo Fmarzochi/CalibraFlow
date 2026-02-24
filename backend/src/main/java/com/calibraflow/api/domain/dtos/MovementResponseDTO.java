@@ -1,11 +1,11 @@
 package com.calibraflow.api.domain.dtos;
 
 import com.calibraflow.api.domain.entities.Movement;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record MovementResponseDTO(
         Long id,
-        LocalDateTime movementDate,
+        OffsetDateTime movementDate,
         String reason,
         Long instrumentId,
         String instrumentTag,
@@ -22,7 +22,7 @@ public record MovementResponseDTO(
                 movement.getInstrument() != null ? movement.getInstrument().getTag() : null,
                 movement.getOrigin() != null ? movement.getOrigin().getName() : null,
                 movement.getDestination() != null ? movement.getDestination().getName() : null,
-                movement.getMovedBy() != null ? movement.getMovedBy().getUsername() : null
+                movement.getUser() != null ? movement.getUser().getUsername() : null
         );
     }
 }

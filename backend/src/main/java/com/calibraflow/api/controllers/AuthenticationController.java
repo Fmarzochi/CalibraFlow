@@ -46,7 +46,7 @@ public class AuthenticationController {
         newUser.setEmail(data.email());
         newUser.setPassword(passwordEncoder.encode(data.password()));
         newUser.setCpf(data.cpf());
-        newUser.setRole(data.role());
+        newUser.setRole(data.role().name());
 
         this.userRepository.save(newUser);
         return ResponseEntity.ok().build();

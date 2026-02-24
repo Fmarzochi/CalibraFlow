@@ -3,14 +3,19 @@ package com.calibraflow.api.domain.entities;
 import com.calibraflow.api.domain.entities.enums.InstrumentStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
+import org.hibernate.annotations.Filter;
+
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "instruments")
-@Data
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class Instrument {
 
     @Id
@@ -55,10 +60,10 @@ public class Instrument {
     private boolean active;
 
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = OffsetDateTime.now();
     }
 }

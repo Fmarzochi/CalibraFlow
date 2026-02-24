@@ -2,7 +2,6 @@ package com.calibraflow.api.infrastructure.seeder;
 
 import com.calibraflow.api.domain.entities.Tenant;
 import com.calibraflow.api.domain.entities.User;
-import com.calibraflow.api.domain.entities.enums.UserRole;
 import com.calibraflow.api.domain.repositories.TenantRepository;
 import com.calibraflow.api.domain.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,7 @@ public class InstrumentDataSeeder implements CommandLineRunner {
                 admin.setEmail("admin@calibraflow.com");
                 admin.setPassword(passwordEncoder.encode("123456"));
                 admin.setCpf("00000000000");
-                admin.setRole(UserRole.ADMINISTRADOR);
+                admin.setRole("ADMINISTRADOR");
                 admin.setEnabled(true);
                 userRepository.save(admin);
             }

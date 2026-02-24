@@ -2,8 +2,10 @@ package com.calibraflow.api.infrastructure.seeder;
 
 import com.calibraflow.api.domain.entities.Category;
 import com.calibraflow.api.domain.entities.Periodicity;
+import com.calibraflow.api.domain.entities.Tenant;
 import com.calibraflow.api.domain.repositories.CategoryRepository;
 import com.calibraflow.api.domain.repositories.PeriodicityRepository;
+import com.calibraflow.api.domain.repositories.TenantRepository;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
@@ -31,6 +33,7 @@ public class PeriodicityDataSeeder implements CommandLineRunner {
 
     private final PeriodicityRepository periodicityRepository;
     private final CategoryRepository categoryRepository;
+    private final TenantRepository tenantRepository;
 
     @Override
     @Transactional
@@ -57,6 +60,8 @@ public class PeriodicityDataSeeder implements CommandLineRunner {
             String[] line;
             int count = 0;
 
+            Tenant tenant = tenantRepository.findAll().stream().findFirst().orElse(null);
+
             while ((line = csvReader.readNext()) != null) {
                 if (line.length < 3 || line[0].trim().isEmpty()) {
                     continue;
@@ -76,9 +81,9 @@ public class PeriodicityDataSeeder implements CommandLineRunner {
                     Category category = categoryOpt.orElse(null);
 
                     Periodicity periodicity = Periodicity.builder()
-                            .instrumentName(instrumentName)
                             .days(days)
                             .category(category)
+                            .tenant(tenant)
                             .build();
 
                     periodicityRepository.save(periodicity);

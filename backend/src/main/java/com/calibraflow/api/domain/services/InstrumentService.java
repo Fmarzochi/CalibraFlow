@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +49,7 @@ public class InstrumentService {
                 .tenant(loggedUser.getTenant())
                 .status(InstrumentStatus.ATIVO)
                 .active(true)
-                .createdAt(LocalDateTime.now())
+                .createdAt(OffsetDateTime.now())
                 .build();
 
         instrument = instrumentRepository.save(instrument);
@@ -110,7 +110,7 @@ public class InstrumentService {
                 instrument.getPeriodicity() != null ? instrument.getPeriodicity().getDays() : null,
                 instrument.getStatus(),
                 instrument.isActive(),
-                instrument.getCreatedAt()
+                instrument.getCreatedAt() != null ? instrument.getCreatedAt().toLocalDateTime() : null
         );
     }
 }
