@@ -28,7 +28,7 @@ public class PeriodicityService {
 
     @Transactional(readOnly = true)
     public Optional<Periodicity> findByInstrumentName(String instrumentName) {
-        return periodicityRepository.findByInstrumentName(instrumentName);
+        return periodicityRepository.findByCategoryName(instrumentName);
     }
 
     @Transactional

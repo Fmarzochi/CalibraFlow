@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface PeriodicityRepository extends JpaRepository<Periodicity, Long> {
-    Optional<Periodicity> findByInstrumentName(String instrumentName);
+    Optional<Periodicity> findByCategoryName(String categoryName);
 }
