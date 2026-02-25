@@ -1,28 +1,22 @@
 package com.calibraflow.api.domain.dtos;
 
-import com.calibraflow.api.domain.entities.Movement;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.OffsetDateTime;
 
-public record MovementResponseDTO(
-        Long id,
-        OffsetDateTime movementDate,
-        String reason,
-        Long instrumentId,
-        String instrumentTag,
-        String originName,
-        String destinationName,
-        String userName
-) {
-    public MovementResponseDTO(Movement movement) {
-        this(
-                movement.getId(),
-                movement.getMovementDate(),
-                movement.getReason(),
-                movement.getInstrument() != null ? movement.getInstrument().getId() : null,
-                movement.getInstrument() != null ? movement.getInstrument().getTag() : null,
-                movement.getOrigin() != null ? movement.getOrigin().getName() : null,
-                movement.getDestination() != null ? movement.getDestination().getName() : null,
-                movement.getUser() != null ? movement.getUser().getUsername() : null
-        );
-    }
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MovementResponseDTO {
+    private Long id;
+    private String instrumentTag;
+    private String originName;
+    private String destinationName;
+    private String reason;
+    private String movedByName;
+    private OffsetDateTime movementDate;
 }

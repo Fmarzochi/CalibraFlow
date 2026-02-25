@@ -4,9 +4,9 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-@Data
 @Configuration
 @ConfigurationProperties(prefix = "datafixer")
+@Data
 public class DataFixerConfig {
     private Input input;
     private Output output;
@@ -14,14 +14,14 @@ public class DataFixerConfig {
 
     @Data
     public static class Input {
-        private String filename;
         private String directory;
+        private String filename;
     }
 
     @Data
     public static class Output {
-        private String filename;
         private String directory;
+        private String filename;
     }
 
     @Data

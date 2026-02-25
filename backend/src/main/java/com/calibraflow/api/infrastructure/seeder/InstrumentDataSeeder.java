@@ -19,23 +19,42 @@ public class InstrumentDataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (tenantRepository.count() == 0) {
-            Tenant tenant = new Tenant();
-            tenant.setName("Empresa Padrao");
-            tenant.setDocument("00.000.000/0001-00");
-            tenantRepository.save(tenant);
+        Tenant tenant1 = tenantRepository.findById(1L).orElseGet(() -> {
+            Tenant newTenant = new Tenant();
+            newTenant.setName("Empresa Piloto");
+            newTenant.setDocument("00.000.000/0001-00");
+            return tenantRepository.save(newTenant);
+        });
 
-            if (userRepository.findOptionalByEmail("admin@calibraflow.com").isEmpty()) {
-                User admin = new User();
-                admin.setTenant(tenant);
-                admin.setName("Administrador");
-                admin.setEmail("admin@calibraflow.com");
-                admin.setPassword(passwordEncoder.encode("123456"));
-                admin.setCpf("00000000000");
-                admin.setRole("ADMINISTRADOR");
-                admin.setEnabled(true);
-                userRepository.save(admin);
-            }
+        if (userRepository.findOptionalByEmail("admin@calibraflow.com").isEmpty()) {
+            User admin = new User();
+            admin.setTenant(tenant1);
+            admin.setName("Administrador");
+            admin.setEmail("admin@calibraflow.com");
+            admin.setPassword(passwordEncoder.encode("123456"));
+            admin.setCpf("00000000000");
+            admin.setRole("ADMINISTRADOR");
+            admin.setEnabled(true);
+            userRepository.save(admin);
+        }
+
+        Tenant tenant2 = tenantRepository.findById(2L).orElseGet(() -> {
+            Tenant newTenant = new Tenant();
+            newTenant.setName("Empresa Piloto 2 (Engenharia)");
+            newTenant.setDocument("00.000.000/0002-00");
+            return tenantRepository.save(newTenant);
+        });
+
+        if (userRepository.findOptionalByEmail("admin2@calibraflow.com").isEmpty()) {
+            User admin2 = new User();
+            admin2.setTenant(tenant2);
+            admin2.setName("Administrador 2");
+            admin2.setEmail("admin2@calibraflow.com");
+            admin2.setPassword(passwordEncoder.encode("123456"));
+            admin2.setCpf("11111111111");
+            admin2.setRole("ADMINISTRADOR");
+            admin2.setEnabled(true);
+            userRepository.save(admin2);
         }
     }
 }

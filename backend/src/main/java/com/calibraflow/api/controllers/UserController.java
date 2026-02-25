@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,19 +19,16 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<Page<UserResponseDTO>> findAll(@PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(userService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
-    @PutMapping("/{id}/permissions")
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PatchMapping("/{id}/permissions")
     public ResponseEntity<UserResponseDTO> updatePermissions(
             @PathVariable Long id,
             @RequestBody @Valid UserUpdatePermissionsDTO dto) {
@@ -40,7 +36,6 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<Void> softDelete(@PathVariable Long id) {
         userService.softDelete(id);
         return ResponseEntity.noContent().build();

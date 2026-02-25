@@ -5,6 +5,7 @@ import com.calibraflow.api.domain.dtos.LoginResponseDTO;
 import com.calibraflow.api.domain.dtos.RegisterDTO;
 import com.calibraflow.api.domain.entities.User;
 import com.calibraflow.api.domain.repositories.UserRepository;
+import com.calibraflow.api.domain.services.EmailService;
 import com.calibraflow.api.infrastructure.security.TokenService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class AuthenticationController {
     private final UserRepository userRepository;
     private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO data) {
@@ -47,8 +49,20 @@ public class AuthenticationController {
         newUser.setPassword(passwordEncoder.encode(data.password()));
         newUser.setCpf(data.cpf());
         newUser.setRole(data.role().name());
+        newUser.setEnabled(true);
 
         this.userRepository.save(newUser);
+
+        String assunto = "Bem-vindo ao CalibraFlow!";
+        String mensagem = String.format(
+                "Olá, %s!\n\nSeu cadastro no CalibraFlow foi realizado com sucesso.\n" +
+                        "Agora você já pode acessar o sistema para gerenciar as calibrações de seus instrumentos.\n\n" +
+                        "Equipe CalibraFlow",
+                newUser.getName()
+        );
+
+        emailService.enviarEmail(newUser.getEmail(), assunto, mensagem);
+
         return ResponseEntity.ok().build();
     }
 }

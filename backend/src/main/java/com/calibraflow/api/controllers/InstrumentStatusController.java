@@ -1,4 +1,4 @@
-package com.calibraflow.api.application.controllers;
+package com.calibraflow.api.controllers;
 
 import com.calibraflow.api.domain.dtos.InstrumentRequestDTO;
 import com.calibraflow.api.domain.entities.User;
@@ -25,10 +25,10 @@ public class InstrumentStatusController {
             HttpServletRequest request) {
 
         String sourceIp = request.getHeader("X-Forwarded-For");
-        if (sourceIp != null && !sourceIp.isEmpty()) {
-            sourceIp = sourceIp.split(",")[0].trim();
-        } else {
+        if (sourceIp == null || sourceIp.isEmpty()) {
             sourceIp = request.getRemoteAddr();
+        } else {
+            sourceIp = sourceIp.split(",")[0].trim();
         }
 
         statusService.changeStatus(id, dto, loggedUser, sourceIp);

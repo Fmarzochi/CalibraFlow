@@ -9,26 +9,27 @@ import org.hibernate.annotations.Filter;
 
 @Entity
 @Table(name = "locations")
-@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
 
     @Column(nullable = false)
     private String name;
 
+    @Column
     private String description;
 
-    @Column(nullable = false)
-    private Boolean active;
+    @Column(name = "is_active", nullable = false)
+    private boolean active;
 }

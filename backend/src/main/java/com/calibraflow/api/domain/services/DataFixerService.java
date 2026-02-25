@@ -1,22 +1,18 @@
 package com.calibraflow.api.domain.services;
 
 import com.calibraflow.api.tools.DataFixer;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
 
 @Service
+@RequiredArgsConstructor
 public class DataFixerService {
 
-    @Autowired
-    private DataFixer dataFixer;
+    private final DataFixer dataFixer;
 
     public Path processData() {
         return dataFixer.process();
-    }
-
-    public String getStatus() {
-        return "DataFixer está pronto para processar arquivos";
     }
 }

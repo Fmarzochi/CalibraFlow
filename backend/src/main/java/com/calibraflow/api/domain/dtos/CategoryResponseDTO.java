@@ -1,7 +1,16 @@
 package com.calibraflow.api.domain.dtos;
 
-public record CategoryResponseDTO(
-        Long id,
-        String name,
-        String description
-) {}
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CategoryResponseDTO {
+    private Long id;
+    private String name;
+    private String description;
+}

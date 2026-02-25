@@ -1,16 +1,19 @@
 package com.calibraflow.api.domain.dtos;
 
-import com.calibraflow.api.domain.entities.enums.UserPermission;
-import com.calibraflow.api.domain.entities.enums.UserRole;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
-public record UserResponseDTO(
-        Long id,
-        String name,
-        String email,
-        String cpf,
-        UserRole role,
-        boolean enabled,
-        Set<UserPermission> permissions
-) {}
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserResponseDTO {
+    private Long id;
+    private String name;
+    private String email;
+    private String cpf;
+    private String role;
+    private boolean enabled;
+}

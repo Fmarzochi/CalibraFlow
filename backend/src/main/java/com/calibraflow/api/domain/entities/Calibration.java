@@ -1,31 +1,32 @@
 package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Filter;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "calibrations")
-@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public class Calibration {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instrument_id", nullable = false)
     private Instrument instrument;
 
@@ -35,26 +36,12 @@ public class Calibration {
     @Column(name = "next_calibration_date")
     private LocalDate nextCalibrationDate;
 
-    @Column(name = "certificate_number", nullable = false)
+    @Column(name = "certificate_number")
     private String certificateNumber;
 
-    @Column(nullable = false)
+    @Column(name = "is_approved", nullable = false)
     private boolean approved;
 
     @Column(columnDefinition = "TEXT")
     private String observations;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private OffsetDateTime createdAt;
-
-    @Column(name = "created_by_id", nullable = false)
-    private Long createdById;
-
-    @Column(name = "created_by_name", nullable = false)
-    private String createdByName;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = OffsetDateTime.now();
-    }
 }

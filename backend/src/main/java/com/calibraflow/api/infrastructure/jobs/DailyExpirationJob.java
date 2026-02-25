@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
@@ -63,16 +64,19 @@ public class DailyExpirationJob {
                     inst.setStatus(InstrumentStatus.VENCIDO);
                     entityManager.merge(inst);
 
-                    InstrumentStatusHistory history = new InstrumentStatusHistory();
-                    history.setInstrument(inst);
-                    history.setTenant(tenant);
-                    history.setPreviousStatus(InstrumentStatus.ATIVO);
-                    history.setNewStatus(InstrumentStatus.VENCIDO);
-                    history.setResponsibleId(0L);
-                    history.setResponsibleFullName("SISTEMA AUTOMATICO");
-                    history.setResponsibleCpf("00000000000");
-                    history.setSourceIp("127.0.0.1");
-                    history.setJustification("Bloqueio automatico por vencimento de prazo de calibracao.");
+                    InstrumentStatusHistory history = InstrumentStatusHistory.builder()
+                            .instrument(inst)
+                            .tenant(tenant)
+                            .previousStatus(InstrumentStatus.ATIVO)
+                            .status(InstrumentStatus.VENCIDO)
+                            .responsibleId(0L)
+                            .responsibleFullName("SISTEMA AUTOMATICO")
+                            .responsibleCpf("00000000000")
+                            .sourceIp("127.0.0.1")
+                            .justification("Bloqueio automatico por vencimento de prazo de calibracao.")
+                            .changedAt(OffsetDateTime.now())
+                            .build();
+
                     entityManager.persist(history);
 
                     mensagem.append("TAG: ").append(inst.getTag())

@@ -1,4 +1,4 @@
-package com.calibraflow.api.application.controllers;
+package com.calibraflow.api.controllers;
 
 import com.calibraflow.api.application.dtos.CertificateResponseDTO;
 import com.calibraflow.api.domain.entities.Certificate;

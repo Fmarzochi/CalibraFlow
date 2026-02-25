@@ -1,18 +1,19 @@
 package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Filter;
 
 @Entity
 @Table(name = "periodicities")
-@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public class Periodicity {
 
     @Id

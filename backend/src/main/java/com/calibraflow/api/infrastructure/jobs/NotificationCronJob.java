@@ -1,11 +1,9 @@
 package com.calibraflow.api.infrastructure.jobs;
 
-import com.calibraflow.api.domain.dtos.UpcomingCalibrationDTO;
+import com.calibraflow.api.domain.entities.Calibration;
 import com.calibraflow.api.domain.services.CalibrationService;
-import com.calibraflow.api.domain.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,19 +16,19 @@ import java.util.List;
 public class NotificationCronJob {
 
     private final CalibrationService calibrationService;
-    private final UserService userService;
 
-    @Scheduled(cron = "0 0 8 * * *")
-    public void checkUpcomingCalibrations() {
-        log.info("Iniciando rotina de verificacao de calibracoes a vencer...");
-        LocalDate today = LocalDate.now();
-        LocalDate nextMonth = today.plusDays(30);
+    @Scheduled(cron = "0 0 8 * * ?")
+    public void notifyUpcomingCalibrations() {
+        log.info("Iniciando rotina de verificação de calibrações próximas ao vencimento...");
+        LocalDate start = LocalDate.now();
+        LocalDate end = start.plusDays(30);
 
-        List<UpcomingCalibrationDTO> upcoming = calibrationService.findUpcomingCalibrations(today, nextMonth);
-        var users = userService.findAll(Pageable.unpaged());
+        List<Calibration> upcoming = calibrationService.findUpcomingCalibrations(start, end);
 
-        for (UpcomingCalibrationDTO cal : upcoming) {
-            log.info("Alerta: Instrumento {} ({}) vence em {}", cal.instrumentTag(), cal.instrumentName(), cal.nextCalibrationDate());
+        for (Calibration calibration : upcoming) {
+            log.info("Instrumento [{}] vence em: {}", calibration.getInstrument().getTag(), calibration.getNextCalibrationDate());
         }
+
+        log.info("Rotina de calibrações finalizada. Total de notificações preparadas: {}", upcoming.size());
     }
 }

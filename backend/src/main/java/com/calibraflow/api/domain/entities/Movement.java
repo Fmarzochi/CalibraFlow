@@ -1,25 +1,30 @@
 package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Filter;
 
 import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "movements")
-@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public class Movement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tenant_id", nullable = false)
+    private Tenant tenant;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instrument_id", nullable = false)
@@ -37,8 +42,9 @@ public class Movement {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(columnDefinition = "TEXT")
+    private String reason;
+
     @Column(name = "movement_date", nullable = false)
     private OffsetDateTime movementDate;
-
-    private String reason;
 }

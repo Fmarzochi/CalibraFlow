@@ -1,26 +1,26 @@
 package com.calibraflow.api.domain.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Filter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.hibernate.annotations.Filter;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
-@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public class User implements UserDetails {
 
     @Id
@@ -31,37 +31,47 @@ public class User implements UserDetails {
     @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(unique = true, length = 14)
+    @Column(unique = true)
     private String cpf;
 
-    @Column(nullable = false)
     private String role;
 
-    @Column(name = "is_enabled", nullable = false)
+    @Column(name = "is_enabled")
     private boolean enabled;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_permissions", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "permission")
-    @Builder.Default
-    private Set<String> permissions = new HashSet<>();
+    private Set<String> permissions;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> authorities = permissions.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toSet());
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role));
+        Set<GrantedAuthority> authorities = new HashSet<>();
+
+        if (this.role != null && !this.role.trim().isEmpty()) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role));
+        }
+
+        if (this.permissions != null && !this.permissions.isEmpty()) {
+            for (String permission : this.permissions) {
+                authorities.add(new SimpleGrantedAuthority(permission));
+            }
+        }
+
         return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
     @Override
