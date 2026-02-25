@@ -12,7 +12,7 @@
 [[1;34mINFO[m] 
 [[1;34mINFO[m] [1m--- [0;32mresources:3.3.1:resources[m [1m(default-resources)[m @ [36mapi[0;1m ---[m
 [[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
-[[1;34mINFO[m] Copying 3 resources from src/main/resources to target/classes
+[[1;34mINFO[m] Copying 4 resources from src/main/resources to target/classes
 [[1;34mINFO[m] 
 [[1;34mINFO[m] [1m--- [0;32mcompiler:3.11.0:compile[m [1m(default-compile)[m @ [36mapi[0;1m ---[m
 [[1;34mINFO[m] Changes detected - recompiling the module! :source
@@ -46,35 +46,36 @@ Standard Commons Logging discovery in action with spring-jcl: please remove comm
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.2.2)
 
-2026-02-24T23:08:33.933-03:00  INFO 170545 --- [           main] c.c.api.CalibraFlowApiApplication        : Starting CalibraFlowApiApplication using Java 21.0.10 with PID 170545 (/home/fmarzochi/Projects/CalibraFlow/backend/target/classes started by fmarzochi in /home/fmarzochi/Projects/CalibraFlow/backend)
-2026-02-24T23:08:33.935-03:00  INFO 170545 --- [           main] c.c.api.CalibraFlowApiApplication        : No active profile set, falling back to 1 default profile: "default"
-2026-02-24T23:08:34.551-03:00  INFO 170545 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-02-24T23:08:34.615-03:00  INFO 170545 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 56 ms. Found 11 JPA repository interfaces.
-2026-02-24T23:08:35.252-03:00  INFO 170545 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2026-02-24T23:08:35.264-03:00  INFO 170545 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-02-24T23:08:35.264-03:00  INFO 170545 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
-2026-02-24T23:08:35.302-03:00  INFO 170545 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-02-24T23:08:35.303-03:00  INFO 170545 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1330 ms
+2026-02-24T23:21:41.655-03:00  INFO 173497 --- [           main] c.c.api.CalibraFlowApiApplication        : Starting CalibraFlowApiApplication using Java 21.0.10 with PID 173497 (/home/fmarzochi/Projects/CalibraFlow/backend/target/classes started by fmarzochi in /home/fmarzochi/Projects/CalibraFlow/backend)
+2026-02-24T23:21:41.657-03:00  INFO 173497 --- [           main] c.c.api.CalibraFlowApiApplication        : No active profile set, falling back to 1 default profile: "default"
+2026-02-24T23:21:42.228-03:00  INFO 173497 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-24T23:21:42.290-03:00  INFO 173497 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 55 ms. Found 11 JPA repository interfaces.
+2026-02-24T23:21:42.912-03:00  INFO 173497 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-02-24T23:21:42.924-03:00  INFO 173497 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-24T23:21:42.924-03:00  INFO 173497 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-02-24T23:21:42.962-03:00  INFO 173497 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-02-24T23:21:42.963-03:00  INFO 173497 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1267 ms
 Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
-2026-02-24T23:08:35.416-03:00  INFO 170545 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-02-24T23:08:35.535-03:00  INFO 170545 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@10d18696
-2026-02-24T23:08:35.536-03:00  INFO 170545 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-02-24T23:08:35.609-03:00  INFO 170545 --- [           main] o.f.c.internal.license.VersionPrinter    : Flyway Community Edition 9.22.3 by Redgate
-2026-02-24T23:08:35.609-03:00  INFO 170545 --- [           main] o.f.c.internal.license.VersionPrinter    : See release notes here: https://rd.gt/416ObMi
-2026-02-24T23:08:35.609-03:00  INFO 170545 --- [           main] o.f.c.internal.license.VersionPrinter    : 
-2026-02-24T23:08:35.621-03:00  INFO 170545 --- [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5433/calibraflow (PostgreSQL 15.15)
-2026-02-24T23:08:35.657-03:00  INFO 170545 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 3 migrations (execution time 00:00.021s)
-2026-02-24T23:08:35.668-03:00  INFO 170545 --- [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 3
-2026-02-24T23:08:35.670-03:00  INFO 170545 --- [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
-2026-02-24T23:08:35.740-03:00  INFO 170545 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-02-24T23:08:35.774-03:00  INFO 170545 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.1.Final
-2026-02-24T23:08:35.797-03:00  INFO 170545 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-02-24T23:08:35.928-03:00  INFO 170545 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-02-24T23:08:35.959-03:00  WARN 170545 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-02-24T23:08:36.088-03:00 ERROR 170545 --- [           main] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: Multiple '@FilterDef' annotations define a filter named 'tenantFilter'
-2026-02-24T23:08:36.089-03:00 ERROR 170545 --- [           main] o.s.b.web.embedded.tomcat.TomcatStarter  : Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name 'securityFilter': Unsatisfied dependency expressed through field 'userRepository': Error creating bean with name 'userRepository' defined in com.calibraflow.api.domain.repositories.UserRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
-2026-02-24T23:08:36.109-03:00  INFO 170545 --- [           main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
-2026-02-24T23:08:36.111-03:00  WARN 170545 --- [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [ROOT] appears to have started a thread named [HikariPool-1 housekeeper] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+2026-02-24T23:21:43.074-03:00  INFO 173497 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-02-24T23:21:43.186-03:00  INFO 173497 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1c5d3a37
+2026-02-24T23:21:43.187-03:00  INFO 173497 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-02-24T23:21:43.255-03:00  INFO 173497 --- [           main] o.f.c.internal.license.VersionPrinter    : Flyway Community Edition 9.22.3 by Redgate
+2026-02-24T23:21:43.255-03:00  INFO 173497 --- [           main] o.f.c.internal.license.VersionPrinter    : See release notes here: https://rd.gt/416ObMi
+2026-02-24T23:21:43.255-03:00  INFO 173497 --- [           main] o.f.c.internal.license.VersionPrinter    : 
+2026-02-24T23:21:43.266-03:00  INFO 173497 --- [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5433/calibraflow (PostgreSQL 15.15)
+2026-02-24T23:21:43.299-03:00  INFO 173497 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 4 migrations (execution time 00:00.020s)
+2026-02-24T23:21:43.310-03:00  INFO 173497 --- [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 4
+2026-02-24T23:21:43.312-03:00  INFO 173497 --- [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+2026-02-24T23:21:43.384-03:00  INFO 173497 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-02-24T23:21:43.418-03:00  INFO 173497 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.1.Final
+2026-02-24T23:21:43.440-03:00  INFO 173497 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-02-24T23:21:43.571-03:00  INFO 173497 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-24T23:21:43.602-03:00  WARN 173497 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-02-24T23:21:44.390-03:00  INFO 173497 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-24T23:21:44.447-03:00 ERROR 173497 --- [           main] j.LocalContainerEntityManagerFactoryBean : Failed to initialize JPA EntityManagerFactory: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: missing column [status] in table [instrument_status_history]
+2026-02-24T23:21:44.448-03:00 ERROR 173497 --- [           main] o.s.b.web.embedded.tomcat.TomcatStarter  : Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name 'securityFilter': Unsatisfied dependency expressed through field 'userRepository': Error creating bean with name 'userRepository' defined in com.calibraflow.api.domain.repositories.UserRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
+2026-02-24T23:21:44.474-03:00  INFO 173497 --- [           main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2026-02-24T23:21:44.476-03:00  WARN 173497 --- [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [ROOT] appears to have started a thread named [HikariPool-1 housekeeper] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
  java.base/jdk.internal.misc.Unsafe.park(Native Method)
  java.base/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:269)
  java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1797)
@@ -84,7 +85,7 @@ Standard Commons Logging discovery in action with spring-jcl: please remove comm
  java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
  java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
  java.base/java.lang.Thread.run(Thread.java:1583)
-2026-02-24T23:08:36.111-03:00  WARN 170545 --- [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [ROOT] appears to have started a thread named [HikariPool-1 connection adder] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+2026-02-24T23:21:44.477-03:00  WARN 173497 --- [           main] o.a.c.loader.WebappClassLoaderBase       : The web application [ROOT] appears to have started a thread named [HikariPool-1 connection adder] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
  java.base/jdk.internal.misc.Unsafe.park(Native Method)
  java.base/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:269)
  java.base/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1797)
@@ -93,13 +94,13 @@ Standard Commons Logging discovery in action with spring-jcl: please remove comm
  java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
  java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
  java.base/java.lang.Thread.run(Thread.java:1583)
-2026-02-24T23:08:36.113-03:00  WARN 170545 --- [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
-2026-02-24T23:08:36.113-03:00  INFO 170545 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
-2026-02-24T23:08:36.116-03:00  INFO 170545 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-2026-02-24T23:08:36.125-03:00  INFO 170545 --- [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
+2026-02-24T23:21:44.479-03:00  WARN 173497 --- [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
+2026-02-24T23:21:44.479-03:00  INFO 173497 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-02-24T23:21:44.482-03:00  INFO 173497 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-02-24T23:21:44.493-03:00  INFO 173497 --- [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2026-02-24T23:08:36.137-03:00 ERROR 170545 --- [           main] o.s.boot.SpringApplication               : Application run failed
+2026-02-24T23:21:44.508-03:00 ERROR 173497 --- [           main] o.s.boot.SpringApplication               : Application run failed
 
 org.springframework.context.ApplicationContextException: Unable to start web server
 	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:165) ~[spring-boot-3.2.2.jar:3.2.2]
@@ -195,7 +196,7 @@ Caused by: org.springframework.beans.factory.BeanCreationException: Error creati
 	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199) ~[spring-beans-6.1.3.jar:6.1.3]
 	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365) ~[spring-beans-6.1.3.jar:6.1.3]
 	... 68 common frames omitted
-Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: Multiple '@FilterDef' annotations define a filter named 'tenantFilter'
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: missing column [status] in table [instrument_status_history]
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1773) ~[spring-beans-6.1.3.jar:6.1.3]
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.3.jar:6.1.3]
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:521) ~[spring-beans-6.1.3.jar:6.1.3]
@@ -205,29 +206,37 @@ Caused by: org.springframework.beans.factory.BeanCreationException: Error creati
 	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199) ~[spring-beans-6.1.3.jar:6.1.3]
 	at org.springframework.beans.factory.support.BeanDefinitionValueResolver.resolveReference(BeanDefinitionValueResolver.java:365) ~[spring-beans-6.1.3.jar:6.1.3]
 	... 80 common frames omitted
-Caused by: org.hibernate.AnnotationException: Multiple '@FilterDef' annotations define a filter named 'tenantFilter'
-	at org.hibernate.boot.model.internal.AnnotationBinder.bindFilterDef(AnnotationBinder.java:660) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
-	at org.hibernate.boot.model.internal.AnnotationBinder.bindFilterDefs(AnnotationBinder.java:648) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
-	at org.hibernate.boot.model.internal.AnnotationBinder.bindClass(AnnotationBinder.java:413) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
-	at org.hibernate.boot.model.source.internal.annotations.AnnotationMetadataSourceProcessorImpl.processEntityHierarchies(AnnotationMetadataSourceProcessorImpl.java:256) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess$1.processEntityHierarchies(MetadataBuildingProcess.java:279) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:322) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1432) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1503) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.1.3.jar:6.1.3]
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:376) ~[spring-orm-6.1.3.jar:6.1.3]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.1.3.jar:6.1.3]
+Caused by: jakarta.persistence.PersistenceException: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: missing column [status] in table [instrument_status_history]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:421) ~[spring-orm-6.1.3.jar:6.1.3]
 	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-6.1.3.jar:6.1.3]
 	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:352) ~[spring-orm-6.1.3.jar:6.1.3]
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1820) ~[spring-beans-6.1.3.jar:6.1.3]
 	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1769) ~[spring-beans-6.1.3.jar:6.1.3]
 	... 87 common frames omitted
+Caused by: org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: missing column [status] in table [instrument_status_history]
+	at org.hibernate.tool.schema.internal.AbstractSchemaValidator.validateTable(AbstractSchemaValidator.java:145) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at org.hibernate.tool.schema.internal.GroupedSchemaValidatorImpl.validateTables(GroupedSchemaValidatorImpl.java:46) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaValidator.performValidation(AbstractSchemaValidator.java:97) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at org.hibernate.tool.schema.internal.AbstractSchemaValidator.doValidation(AbstractSchemaValidator.java:75) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:295) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$5(SchemaManagementToolCoordinator.java:145) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at java.base/java.util.HashMap.forEach(HashMap.java:1429) ~[na:na]
+	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:142) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:37) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:35) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:315) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:450) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1507) ~[hibernate-core-6.4.1.Final.jar:6.4.1.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.1.3.jar:6.1.3]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:376) ~[spring-orm-6.1.3.jar:6.1.3]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.1.3.jar:6.1.3]
+	... 91 common frames omitted
 
 [[1;34mINFO[m] [1m------------------------------------------------------------------------[m
 [[1;34mINFO[m] [1;31mBUILD FAILURE[m
 [[1;34mINFO[m] [1m------------------------------------------------------------------------[m
-[[1;34mINFO[m] Total time:  8.649 s
-[[1;34mINFO[m] Finished at: 2026-02-24T23:08:36-03:00
+[[1;34mINFO[m] Total time:  7.943 s
+[[1;34mINFO[m] Finished at: 2026-02-24T23:21:44-03:00
 [[1;34mINFO[m] [1m------------------------------------------------------------------------[m
 [[1;31mERROR[m] Failed to execute goal [32morg.springframework.boot:spring-boot-maven-plugin:3.2.2:run[m [1m(default-cli)[m on project [36mapi[m: [1;31mProcess terminated with exit code: 1[m -> [1m[Help 1][m
 [[1;31mERROR[m] 
